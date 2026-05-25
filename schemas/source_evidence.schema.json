@@ -1,0 +1,302 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "schemas/source_evidence.schema.json",
+  "title": "VideoAsset Manualize Source Evidence Schema",
+  "description": "Schema for the source_evidence object used in VideoAsset Manualize Phase 2.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source_video",
+    "transcript_segments"
+  ],
+  "properties": {
+    "source_video": {
+      "$ref": "#/$defs/sourceVideo"
+    },
+    "transcript_segments": {
+      "type": "array",
+      "description": "Transcript segments with timestamped evidence.",
+      "items": {
+        "$ref": "#/$defs/transcriptSegment"
+      }
+    },
+    "ocr_segments": {
+      "type": "array",
+      "description": "OCR segments extracted from video frames.",
+      "items": {
+        "$ref": "#/$defs/ocrSegment"
+      },
+      "default": []
+    },
+    "screenshot_candidates": {
+      "type": "array",
+      "description": "Screenshot candidates for review and manual generation.",
+      "items": {
+        "$ref": "#/$defs/screenshotCandidate"
+      },
+      "default": []
+    },
+    "speaker_segments": {
+      "type": "array",
+      "description": "Optional speaker segment information.",
+      "items": {
+        "$ref": "#/$defs/speakerSegment"
+      },
+      "default": []
+    },
+    "evidence_links": {
+      "type": "array",
+      "description": "Links between extracted instructional elements and source evidence.",
+      "items": {
+        "$ref": "#/$defs/evidenceLink"
+      },
+      "default": []
+    }
+  },
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "msTimestamp": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "confidenceScore": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "bbox": {
+      "type": "array",
+      "description": "Bounding box in [x1, y1, x2, y2] format.",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "sourceVideo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "video_id",
+        "file_name",
+        "file_path",
+        "source_type",
+        "duration_ms",
+        "language"
+      ],
+      "properties": {
+        "video_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "file_name": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "file_path": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "source_type": {
+          "type": "string",
+          "enum": [
+            "local_file",
+            "uploaded_file",
+            "url"
+          ]
+        },
+        "duration_ms": {
+          "$ref": "#/$defs/msTimestamp"
+        },
+        "language": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "checksum": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "transcriptSegment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "segment_id",
+        "start_ms",
+        "end_ms",
+        "text"
+      ],
+      "properties": {
+        "segment_id": {
+          "type": "string",
+          "pattern": "^ts-[A-Za-z0-9._-]+$"
+        },
+        "start_ms": {
+          "$ref": "#/$defs/msTimestamp"
+        },
+        "end_ms": {
+          "$ref": "#/$defs/msTimestamp"
+        },
+        "text": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "speaker_id": {
+          "type": "string",
+          "pattern": "^spk-[A-Za-z0-9._-]+$"
+        },
+        "confidence": {
+          "$ref": "#/$defs/confidenceScore"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "start_ms": {
+                "type": "integer"
+              },
+              "end_ms": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "start_ms",
+              "end_ms"
+            ]
+          },
+          "then": {
+            "properties": {
+              "end_ms": {
+                "minimum": 0
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ocrSegment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ocr_id",
+        "start_ms",
+        "end_ms",
+        "text"
+      ],
+      "properties": {
+        "ocr_id": {
+          "type": "string",
+          "pattern": "^ocr-[A-Za-z0-9._-]+$"
+        },
+        "start_ms": {
+          "$ref": "#/$defs/msTimestamp"
+        },
+        "end_ms": {
+          "$ref": "#/$defs/msTimestamp"
+        },
+        "text": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "bbox": {
+          "$ref": "#/$defs/bbox"
+        },
+        "confidence": {
+          "$ref": "#/$defs/confidenceScore"
+        }
+      }
+    },
+    "screenshotCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "screenshot_id",
+        "timestamp_ms",
+        "image_path"
+      ],
+      "properties": {
+        "screenshot_id": {
+          "type": "string",
+          "pattern": "^sc-[A-Za-z0-9._-]+$"
+        },
+        "timestamp_ms": {
+          "$ref": "#/$defs/msTimestamp"
+        },
+        "image_path": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "speakerSegment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "speaker_id",
+        "start_ms",
+        "end_ms"
+      ],
+      "properties": {
+        "speaker_id": {
+          "type": "string",
+          "pattern": "^spk-[A-Za-z0-9._-]+$"
+        },
+        "start_ms": {
+          "$ref": "#/$defs/msTimestamp"
+        },
+        "end_ms": {
+          "$ref": "#/$defs/msTimestamp"
+        },
+        "label": {
+          "type": "string"
+        }
+      }
+    },
+    "evidenceLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "link_id",
+        "target_type",
+        "target_id",
+        "evidence_type",
+        "evidence_id"
+      ],
+      "properties": {
+        "link_id": {
+          "type": "string",
+          "pattern": "^evl-[A-Za-z0-9._-]+$"
+        },
+        "target_type": {
+          "type": "string",
+          "enum": [
+            "summary",
+            "chapter",
+            "procedure",
+            "step",
+            "caution",
+            "faq_candidate"
+          ]
+        },
+        "target_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "evidence_type": {
+          "type": "string",
+          "enum": [
+            "transcript_segment",
+            "ocr_segment",
+            "screenshot_candidate",
+            "speaker_segment"
+          ]
+        },
+        "evidence_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    }
+  }
+}
