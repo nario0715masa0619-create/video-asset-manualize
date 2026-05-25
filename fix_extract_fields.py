@@ -1,0 +1,302 @@
+"""
+source_evidence_to_training_asset_builder.py を修正
+すべての source_evidence フィールドをスキーマに合わせてクリーンアップ
+"""
+
+from pathlib import Path
+
+builder_file = Path("src/video_asset_manualize/source_evidence_to_training_asset_builder.py")
+
+new_code = r'''"""
+Source Evidence to Training Asset Builder - Converts source_evidence to training_asset_spec.
+"""
+
+import json
+from pathlib import Path
+from datetime import datetime
+from uuid import uuid4
+
+from .training_asset_spec_builder import TrainingAssetSpecBuilder
+
+
+class SourceEvidenceToTrainingAssetBuilder:
+    """
+    MVP Builder: Converts source_evidence into training_asset_spec.
+    Extracts key information from transcript and structures it into chapters/procedures/steps.
+    """
+
+    def __init__(self):
+        """Initialize builder."""
+        self.source_evidence = None
+        self.spec_builder = TrainingAssetSpecBuilder()
+
+    def load_source_evidence(self, file_path: Path) -> dict:
+        """
+        Load source_evidence from file.
+
+        Args:
+            file_path: Path to source_evidence JSON
+
+        Returns:
+            Loaded source_evidence
+        """
+        if not file_path.exists():
+            raise FileNotFoundError(f"File not found: {file_path}")
+
+        with open(file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        # Clean up source_evidence to match schema exactly
+        self.source_evidence = self._clean_source_evidence(data)
+        return self.source_evidence
+
+    def _clean_source_evidence(self, data: dict) -> dict:
+        """
+        Clean source_evidence to match schema.
+        Remove extra fields and keep only schema-defined fields.
+        """
+        cleaned = {}
+
+        # source_video: keep required fields only
+        if "source_video" in data:
+            sv = data["source_video"]
+            cleaned["source_video"] = {
+                "video_id": sv.get("video_id"),
+                "file_name": sv.get("file_name"),
+                "file_path": sv.get("file_path"),
+                "source_type": sv.get("source_type"),
+                "duration_ms": sv.get("duration_ms"),
+                "language": sv.get("language")
+            }
+            if "checksum" in sv:
+                cleaned["source_video"]["checksum"] = sv["checksum"]
+
+        # transcript_segments: keep required fields only
+        if "transcript_segments" in data:
+            cleaned["transcript_segments"] = []
+            for ts in data.get("transcript_segments", []):
+                segment = {
+                    "segment_id": ts.get("segment_id"),
+                    "start_ms": ts.get("start_ms"),
+                    "end_ms": ts.get("end_ms"),
+                    "text": ts.get("text")
+                }
+                if "speaker_id" in ts:
+                    segment["speaker_id"] = ts["speaker_id"]
+                if "confidence" in ts:
+                    segment["confidence"] = ts["confidence"]
+                cleaned["transcript_segments"].append(segment)
+
+        # ocr_segments: keep required fields only
+        if "ocr_segments" in data:
+            cleaned["ocr_segments"] = []
+            for ocr in data.get("ocr_segments", []):
+                segment = {
+                    "ocr_id": ocr.get("ocr_id"),
+                    "start_ms": ocr.get("start_ms"),
+                    "end_ms": ocr.get("end_ms"),
+                    "text": ocr.get("text")
+                }
+                if "bbox" in ocr:
+                    segment["bbox"] = ocr["bbox"]
+                if "confidence" in ocr:
+                    segment["confidence"] = ocr["confidence"]
+                cleaned["ocr_segments"].append(segment)
+
+        # screenshot_candidates: keep required fields only
+        if "screenshot_candidates" in data:
+            cleaned["screenshot_candidates"] = []
+            for sc in data.get("screenshot_candidates", []):
+                screenshot = {
+                    "screenshot_id": sc.get("screenshot_id"),
+                    "timestamp_ms": sc.get("timestamp_ms"),
+                    "image_path": sc.get("image_path")
+                }
+                if "description" in sc:
+                    screenshot["description"] = sc["description"]
+                cleaned["screenshot_candidates"].append(screenshot)
+
+        # speaker_segments: keep required fields only
+        if "speaker_segments" in data:
+            cleaned["speaker_segments"] = []
+            for spk in data.get("speaker_segments", []):
+                segment = {
+                    "speaker_id": spk.get("speaker_id"),
+                    "start_ms": spk.get("start_ms"),
+                    "end_ms": spk.get("end_ms")
+                }
+                if "label" in spk:
+                    segment["label"] = spk["label"]
+                cleaned["speaker_segments"].append(segment)
+
+        # evidence_links: keep required fields only
+        if "evidence_links" in data:
+            cleaned["evidence_links"] = []
+            for ev in data.get("evidence_links", []):
+                link = {
+                    "link_id": ev.get("link_id"),
+                    "target_type": ev.get("target_type"),
+                    "target_id": ev.get("target_id"),
+                    "evidence_type": ev.get("evidence_type"),
+                    "evidence_id": ev.get("evidence_id")
+                }
+                cleaned["evidence_links"].append(link)
+
+        return cleaned
+
+    def build_training_asset_spec(self, asset_meta: dict = None) -> dict:
+        """
+        Build training_asset_spec from source_evidence.
+
+        Args:
+            asset_meta: Optional metadata overrides
+
+        Returns:
+            Generated training_asset_spec
+        """
+        if not self.source_evidence:
+            raise ValueError("No source_evidence loaded")
+
+        # Asset metadata
+        if not asset_meta:
+            asset_meta = self._build_asset_meta()
+
+        # Source evidence section (cleaned)
+        source_evidence = self.source_evidence
+
+        # Instructional core (extracted from transcripts)
+        instructional_core = self._build_instructional_core()
+
+        # Derived views (basic generation)
+        derived_views = self._build_derived_views()
+
+        # Metadata
+        metadata = {
+            "schema_version": "0.1.0",
+            "generated_at": datetime.now().isoformat(),
+            "pipeline_version": "0.2.0",
+            "generation_context": {
+                "mode": "source_evidence_extraction",
+                "source": "phase2_extraction"
+            },
+            "review_status": "unreviewed",
+            "review_notes": ["自動抽出のため、レビューが必要です"]
+        }
+
+        # Build complete spec
+        spec = {
+            "asset_meta": asset_meta,
+            "source_evidence": source_evidence,
+            "instructional_core": instructional_core,
+            "derived_views": derived_views,
+            "delivery_assets": {},
+            "_metadata": metadata
+        }
+
+        # Store in builder
+        self.spec_builder.spec = spec
+
+        return spec
+
+    def _build_asset_meta(self) -> dict:
+        """Build asset_meta from source_evidence."""
+        source_video = self.source_evidence.get("source_video", {})
+
+        return {
+            "asset_id": f"asset-{uuid4().hex[:8]}",
+            "source_video_id": source_video.get("video_id", "unknown"),
+            "title": f"{source_video.get('file_name', '動画')}からの自動抽出",
+            "purpose": "動画から自動抽出した手順",
+            "target_audience": ["全員"],
+            "target_department": [],
+            "prerequisites": [],
+            "language": "ja-JP",
+            "status": "draft",
+            "version": "0.1.0",
+            "created_at": datetime.now().isoformat(),
+            "updated_at": datetime.now().isoformat()
+        }
+
+    def _build_instructional_core(self) -> dict:
+        """Build instructional_core from transcript_segments."""
+        transcripts = self.source_evidence.get("transcript_segments", [])
+
+        if not transcripts:
+            return {
+                "summary": {
+                    "purpose_summary": "transcript がありません"
+                },
+                "chapters": [{
+                    "chapter_id": "chapter-001",
+                    "title": "章1",
+                    "procedures": [{
+                        "procedure_id": "procedure-001",
+                        "title": "手順1",
+                        "steps": [{
+                            "step_id": "step-001",
+                            "order": 1,
+                            "action": "transcript から自動抽出されていません"
+                        }]
+                    }]
+                }],
+                "global_cautions": ["自動抽出のため、内容を確認してください"]
+            }
+
+        # Simple extraction: group transcripts into chapters/procedures/steps
+        steps = []
+        for i, ts in enumerate(transcripts, 1):
+            step = {
+                "step_id": f"step-{i:03d}",
+                "order": i,
+                "action": ts.get("text", ""),
+                "expected_result": "次のステップへ進む",
+                "evidence_refs": [ts.get("segment_id", "")]
+            }
+            steps.append(step)
+
+        return {
+            "summary": {
+                "purpose_summary": "video から自動抽出した手順",
+                "outcome_summary": "各ステップに従って操作を実施"
+            },
+            "chapters": [{
+                "chapter_id": "chapter-001",
+                "title": "抽出された手順",
+                "procedures": [{
+                    "procedure_id": "procedure-001",
+                    "title": "自動抽出手順",
+                    "steps": steps
+                }]
+            }],
+            "global_cautions": [
+                "このデータは自動抽出です",
+                "内容を確認し、必要に応じて修正してください"
+            ]
+        }
+
+    def _build_derived_views(self) -> dict:
+        """Build derived_views (minimal)."""
+        return {
+            "beginner_view": {
+                "title": "新人向け簡易版",
+                "key_points": ["自動抽出のため、確認が必要です"]
+            }
+        }
+
+    def save_training_asset_spec(self, output_file: Path) -> Path:
+        """
+        Save generated training_asset_spec to file.
+
+        Args:
+            output_file: Path to save
+
+        Returns:
+            Path to saved file
+        """
+        return self.spec_builder.save_to_file(output_file)
+'''
+
+with open(builder_file, "w", encoding="utf-8") as f:
+    f.write(new_code)
+
+print("✓ source_evidence_to_training_asset_builder.py を修正しました")

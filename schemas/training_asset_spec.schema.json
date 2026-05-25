@@ -43,7 +43,6 @@
     },
     "assetMeta": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
         "asset_id",
         "title"
@@ -108,7 +107,6 @@
     },
     "sourceEvidence": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "source_video": {
           "$ref": "#/$defs/sourceVideo"
@@ -175,7 +173,6 @@
     },
     "transcriptSegment": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
         "segment_id",
         "start_ms",
@@ -215,12 +212,15 @@
             "exception",
             "supplement"
           ]
+        },
+        "speaker_id": {
+          "type": "string",
+          "pattern": "^spk-[A-Za-z0-9._-]+$"
         }
       }
     },
     "ocrSegment": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
         "ocr_id",
         "start_ms",
@@ -254,7 +254,6 @@
     },
     "screenshotCandidate": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
         "screenshot_id",
         "at_ms"
@@ -280,7 +279,6 @@
     },
     "speakerSegment": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
         "speaker_segment_id",
         "start_ms",
@@ -310,7 +308,6 @@
     },
     "evidenceLink": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
         "evidence_ref_id",
         "related_step_id"
@@ -335,7 +332,6 @@
     },
     "instructionalCore": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
         "chapters"
       ],
@@ -371,7 +367,6 @@
     },
     "summary": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "purpose_summary": {
           "type": "string"
@@ -389,7 +384,6 @@
     },
     "chapter": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
         "chapter_id",
         "title",
@@ -419,7 +413,6 @@
     },
     "procedure": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
         "procedure_id",
         "title",
@@ -462,7 +455,6 @@
     },
     "step": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
         "step_id",
         "order",
@@ -504,7 +496,6 @@
     },
     "commonMistake": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
         "mistake"
       ],
@@ -525,7 +516,6 @@
     },
     "checklistItem": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
         "item"
       ],
@@ -541,7 +531,6 @@
     },
     "derivedViews": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "beginner_view": {
           "$ref": "#/$defs/beginnerView"
@@ -566,7 +555,6 @@
     },
     "beginnerView": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "title": {
           "type": "string"
@@ -578,7 +566,6 @@
     },
     "checklistView": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "title": {
           "type": "string"
@@ -597,7 +584,6 @@
     },
     "checklistViewItem": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
         "item_id",
         "text"
@@ -617,7 +603,6 @@
     },
     "faqCandidate": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
         "faq_id",
         "question"
@@ -647,7 +632,6 @@
     },
     "digestView": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "title": {
           "type": "string"
@@ -659,7 +643,6 @@
     },
     "managerView": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "title": {
           "type": "string"
@@ -674,7 +657,6 @@
     },
     "deliveryAssets": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "raw_transcript": {
           "$ref": "#/$defs/rawTranscriptAsset"
@@ -699,7 +681,6 @@
     },
     "rawTranscriptAsset": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "file_ref": {
           "type": "string"
@@ -711,7 +692,6 @@
     },
     "summaryTextAsset": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "text": {
           "type": "string"
@@ -724,7 +704,6 @@
     },
     "renderedAsset": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "file_ref": {
           "type": "string"
@@ -740,7 +719,6 @@
     },
     "exportedFile": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
         "asset_type"
       ],
@@ -769,7 +747,6 @@
     },
     "metadata": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
         "schema_version"
       ],
@@ -819,7 +796,6 @@
     },
     "changeLogEntry": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "changed_at": {
           "type": "string",

@@ -1,0 +1,80 @@
+{
+  "source_video": {
+    "video_id": "video-001",
+    "file_name": "customer_registration_training.mp4",
+    "file_path": "inputs/customer_registration_training.mp4",
+    "source_type": "local_file",
+    "duration_ms": 845000,
+    "language": "ja",
+    "checksum": null
+  },
+  "transcript_segments": [
+    {
+      "segment_id": "ts-001",
+      "start_ms": 1200,
+      "end_ms": 6800,
+      "text": "まず画面上部のメニューから顧客管理を開きます。",
+      "speaker_id": "spk-001",
+      "confidence": 0.96
+    },
+    {
+      "segment_id": "ts-002",
+      "start_ms": 6900,
+      "end_ms": 11800,
+      "text": "次に新規登録ボタンを押してください。",
+      "speaker_id": "spk-001",
+      "confidence": 0.95
+    },
+    {
+      "segment_id": "ts-003",
+      "start_ms": 11900,
+      "end_ms": 17200,
+      "text": "必須項目を入力したら保存を押します。",
+      "speaker_id": "spk-001",
+      "confidence": 0.94
+    }
+  ],
+  "ocr_segments": [
+    {
+      "ocr_id": "ocr-001",
+      "start_ms": 1500,
+      "end_ms": 5000,
+      "text": "顧客管理",
+      "bbox": [120, 40, 260, 88],
+      "confidence": 0.91
+    },
+    {
+      "ocr_id": "ocr-002",
+      "start_ms": 7200,
+      "end_ms": 10500,
+      "text": "新規登録",
+      "bbox": [980, 120, 1120, 172],
+      "confidence": 0.93
+    }
+  ],
+  "screenshot_candidates": [
+    {
+      "screenshot_id": "sc-001",
+      "timestamp_ms": 3200,
+      "image_path": "artifacts/screenshots/sc-001.png",
+      "description": "顧客管理メニューを開いた画面"
+    }
+  ],
+  "speaker_segments": [
+    {
+      "speaker_id": "spk-001",
+      "start_ms": 0,
+      "end_ms": 30000,
+      "label": "narrator"
+    }
+  ],
+  "evidence_links": [
+    {
+      "link_id": "evl-001",
+      "target_type": "step",
+      "target_id": "step-001",
+      "evidence_type": "transcript_segment",
+      "evidence_id": "ts-001"
+    }
+  ]
+}
