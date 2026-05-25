@@ -1,96 +1,53 @@
 """
-Source Evidence Validator - Validates source_evidence JSON against schema.
+Source Evidence Validator - Validate source_evidence.json against schema
 """
 
 import json
 from pathlib import Path
-from jsonschema import validate, ValidationError, Draft202012Validator
-
-from .settings import settings
+import jsonschema
 
 
 class SourceEvidenceValidator:
-    """Validates source_evidence JSON against the official schema."""
-
-    def __init__(self, schema_file: Path = None):
-        """
-        Initialize validator with source_evidence schema.
-
-        Args:
-            schema_file: Path to JSON Schema file.
-        """
-        self.schema_file = schema_file or (
-            Path(settings.SCHEMAS_DIR) / "source_evidence.schema.json"
-        )
-        self._schema = None
-        self._load_schema()
-
-    def _load_schema(self):
-        """Load JSON Schema from file."""
-        if not self.schema_file.exists():
-            raise FileNotFoundError(f"Schema file not found: {self.schema_file}")
-
-        with open(self.schema_file, "r", encoding="utf-8") as f:
-            self._schema = json.load(f)
-
-    @property
-    def schema(self):
-        """Return the loaded schema."""
-        return self._schema
-
+    """source_evidence.json をスキーマに対して検証"""
+    
+    def __init__(self):
+        """初期化 - スキーマを読み込む"""
+        schema_path = Path(__file__).parent.parent.parent / "schemas" / "source_evidence.schema.json"
+        
+        if not schema_path.exists():
+            raise FileNotFoundError(f"Schema not found: {schema_path}")
+        
+        with open(schema_path, 'r', encoding='utf-8') as f:
+            self.schema = json.load(f)
+    
     def validate(self, data: dict) -> bool:
-        """
-        Validate data against schema.
-
-        Args:
-            data: Dictionary to validate
-
-        Returns:
-            True if valid
-
-        Raises:
-            ValidationError: If validation fails
-        """
+        """辞書型の source_evidence を検証"""
         try:
-            validate(instance=data, schema=self._schema)
+            jsonschema.validate(instance=data, schema=self.schema)
             return True
-        except ValidationError as e:
-            raise ValidationError(
-                f"Source evidence validation failed: {e.message}"
-            ) from e
-
-    def validate_file(self, file_path: Path) -> bool:
-        """
-        Load and validate a JSON file.
-
-        Args:
-            file_path: Path to JSON file
-
-        Returns:
-            True if valid
-        """
-        if not file_path.exists():
+        except jsonschema.ValidationError as e:
+            raise ValueError(f"Schema validation failed: {e.message}")
+    
+    def validate_file(self, file_path) -> bool:
+        """JSON ファイルを検証"""
+        file_path = str(file_path)
+        file_path_obj = Path(file_path)
+        
+        if not file_path_obj.exists():
             raise FileNotFoundError(f"File not found: {file_path}")
-
-        with open(file_path, "r", encoding="utf-8") as f:
+        
+        with open(file_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
-
+        
         return self.validate(data)
-
+    
     def get_validation_errors(self, data: dict) -> list:
-        """
-        Get all validation errors without raising exception.
-
-        Args:
-            data: Dictionary to validate
-
-        Returns:
-            List of error messages
-        """
+        """検証エラーを取得"""
+        validator = jsonschema.Draft7Validator(self.schema)
         errors = []
-        validator = Draft202012Validator(self._schema)
-
-        for error in sorted(validator.iter_errors(data), key=str):
-            errors.append(str(error.message))
-
+        for error in validator.iter_errors(data):
+            errors.append({
+                "path": list(error.absolute_path),
+                "message": error.message
+            })
         return errors

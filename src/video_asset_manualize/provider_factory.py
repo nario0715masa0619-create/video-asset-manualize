@@ -72,3 +72,21 @@ class ProviderFactory:
                 )
         else:
             return DummyOCRProvider()
+
+    @staticmethod
+    def create_llm_provider(provider_type='dummy', **kwargs):
+        """LLM プロバイダーを作成"""
+        if provider_type == 'openai':
+            try:
+                from .openai_llm_provider import OpenAILLMProvider
+                api_key = kwargs.get('api_key') or os.getenv('OPENAI_API_KEY')
+                model = kwargs.get('model', 'gpt-3.5-turbo')
+                if not api_key:
+                    raise ValueError("OPENAI_API_KEY is required for OpenAI provider")
+                return OpenAILLMProvider(api_key=api_key, model=model)
+            except ImportError:
+                raise ImportError("OpenAI library not found. Install with: pip install openai")
+        else:
+            from .llm_provider import DummyLLMProvider
+            return DummyLLMProvider()
+

@@ -3,11 +3,10 @@
   "title": "training_asset_spec",
   "description": "VideoAsset Manualize における動画1本分の正本データスキーマ。既存の研修動画・マニュアル動画を、証跡付きの構造化資産として保持する。",
   "type": "object",
-  "additionalProperties": false,
+  "additionalProperties": true,
   "required": [
     "asset_meta",
-    "instructional_core",
-    "_metadata"
+    "instructional_core"
   ],
   "properties": {
     "asset_meta": {
@@ -27,6 +26,10 @@
     },
     "_metadata": {
       "$ref": "#/$defs/metadata"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Metadata about the asset generation"
     }
   },
   "$defs": {

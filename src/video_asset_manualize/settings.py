@@ -48,3 +48,11 @@ class Settings(BaseSettings):
         self.EXPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
 settings = Settings()
+
+
+# ===== LLM Settings (Phase 6) =====
+LLM_PROVIDER_TYPE: str = "dummy"  # "dummy" or "openai"
+LLM_MODEL: str = "gpt-3.5-turbo"  # OpenAI model name
+OPENAI_API_KEY: str = ""  # Set via environment variable OPENAI_API_KEY
+ENABLE_LLM_EXTRACTION: bool = False  # Enable LLM-based extraction in CLI
+
