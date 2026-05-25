@@ -281,6 +281,7 @@ video-asset-manualize/
 │   ├── mvp_scope.md
 │   ├── roadmap.md
 │   ├── prompt_design.md
+│   ├── src_structure.md
 │   └── templates/
 │       └── manual_template_spec.md
 ├── schemas/
@@ -315,6 +316,9 @@ video-asset-manualize/
 
 - `docs/prompt_design.md`  
   要約と手順抽出を分離するための抽出ポリシー設計
+
+- `docs/src_structure.md`  
+  `src/` 配下の初期ディレクトリ構成案、責務分離、MVP でまず作る最小セットの整理
 
 - `docs/templates/manual_template_spec.md`  
   `training_asset_spec` から HTML / PDF マニュアルを生成するためのテンプレート仕様
@@ -400,6 +404,7 @@ HTML / PDF レンダリング
 - `docs/mvp_scope.md`
 - `docs/roadmap.md`
 - `docs/prompt_design.md`
+- `docs/src_structure.md`
 - `docs/templates/manual_template_spec.md`
 - `schemas/training_asset_spec.schema.json`
 - `samples/sample_training_asset_spec.json`
