@@ -58,4 +58,17 @@ class ProviderFactory:
         Returns:
             OCRProvider インスタンス
         """
-        return DummyOCRProvider()
+        if provider_type == "easyocr":
+            try:
+                from .easyocr_provider import EasyOCRProvider
+                return EasyOCRProvider(
+                    languages=kwargs.get("languages", ["ja", "en"]),
+                    gpu=kwargs.get("gpu", False)
+                )
+            except ImportError:
+                raise ImportError(
+                    "EasyOCR provider requires easyocr. "
+                    "Install with: pip install easyocr"
+                )
+        else:
+            return DummyOCRProvider()

@@ -29,10 +29,10 @@ class VideoSourceEvidenceBuilder:
         
         Args:
             transcript_provider: 文字起こしプロバイダー (デフォルト: settings から取得)
-            ocr_provider: OCR プロバイダー (デフォルト: Dummy)
+            ocr_provider: OCR プロバイダー (デフォルト: settings から取得)
             extract_metadata: ffprobe でメタデータを取得するか
         """
-        # Provider を初期化
+        # Transcript Provider を初期化
         if transcript_provider is None:
             self.transcript_provider = ProviderFactory.create_transcript_provider(
                 provider_type=settings.TRANSCRIPT_PROVIDER_TYPE,
@@ -42,9 +42,12 @@ class VideoSourceEvidenceBuilder:
         else:
             self.transcript_provider = transcript_provider
         
+        # OCR Provider を初期化
         if ocr_provider is None:
             self.ocr_provider = ProviderFactory.create_ocr_provider(
-                provider_type=settings.OCR_PROVIDER_TYPE
+                provider_type=settings.OCR_PROVIDER_TYPE,
+                languages=settings.EASYOCR_LANGUAGES,
+                gpu=settings.EASYOCR_GPU
             )
         else:
             self.ocr_provider = ocr_provider
