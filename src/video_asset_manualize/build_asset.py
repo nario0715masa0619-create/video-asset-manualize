@@ -143,22 +143,34 @@ def extract(
 
 
 
+
+
 @app.command()
 def video(
     input_file: str = typer.Argument(..., help="動画ファイルパス"),
     output_dir: str = typer.Option("output/exports", help="出力ディレクトリ"),
     output_name: str = typer.Option("extracted_source_evidence.json", help="出力ファイル名"),
+    provider: str = typer.Option("dummy", help="Transcript provider: dummy or whisper"),
+    whisper_model: str = typer.Option("base", help="Whisper model: tiny, base, small, medium, large"),
 ):
     """
-    動画ファイルから source_evidence を抽出します (Phase 3)
+    動画ファイルから source_evidence を抽出します (Phase 3/4)
+    
+    Examples:
+      # ダミー provider で実行
+      python -m video_asset_manualize.build_asset video input.mp4
+      
+      # Whisper で実行
+      python -m video_asset_manualize.build_asset video input.mp4 --provider whisper --whisper-model base
     """
     from video_asset_manualize.video_source_evidence_builder import (
         VideoSourceEvidenceBuilder
     )
 
     try:
-        console.print("[bold blue]📹 Phase 3: 動画 → Source Evidence パイプライン[/]")
+        console.print("[bold blue]📹 Phase 3/4: 動画 → Source Evidence パイプライン[/]")
         console.print(f"[cyan]入力ファイル: {input_file}[/]")
+        console.print(f"[cyan]Transcript Provider: {provider}[/]")
 
         input_path = Path(input_file)
         if not input_path.exists():
@@ -167,9 +179,22 @@ def video(
 
         # Step 1: source_evidence を生成
         console.print("[yellow]🔍 ステップ 1/3: 動画から source_evidence を抽出中...[/]")
+        
         builder = VideoSourceEvidenceBuilder()
-        source_evidence = builder.build_from_video(input_path)
-        console.print("[green]✓ source_evidence 抽出: 成功[/]")
+        # Provider 設定を反映
+        from video_asset_manualize.settings import settings
+        original_provider = settings.TRANSCRIPT_PROVIDER_TYPE
+        original_model = settings.WHISPER_MODEL
+        
+        try:
+            settings.TRANSCRIPT_PROVIDER_TYPE = provider
+            settings.WHISPER_MODEL = whisper_model
+            
+            source_evidence = builder.build_from_video(input_path)
+            console.print("[green]✓ source_evidence 抽出: 成功[/]")
+        finally:
+            settings.TRANSCRIPT_PROVIDER_TYPE = original_provider
+            settings.WHISPER_MODEL = original_model
 
         # Step 2: 出力ディレクトリ作成
         console.print("[yellow]🔍 ステップ 2/3: 出力ディレクトリを作成中...[/]")
@@ -184,7 +209,7 @@ def video(
         console.print(f"[green]✓ 保存完了: {evidence_file}[/]")
 
         # 結果サマリー
-        console.print("[bold green]✅ Phase 3 抽出完了![/]")
+        console.print("[bold green]✅ 抽出完了![/]")
         table = Table(title="処理結果")
         table.add_column("項目", style="cyan")
         table.add_column("値", style="green")
@@ -192,6 +217,7 @@ def video(
         table.add_row("出力ファイル", str(evidence_file.absolute()))
         table.add_row("Transcript セグメント", str(len(source_evidence.get("transcript_segments", []))))
         table.add_row("OCR セグメント", str(len(source_evidence.get("ocr_segments", []))))
+        table.add_row("Source Video Metadata", "ffprobe" if builder.extract_metadata else "ダミー")
         console.print(table)
 
         console.print("[cyan]💡 次ステップ:[/]")

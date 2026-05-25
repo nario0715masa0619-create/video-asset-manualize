@@ -36,6 +36,14 @@ class Settings(BaseSettings):
     PDF_MARGIN_BOTTOM: int = 20
     PDF_MARGIN_LEFT: int = 20
     PDF_MARGIN_RIGHT: int = 20
+
+    # Provider settings
+    TRANSCRIPT_PROVIDER_TYPE: str = "dummy"  # "dummy" or "whisper"
+    WHISPER_MODEL: str = "base"  # tiny, base, small, medium, large
+    WHISPER_LANGUAGE: str = "ja"  # Language code
+    OCR_PROVIDER_TYPE: str = "dummy"  # "dummy" or future "easyocr"
+
+
     
     class Config:
         env_file = ".env"
