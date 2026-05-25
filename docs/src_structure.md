@@ -1,80 +1,43 @@
-# src ディレクトリ構成案
+# src Structure
 
-このドキュメントは、**VideoAsset Manualize** における `src/` 配下の初期ディレクトリ構成案を定義するものです。
+## 1. 目的
 
-本プロジェクトでは、既存の研修動画・マニュアル動画を、**構造化 JSON・要約・HTML マニュアル・PDF マニュアル・FAQ 候補・チェックリスト候補**へ展開可能な教育資産・業務資産として扱います。  
-そのため、`src/` の構成も単なるスクリプト置き場ではなく、**動画 → 証跡抽出 → 分類 → 構造化 → 正本 JSON 化 → 各種出力生成** の流れを明確に反映する必要があります。
+このドキュメントは、**VideoAsset Manualize** の MVP を実装するための、`src/` 配下の初期ディレクトリ構成案を定義するものです。
 
----
-
-## 1. このドキュメントの目的
-
-`src/` 配下の構成は、以下を満たすことを目的とします。
-
-- `training_asset_spec` を正本とする設計思想に整合する
-- 要約と手順抽出を分離する
-- 証跡と成果物を分離しつつ、相互参照可能にする
-- HTML / PDF / テキスト等の出力責務を明確に分ける
-- MVP の最小実装から将来拡張まで無理なく育てられる
-- README / architecture / json_schema / mvp_scope / prompt_design / manual_template_spec と整合する
+本プロジェクトでは、既存の研修動画・マニュアル動画を、**構造化 JSON・要約・HTML / PDF マニュアル**へ変換可能な教育資産として扱います。  
+そのため `src/` の構成も、単なるスクリプト置き場ではなく、**動画入力 → 証跡抽出 → 分類 → 抽出 → 正規化 → 出力** の流れが分かる形にする必要があります。
 
 ---
 
-## 2. 設計方針
+## 2. 基本方針
 
-`src/` の構成設計では、以下の方針を採用します。
+`src/` の構成は、以下の方針に従います。
 
-### 2.1 正本データ先行
+### 2.1 `training_asset_spec` を正本とする
 
-本プロジェクトでは、動画を直接 PDF やマニュアルに変換するのではなく、  
-一度 **`training_asset_spec`** に正規化した上で、そこから各種出力を派生生成します。
+最終的な正本データは `training_asset_spec` とし、HTML / PDF はそこから派生生成します。  
+そのため、出力ロジックより先に、**正本 JSON を安定して作るための構成**を優先します。
 
-そのため、`src/` でも以下の責務分離を前提にします。
+### 2.2 要約と手順抽出を分離する
 
-- 入力受付
-- 証跡抽出
-- セグメント分類
-- 手順抽出
-- 要約抽出
-- 正規化 / スキーマ整合
-- HTML / PDF レンダリング
-- レビュー補助
+説明の要約と、実務で使う手順抽出は役割が異なるため、同じ責務にまとめません。  
+構成上も、両者が別モジュールになるようにします。
 
-### 2.2 要約と手順抽出を分ける
+### 2.3 証跡を独立して扱う
 
-本プロジェクトで最重要なのは、**説明部分の要約**と**操作手順の抽出**を分けることです。
+transcript、OCR、タイムスタンプなどは補助情報ではなく、レビューや再確認のための基盤です。  
+そのため、証跡抽出は独立した責務として扱います。
 
-したがって `src/` でも、
+### 2.4 MVP では過剰設計しない
 
-- 要約系ロジック
-- 手順抽出系ロジック
-- 注意点抽出系ロジック
-- FAQ / チェックリスト派生ロジック
-
-を別責務として配置します。
-
-### 2.3 証跡を独立して保持する
-
-動画の内容を後から検証できるようにするため、
-
-- transcript
-- OCR
-- screenshot candidate
-- speaker segment
-- evidence link
-
-などの証跡系処理は独立層として扱います。
-
-### 2.4 MVP では過剰分割しすぎない
-
-将来拡張を見据えつつも、最初から細かく分けすぎると実装負荷が上がるため、  
-MVP 段階では**責務の境界が明確な最小構成**から開始します。
+将来拡張は意識しつつも、初期段階ではモジュールを細かく分けすぎません。  
+まずは **1動画 → 1構造化JSON → 1要約 → 1HTML / PDF** を成立させるための最小構成に絞ります。
 
 ---
 
-## 3. `src/` 全体構成案
+## 3. 初期ディレクトリ構成
 
-以下を、初期の標準構成案とします。
+MVP の初期構成案は以下の通りです。
 
 ```text
 src/
@@ -85,126 +48,53 @@ src/
     ├── config/
     │   ├── __init__.py
     │   ├── settings.py
-    │   ├── logging.py
-    │   └── constants.py
-    │
-    ├── domain/
-    │   ├── __init__.py
-    │   ├── asset_meta.py
-    │   ├── source_evidence.py
-    │   ├── instructional_core.py
-    │   ├── derived_views.py
-    │   ├── delivery_assets.py
-    │   ├── metadata.py
-    │   ├── enums.py
-    │   └── ids.py
+    │   └── logging.py
     │
     ├── ingestion/
     │   ├── __init__.py
-    │   ├── video_loader.py
-    │   ├── input_manifest_loader.py
-    │   └── source_video_resolver.py
+    │   └── video_loader.py
     │
     ├── evidence/
     │   ├── __init__.py
     │   ├── transcript_extractor.py
     │   ├── ocr_extractor.py
-    │   ├── screenshot_candidate_extractor.py
-    │   ├── speaker_segment_extractor.py
     │   └── evidence_link_builder.py
     │
     ├── classification/
     │   ├── __init__.py
-    │   ├── segment_classifier.py
-    │   ├── classification_rules.py
-    │   └── classification_postprocessor.py
+    │   └── segment_classifier.py
     │
     ├── extraction/
     │   ├── __init__.py
     │   ├── instruction_extractor.py
     │   ├── summary_extractor.py
-    │   ├── caution_extractor.py
-    │   ├── common_mistake_extractor.py
-    │   ├── checklist_extractor.py
-    │   └── faq_candidate_extractor.py
+    │   └── caution_extractor.py
     │
     ├── normalization/
     │   ├── __init__.py
     │   ├── training_asset_spec_builder.py
-    │   ├── schema_validator.py
-    │   ├── defaults_applier.py
-    │   └── integrity_checker.py
+    │   └── schema_validator.py
     │
     ├── repositories/
     │   ├── __init__.py
-    │   ├── training_asset_repository.py
-    │   ├── source_video_repository.py
-    │   └── export_repository.py
+    │   └── training_asset_repository.py
     │
     ├── renderers/
     │   ├── __init__.py
     │   ├── html_manual_renderer.py
-    │   ├── pdf_manual_renderer.py
-    │   ├── text_asset_renderer.py
-    │   └── section_renderers/
-    │       ├── __init__.py
-    │       ├── cover_renderer.py
-    │       ├── toc_renderer.py
-    │       ├── summary_renderer.py
-    │       ├── chapter_renderer.py
-    │       ├── checklist_renderer.py
-    │       ├── faq_renderer.py
-    │       └── revision_renderer.py
-    │
-    ├── templates/
-    │   └── manual/
-    │       ├── base.html
-    │       ├── manual.html
-    │       ├── partials/
-    │       │   ├── cover.html
-    │       │   ├── toc.html
-    │       │   ├── asset_meta.html
-    │       │   ├── summary.html
-    │       │   ├── chapter.html
-    │       │   ├── checklist.html
-    │       │   ├── faq.html
-    │       │   └── revision.html
-    │       └── styles/
-    │           ├── base.css
-    │           ├── screen.css
-    │           └── print.css
+    │   └── pdf_manual_renderer.py
     │
     ├── pipeline/
     │   ├── __init__.py
-    │   ├── build_training_asset_pipeline.py
-    │   ├── render_manual_pipeline.py
-    │   └── jobs.py
-    │
-    ├── review/
-    │   ├── __init__.py
-    │   ├── review_summary_builder.py
-    │   ├── missing_step_detector.py
-    │   ├── caution_gap_detector.py
-    │   └── evidence_trace_reporter.py
-    │
-    ├── prompts/
-    │   ├── __init__.py
-    │   ├── segment_classification_prompts.py
-    │   ├── instruction_extraction_prompts.py
-    │   ├── summary_extraction_prompts.py
-    │   ├── caution_extraction_prompts.py
-    │   └── faq_extraction_prompts.py
+    │   └── build_training_asset_pipeline.py
     │
     ├── cli/
     │   ├── __init__.py
     │   ├── build_asset.py
-    │   ├── render_manual.py
     │   └── validate_asset.py
     │
     └── utils/
         ├── __init__.py
-        ├── time_utils.py
-        ├── text_utils.py
         ├── file_utils.py
         ├── json_utils.py
         └── id_utils.py
@@ -212,658 +102,370 @@ src/
 
 ---
 
-## 4. ディレクトリごとの役割
+## 4. 各ディレクトリの役割
 
 ### 4.1 `config/`
 
-設定値や環境依存情報を扱う層です。
+設定値を管理するためのディレクトリです。
+
+#### 主な役割
+
+- 環境変数の読み込み
+- 入出力先の設定
+- ログ設定
 
 #### 想定ファイル
 
-- `settings.py`  
-  環境変数、パス設定、出力先設定、モデル切替設定などを扱う
-
-- `logging.py`  
-  ログフォーマット、ロガー初期化、ログレベル設定
-
-- `constants.py`  
-  分類ラベル、ステータス文字列、既定値などを定義
-
-#### 目的
-
-- ハードコードの分散を防ぐ
-- 設定変更を局所化する
-- 実装コードから環境依存を切り離す
+- `settings.py`
+- `logging.py`
 
 ---
 
-### 4.2 `domain/`
+### 4.2 `ingestion/`
 
-プロジェクトの中心となるデータ概念を表現する層です。
+入力動画を受け付けるためのディレクトリです。
 
-#### 想定内容
+#### 主な役割
 
-- `asset_meta.py`
-- `source_evidence.py`
-- `instructional_core.py`
-- `derived_views.py`
-- `delivery_assets.py`
-- `metadata.py`
+- 動画ファイルの読み込み
+- 実行対象の解決
+- 入力元の違いの吸収
 
-#### 目的
+#### 想定ファイル
 
-- `training_asset_spec` をコード上でも自然に扱えるようにする
-- JSON スキーマに対応する内部表現を整理する
-- 各モジュール間のデータ受け渡しを明確化する
+- `video_loader.py`
+
+---
+
+### 4.3 `evidence/`
+
+動画から証跡を抽出するためのディレクトリです。
+
+#### 主な役割
+
+- transcript 抽出
+- OCR 抽出
+- transcript / OCR / 手順の対応づけ
+- タイムスタンプ保持
+
+#### 想定ファイル
+
+- `transcript_extractor.py`
+- `ocr_extractor.py`
+- `evidence_link_builder.py`
 
 #### 補足
 
-初期段階では dataclass や TypedDict 相当の軽量構造でもよく、  
-MVP では「厳密なドメインモデリング」よりも**責務の見える化**を優先します。
+MVP 段階ではスクリーンショット候補や話者分離を必須にしません。  
+必要になった時点で拡張します。
 
 ---
 
-### 4.3 `ingestion/`
+### 4.4 `classification/`
 
-入力動画や入力マニフェストを受け付ける層です。
+動画内容を分類するためのディレクトリです。
+
+#### 主な役割
+
+- explanation
+- operation
+- caution
+
+などの最低限の分類を行うことです。
 
 #### 想定ファイル
 
-- `video_loader.py`  
-  ローカル動画ファイル、保存済みソースなどを読み込む
+- `segment_classifier.py`
 
-- `input_manifest_loader.py`  
-  バッチ処理用の対象一覧、動画メタ一覧などを読み込む
+#### 補足
 
-- `source_video_resolver.py`  
-  入力から実動画への解決処理を行う
-
-#### 目的
-
-- 入力元の違いを吸収する
-- パイプライン本体が入力形式に依存しないようにする
+MVP ではまず、  
+**説明 / 操作 / 注意点**  
+の最低限分類ができれば十分です。
 
 ---
 
-### 4.4 `evidence/`
+### 4.5 `extraction/`
 
-証跡抽出を担う層です。  
-本プロジェクトの重要要素である **元動画との追跡可能性** を支える中核層です。
+分類済み情報から、実際に使う構造を抽出するためのディレクトリです。
 
-#### 想定ファイル
-
-- `transcript_extractor.py`  
-  文字起こしを抽出する
-
-- `ocr_extractor.py`  
-  画面内文字列を抽出する
-
-- `screenshot_candidate_extractor.py`  
-  スクリーンショット候補を抽出する
-
-- `speaker_segment_extractor.py`  
-  話者セグメントを扱う
-
-- `evidence_link_builder.py`  
-  手順や注意点と transcript / OCR / screenshot を結びつける
-
-#### 目的
-
-- 後段の分類・抽出処理に必要な生証跡を揃える
-- 最終成果物に対する根拠追跡を可能にする
-
----
-
-### 4.5 `classification/`
-
-動画内セグメントを、説明・背景・実操作・注意点などに分類する層です。
-
-#### 想定ファイル
-
-- `segment_classifier.py`  
-  セグメント分類の中心処理
-
-- `classification_rules.py`  
-  ルールベース補助や補正条件
-
-- `classification_postprocessor.py`  
-  分類結果の整形、前後文脈を考慮した補正
-
-#### 目的
-
-- `prompt_design.md` で定義した分類方針をコードに反映する
-- 要約対象と保持対象を切り分ける前処理を担う
-
-#### 重要な前提
-
-ここでの分類品質が、その後の
+#### 主な役割
 
 - 手順抽出
 - 要約抽出
 - 注意点抽出
-- FAQ 候補生成
-
-の品質を大きく左右します。
-
----
-
-### 4.6 `extraction/`
-
-分類済みセグメントから、教育資産として必要な構造を抽出する層です。
 
 #### 想定ファイル
 
-- `instruction_extractor.py`  
-  章・手順・ステップを抽出する
+- `instruction_extractor.py`
+- `summary_extractor.py`
+- `caution_extractor.py`
 
-- `summary_extractor.py`  
-  説明・背景・補足から要約を生成する
+#### 重要な方針
 
-- `caution_extractor.py`  
-  注意点・禁止事項・事故防止情報を抽出する
+- `summary_extractor.py` は説明系を扱う
+- `instruction_extractor.py` は操作系を扱う
 
-- `common_mistake_extractor.py`  
-  よくあるミスを抽出する
-
-- `checklist_extractor.py`  
-  チェックリスト候補を抽出する
-
-- `faq_candidate_extractor.py`  
-  FAQ 候補を生成する
-
-#### 目的
-
-- 「説明」「操作」「注意点」を混ぜずに処理する
-- `instructional_core` と `derived_views` の元データを作る
-
-#### 重要な前提
-
-`summary_extractor.py` と `instruction_extractor.py` は分離し、  
-**同じ入力から違う粒度・違う目的の情報を作る**構成にします。
+この分離を明確に保つことが重要です。
 
 ---
 
-### 4.7 `normalization/`
+### 4.6 `normalization/`
 
-抽出結果を `training_asset_spec` に正規化する層です。
+抽出結果を `training_asset_spec` に正規化するためのディレクトリです。
+
+#### 主な役割
+
+- JSON 構造への統合
+- 必須項目の整形
+- スキーマ検証
 
 #### 想定ファイル
 
-- `training_asset_spec_builder.py`  
-  各抽出結果をまとめて正本 JSON 相当の構造へ組み立てる
-
-- `schema_validator.py`  
-  JSON Schema への適合性を確認する
-
-- `defaults_applier.py`  
-  デフォルト値の補完や省略値の整形を行う
-
-- `integrity_checker.py`  
-  参照切れ、ID 重複、空章、順序不整合などを確認する
-
-#### 目的
-
-- 抽出ロジックと最終 JSON 仕様を分離する
-- 後段のレンダリング処理を安定させる
-- `schemas/training_asset_spec.schema.json` との整合性を担保する
-
----
-
-### 4.8 `repositories/`
-
-データ入出力を扱う層です。
-
-#### 想定ファイル
-
-- `training_asset_repository.py`  
-  `training_asset_spec` JSON の保存・読込
-
-- `source_video_repository.py`  
-  ソース動画の参照や管理
-
-- `export_repository.py`  
-  HTML / PDF / テキスト等の生成物管理
-
-#### 目的
-
-- ファイル I/O をビジネスロジックから分離する
-- 今後、ローカル保存から別保存先へ切り替える余地を残す
-
----
-
-### 4.9 `renderers/`
-
-正本 JSON から表示用成果物を生成する層です。
-
-#### 想定ファイル
-
-- `html_manual_renderer.py`  
-  HTML マニュアルを生成する
-
-- `pdf_manual_renderer.py`  
-  HTML またはレンダリング済み内容を基に PDF を生成する
-
-- `text_asset_renderer.py`  
-  テキスト成果物や要約テキストを整形出力する
-
-- `section_renderers/`  
-  各セクション単位の描画責務を分離する
-
-#### 目的
-
-- `manual_template_spec.md` の仕様を実装に落とす
-- JSON と表示を直結させず、中間責務として描画層を置く
-- HTML / PDF の責務分離を維持する
-
----
-
-### 4.10 `templates/`
-
-HTML テンプレートや CSS を置く層です。
-
-#### 想定内容
-
-- `base.html`
-- `manual.html`
-- `partials/`
-- `styles/`
-
-#### 目的
-
-- レンダラー本体から見た目を分離する
-- PDF と HTML の両立を見据えたテンプレート構成を取る
-- `manual_template_spec.md` との対応関係を保つ
+- `training_asset_spec_builder.py`
+- `schema_validator.py`
 
 #### 補足
 
-MVP 段階では装飾よりも、
-
-- 読めること
-- セクションが壊れないこと
-- 改ページが破綻しないこと
-
-を優先します。
+この層が、抽出結果と最終 JSON 仕様の間をつなぐ責務を持ちます。
 
 ---
 
-### 4.11 `pipeline/`
+### 4.7 `repositories/`
 
-処理フロー全体を接続する層です。
+ファイル保存・読み込みを担当するディレクトリです。
+
+#### 主な役割
+
+- `training_asset_spec` JSON の保存
+- 将来の読み込み・再利用の入口
 
 #### 想定ファイル
 
-- `build_training_asset_pipeline.py`  
-  動画から `training_asset_spec` を作る流れを束ねる
+- `training_asset_repository.py`
 
-- `render_manual_pipeline.py`  
-  JSON から HTML / PDF を生成する流れを束ねる
+#### 補足
 
-- `jobs.py`  
-  ジョブ単位・実行単位の制御を行う
-
-#### 目的
-
-- 個別機能をつなぐ実行順序を明示する
-- CLI や将来の UI / API から使いやすい入口を用意する
+MVP ではローカルファイル保存だけで十分です。
 
 ---
 
-### 4.12 `review/`
+### 4.8 `renderers/`
 
-MVP で重要となる、人手レビュー補助のための層です。
+正本 JSON から成果物を生成するためのディレクトリです。
+
+#### 主な役割
+
+- HTML マニュアル生成
+- PDF マニュアル生成
 
 #### 想定ファイル
 
-- `review_summary_builder.py`  
-  レビュー観点をまとめる
+- `html_manual_renderer.py`
+- `pdf_manual_renderer.py`
 
-- `missing_step_detector.py`  
-  手順抜けの疑いを検知する
+#### 方針
 
-- `caution_gap_detector.py`  
-  注意点不足の疑いを検知する
-
-- `evidence_trace_reporter.py`  
-  証跡リンクの確認レポートを出す
-
-#### 目的
-
-- 完全自動化前提ではなく、レビュー前提のプロセスを支える
-- MVP の受け入れ基準に直結する確認観点をコード化する
+レンダラーは、抽出ロジックに直接依存せず、  
+**正規化済みの `training_asset_spec` を受け取って出力する**形にします。
 
 ---
 
-### 4.13 `prompts/`
+### 4.9 `pipeline/`
 
-抽出・分類に使うプロンプト定義を集約する層です。
+処理全体をつなぐためのディレクトリです。
+
+#### 主な役割
+
+- 動画入力から JSON 出力までの接続
+- 実行順序の定義
 
 #### 想定ファイル
 
-- `segment_classification_prompts.py`
-- `instruction_extraction_prompts.py`
-- `summary_extraction_prompts.py`
-- `caution_extraction_prompts.py`
-- `faq_extraction_prompts.py`
+- `build_training_asset_pipeline.py`
 
-#### 目的
+#### 補足
 
-- `prompt_design.md` と実装の対応を明確にする
-- 抽出品質調整をコード変更と切り分ける
-- 将来的なプロンプト改善履歴を管理しやすくする
+MVP では、まず単一のパイプラインだけあれば十分です。
 
 ---
 
-### 4.14 `cli/`
+### 4.10 `cli/`
 
 コマンドライン実行の入口です。
+
+#### 主な役割
+
+- 変換処理の実行
+- JSON 検証の実行
 
 #### 想定ファイル
 
 - `build_asset.py`
-- `render_manual.py`
 - `validate_asset.py`
 
-#### 目的
+#### 補足
 
-- MVP では GUI より先に CLI で動作確認しやすくする
-- 単発実行・検証・再生成をやりやすくする
+初期段階では GUI よりも CLI の方が実装と検証がしやすいため、まずはこちらを優先します。
 
 ---
 
-### 4.15 `utils/`
+### 4.11 `utils/`
 
-共通ユーティリティをまとめる層です。
+共通ユーティリティを置くディレクトリです。
+
+#### 主な役割
+
+- ファイル操作
+- JSON 操作
+- ID 補助処理
 
 #### 想定ファイル
 
-- `time_utils.py`
-- `text_utils.py`
 - `file_utils.py`
 - `json_utils.py`
 - `id_utils.py`
 
-#### 目的
-
-- 小さな共通処理を集約する
-- ドメインロジックに混入しがちな補助処理を分離する
-
 #### 注意点
 
-`utils/` は便利ですが、何でも入れると責務が崩れるため、  
-**ドメイン判断を含まない汎用処理のみ**を置きます。
+`utils/` に何でも集めすぎると責務が崩れるため、  
+**ドメイン判断を含まない補助処理だけ**に限定します。
 
 ---
 
-## 5. MVP で最低限必要な構成
+## 5. MVP で最低限必要なファイル
 
-初期段階ですべてを実装する必要はありません。  
-MVP では、以下の最小構成から始めるのが現実的です。
+初期実装では、次のファイルが揃えば MVP 開始に十分です。
 
 ```text
-src/
-└── video_asset_manualize/
-    ├── __init__.py
-    ├── main.py
-    ├── config/
-    │   ├── settings.py
-    │   └── logging.py
-    ├── ingestion/
-    │   └── video_loader.py
-    ├── evidence/
-    │   ├── transcript_extractor.py
-    │   ├── ocr_extractor.py
-    │   └── evidence_link_builder.py
-    ├── classification/
-    │   └── segment_classifier.py
-    ├── extraction/
-    │   ├── instruction_extractor.py
-    │   ├── summary_extractor.py
-    │   └── caution_extractor.py
-    ├── normalization/
-    │   ├── training_asset_spec_builder.py
-    │   └── schema_validator.py
-    ├── repositories/
-    │   └── training_asset_repository.py
-    ├── renderers/
-    │   ├── html_manual_renderer.py
-    │   └── pdf_manual_renderer.py
-    ├── pipeline/
-    │   └── build_training_asset_pipeline.py
-    ├── cli/
-    │   ├── build_asset.py
-    │   └── validate_asset.py
-    └── utils/
-        ├── file_utils.py
-        ├── json_utils.py
-        └── id_utils.py
+src/video_asset_manualize/
+├── main.py
+├── config/settings.py
+├── ingestion/video_loader.py
+├── evidence/transcript_extractor.py
+├── evidence/ocr_extractor.py
+├── evidence/evidence_link_builder.py
+├── classification/segment_classifier.py
+├── extraction/instruction_extractor.py
+├── extraction/summary_extractor.py
+├── extraction/caution_extractor.py
+├── normalization/training_asset_spec_builder.py
+├── normalization/schema_validator.py
+├── repositories/training_asset_repository.py
+├── renderers/html_manual_renderer.py
+├── renderers/pdf_manual_renderer.py
+├── pipeline/build_training_asset_pipeline.py
+├── cli/build_asset.py
+└── cli/validate_asset.py
 ```
-
-この最小構成で、まず以下を成立させることを目標にします。
-
-- 1 本の動画を入力する
-- transcript / OCR を取得する
-- セグメント分類する
-- 手順と要約を別処理で抽出する
-- `training_asset_spec` を生成する
-- HTML / PDF を出力する
 
 ---
 
 ## 6. 推奨する依存方向
 
-依存関係は、できるだけ一方向に保ちます。
-
-推奨する概念上の流れは以下です。
+モジュール間の依存関係は、できるだけ一方向に保ちます。
 
 ```text
-config / utils
-        ↓
-   ingestion
-        ↓
-    evidence
-        ↓
- classification
-        ↓
-   extraction
-        ↓
- normalization
-        ↓
- repositories
-        ↓
-   renderers
-        ↓
-    pipeline / cli
+ingestion
+  ↓
+evidence
+  ↓
+classification
+  ↓
+extraction
+  ↓
+normalization
+  ↓
+repositories / renderers
+  ↓
+pipeline / cli
 ```
 
 ### 原則
 
-- `renderers` は `extraction` に直接依存しない  
-  必ず正規化済みの `training_asset_spec` を受け取る
-
-- `extraction` は PDF や HTML の知識を持たない
-
-- `classification` は出力レイアウトを意識しない
-
-- `repositories` はドメイン判断を持たない
-
-この分離によって、後から
-
-- 出力形式追加
-- 抽出方式変更
-- プロンプト更新
-- 保存先変更
-
-をしやすくします。
+- `renderers` は `extraction` に直接依存しない
+- `extraction` は HTML / PDF の知識を持たない
+- `classification` は出力形式を知らない
+- `normalization` が JSON 構造の最終責任を持つ
 
 ---
 
 ## 7. 命名規則
 
-命名は、役割が読めることを優先します。
+ファイル名は、責務が見て分かることを優先します。
 
-### 推奨サフィックス
+### 推奨パターン
 
-- `*Extractor`  
-  何かを抽出する責務
+- `*_extractor.py`  
+  何かを抽出する処理
 
-- `*Classifier`  
-  分類する責務
+- `*_builder.py`  
+  複数情報をまとめて構造化する処理
 
-- `*Builder`  
-  複数要素をまとめて構造化する責務
+- `*_renderer.py`  
+  表示用成果物を生成する処理
 
-- `*Validator`  
-  妥当性確認
+- `*_repository.py`  
+  保存・読み込みを担当する処理
 
-- `*Renderer`  
-  描画・出力整形
-
-- `*Repository`  
-  保存・読込
-
-- `*Reporter` / `*Detector`  
-  レビュー補助
+- `*_validator.py`  
+  妥当性確認を行う処理
 
 ### 例
 
 - `instruction_extractor.py`
 - `training_asset_spec_builder.py`
-- `schema_validator.py`
 - `html_manual_renderer.py`
 - `training_asset_repository.py`
+- `schema_validator.py`
 
 ---
 
 ## 8. この構成で守りたいこと
 
-この `src/` 構成では、特に以下を崩さないことを重視します。
+初期構成では、特に以下を崩さないことを重視します。
 
-### 8.1 正本は `training_asset_spec`
+### 8.1 正本は JSON
 
-どんな出力も、最終的には `training_asset_spec` から派生することを原則とします。
+あらゆる成果物は `training_asset_spec` から派生生成することを原則とします。
 
 ### 8.2 要約と手順を混ぜない
 
-`summary_extractor` と `instruction_extractor` は統合しません。  
-両者は目的も品質評価軸も異なるためです。
+説明の整理と操作の保持は分離し、構造としても別モジュールに保ちます。
 
-### 8.3 証跡の紐付けを後回しにしない
+### 8.3 証跡を後回しにしない
 
-Transcript や OCR は補助情報ではなく、  
-レビューと再検証のための基盤です。  
-MVP 段階から扱えるようにします。
+transcript と時刻情報の保持は MVP の段階から扱います。
 
-### 8.4 レンダリングを正本生成より先に複雑化しない
+### 8.4 出力より先に構造を固める
 
-見た目の凝った PDF よりも先に、
-
-- 構造が破綻しない
-- 手順が抜けにくい
-- 注意点が落ちにくい
-- 元動画に戻れる
-
-という品質を優先します。
+見た目の作り込みより、JSON と手順品質の安定を優先します。
 
 ---
 
-## 9. 初期実装順の推奨
+## 9. 将来の拡張余地
 
-最初の着手順としては、以下を推奨します。
+MVP 後には、以下の拡張が考えられます。
 
-### Step 1
+- FAQ 候補抽出の強化
+- チェックリスト生成の強化
+- スクリーンショット候補管理
+- 複数動画統合
+- レビュー補助機能
+- ブランド別テンプレート
+- API / 管理画面対応
 
-最小の CLI 入口を作る
-
-- `cli/build_asset.py`
-- `pipeline/build_training_asset_pipeline.py`
-
-### Step 2
-
-入力と証跡抽出をつなぐ
-
-- `ingestion/video_loader.py`
-- `evidence/transcript_extractor.py`
-- `evidence/ocr_extractor.py`
-
-### Step 3
-
-分類と抽出を最小実装する
-
-- `classification/segment_classifier.py`
-- `extraction/instruction_extractor.py`
-- `extraction/summary_extractor.py`
-- `extraction/caution_extractor.py`
-
-### Step 4
-
-正規化して保存する
-
-- `normalization/training_asset_spec_builder.py`
-- `normalization/schema_validator.py`
-- `repositories/training_asset_repository.py`
-
-### Step 5
-
-HTML / PDF 出力へつなぐ
-
-- `renderers/html_manual_renderer.py`
-- `renderers/pdf_manual_renderer.py`
+その場合でも、初期構成の責務分離を保ったまま拡張できるようにしておくことが重要です。
 
 ---
 
-## 10. 将来拡張を見据えた余地
+## 10. まとめ
 
-この構成は、以下の拡張を視野に入れています。
+VideoAsset Manualize の `src/` は、  
+**動画を再利用可能な教育資産へ変換する処理責務を明確に分けた構成**として設計します。
 
-- 複数動画の統合処理
-- FAQ / 検索向けデータ生成の強化
-- ブランド別テンプレート差し替え
-- レビュー UI や承認フロー対応
-- 管理画面 / API 化
-- バッチ投入や案件単位管理
-- モデル切替や抽出ルール差し替え
+MVP では、過剰な分割や過剰な将来設計を避け、まずは以下を安定して成立させることを優先します。
 
-MVP では使わないモジュールがあっても、  
-構造として置いておくことで成長余地を確保できます。
+**1動画 → 1構造化JSON → 1要約 → 1HTML / PDF**
 
----
-
-## 11. このドキュメントの位置づけ
-
-このドキュメントは、`src/` の**完成確定図**ではなく、  
-現時点の README と仕様群に整合する**初期標準構成案**です。
-
-今後、実装を進める中で、
-
-- 責務が重すぎるモジュールの分割
-- 不要な層の統合
-- テンプレートやパイプラインの整理
-- CLI から API / UI への展開
-
-などに応じて見直される可能性があります。
-
-ただし、以下の原則は維持します。
-
-- 正本 JSON 先行
-- 要約と手順抽出の分離
-- 証跡重視
-- 出力責務分離
-- MVP から拡張可能な構造
-
----
-
-## 12. まとめ
-
-VideoAsset Manualize の `src/` は、単なるスクリプト群ではなく、  
-**動画を再利用可能な教育資産へ変換する処理責務を明確化した構造**として設計します。
-
-中心となる流れは次の通りです。
-
-**動画入力 → 証跡抽出 → セグメント分類 → 手順 / 要約 / 注意点抽出 → `training_asset_spec` 正規化 → HTML / PDF / 派生データ生成**
-
-この構成により、MVP では
-
-**1動画 → 1構造化JSON → 1要約 → 1HTML / 1PDF**
-
-を安定して成立させ、  
-将来的には FAQ、検索、チェックリスト、複数動画統合へと拡張しやすい基盤を作ります。
+そのための最小構成として、本ドキュメントのディレクトリ案を採用します。
