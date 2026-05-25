@@ -1,0 +1,289 @@
+from pathlib import Path
+
+pdf_code = '''"""
+PDF Manual Renderer - Renders training_asset_spec to PDF.
+"""
+
+import json
+from pathlib import Path
+from datetime import datetime
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import mm
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_LEFT, TA_CENTER
+from reportlab.lib import colors
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+
+from .settings import settings
+
+
+class PDFManualRenderer:
+    """Renders training_asset_spec JSON to PDF manual."""
+    
+    def __init__(self):
+        self.styles = getSampleStyleSheet()
+        self._register_fonts()
+        self._setup_custom_styles()
+    
+    def _register_fonts(self):
+        """Register Japanese fonts."""
+        try:
+            font_paths = [
+                'C:/Windows/Fonts/meiryo.ttc',
+                'C:/Windows/Fonts/msmincho.ttc',
+                'C:/Windows/Fonts/yugothic.ttf',
+            ]
+            
+            for font_path in font_paths:
+                if Path(font_path).exists():
+                    try:
+                        pdfmetrics.registerFont(TTFont('JP', font_path))
+                        break
+                    except:
+                        continue
+        except:
+            pass
+    
+    def _setup_custom_styles(self):
+        self.styles.add(ParagraphStyle(
+            name='CustomTitle',
+            parent=self.styles['Heading1'],
+            fontSize=28,
+            textColor=colors.HexColor('#000000'),
+            spaceAfter=12,
+            fontName='JP',
+            alignment=TA_CENTER,
+        ))
+        self.styles.add(ParagraphStyle(
+            name='CustomHeading2',
+            parent=self.styles['Heading2'],
+            fontSize=18,
+            textColor=colors.HexColor('#007bff'),
+            spaceAfter=12,
+            spaceBefore=12,
+            fontName='JP',
+            borderPadding=6,
+        ))
+        self.styles.add(ParagraphStyle(
+            name='CustomHeading3',
+            parent=self.styles['Heading3'],
+            fontSize=14,
+            textColor=colors.HexColor('#333333'),
+            spaceAfter=10,
+            spaceBefore=10,
+            fontName='JP',
+        ))
+        self.styles.add(ParagraphStyle(
+            name='CustomNormal',
+            parent=self.styles['Normal'],
+            fontSize=11,
+            textColor=colors.HexColor('#333333'),
+            spaceAfter=6,
+            alignment=TA_LEFT,
+            fontName='JP',
+        ))
+        self.styles.add(ParagraphStyle(
+            name='CustomBold',
+            parent=self.styles['Normal'],
+            fontSize=11,
+            textColor=colors.HexColor('#333333'),
+            spaceAfter=6,
+            fontName='JP',
+            fontBold=True,
+        ))
+        self.styles.add(ParagraphStyle(
+            name='CautionText',
+            parent=self.styles['Normal'],
+            fontSize=10,
+            textColor=colors.HexColor('#8b0000'),
+            spaceAfter=4,
+            fontName='JP',
+            leftIndent=12,
+        ))
+    
+    def _build_document(self, asset_spec: dict) -> list:
+        story = []
+        asset_meta = asset_spec.get('asset_meta', {})
+        instructional_core = asset_spec.get('instructional_core', {})
+        derived_views = asset_spec.get('derived_views', {})
+        _metadata = asset_spec.get('_metadata', {})
+        
+        # Title
+        story.append(Paragraph(asset_meta.get('title', 'Manual'), self.styles['CustomTitle']))
+        story.append(Spacer(1, 12*mm))
+        
+        # Metadata
+        purpose = asset_meta.get('purpose', 'N/A')
+        audience = ', '.join(asset_meta.get('target_audience', []))
+        status = asset_meta.get('status', 'N/A')
+        version = asset_meta.get('version', 'N/A')
+        
+        meta_html = f"<b>目的:</b> {purpose}<br/><b>対象者:</b> {audience}<br/><b>ステータス:</b> {status}<br/><b>バージョン:</b> {version}"
+        story.append(Paragraph(meta_html, self.styles['CustomNormal']))
+        story.append(Spacer(1, 12*mm))
+        
+        # Prerequisites
+        if asset_meta.get('prerequisites'):
+            story.append(Paragraph('前提条件・準備', self.styles['CustomHeading2']))
+            for pre in asset_meta['prerequisites']:
+                story.append(Paragraph(f"• {pre}", self.styles['CustomNormal']))
+            story.append(Spacer(1, 6*mm))
+        
+        # Summary
+        summary = instructional_core.get('summary', {})
+        if summary:
+            story.append(Paragraph('概要', self.styles['CustomHeading2']))
+            if summary.get('purpose_summary'):
+                story.append(Paragraph(f"<b>目的:</b> {summary['purpose_summary']}", self.styles['CustomNormal']))
+            if summary.get('outcome_summary'):
+                story.append(Paragraph(f"<b>期待する成果:</b> {summary['outcome_summary']}", self.styles['CustomNormal']))
+            story.append(Spacer(1, 6*mm))
+        
+        # Global cautions
+        if instructional_core.get('global_cautions'):
+            story.append(Paragraph('⚠️ 全体注意事項', self.styles['CustomHeading2']))
+            for caution in instructional_core['global_cautions']:
+                story.append(Paragraph(f"• {caution}", self.styles['CautionText']))
+            story.append(Spacer(1, 6*mm))
+        
+        # Chapters
+        for chapter in instructional_core.get('chapters', []):
+            story.append(PageBreak())
+            story.append(Paragraph(chapter.get('title', ''), self.styles['CustomHeading2']))
+            
+            if chapter.get('objective'):
+                story.append(Paragraph(f"<b>目標:</b> {chapter['objective']}", self.styles['CustomNormal']))
+            
+            if chapter.get('chapter_cautions'):
+                story.append(Paragraph('<b>注意事項</b>', self.styles['CustomHeading3']))
+                for caution in chapter['chapter_cautions']:
+                    story.append(Paragraph(f"• {caution}", self.styles['CautionText']))
+                story.append(Spacer(1, 6*mm))
+            
+            # Procedures
+            for procedure in chapter.get('procedures', []):
+                story.append(Paragraph(procedure.get('title', ''), self.styles['CustomHeading3']))
+                
+                if procedure.get('goal'):
+                    story.append(Paragraph(f"<b>ゴール:</b> {procedure['goal']}", self.styles['CustomNormal']))
+                
+                if procedure.get('conditions'):
+                    story.append(Paragraph(f"<b>条件:</b> {'; '.join(procedure['conditions'])}", self.styles['CustomNormal']))
+                
+                # Steps
+                for step in procedure.get('steps', []):
+                    order = step.get('order')
+                    action = step.get('action', '')
+                    text = f"<b>ステップ {order}:</b> {action}"
+                    story.append(Paragraph(text, self.styles['CustomNormal']))
+                    
+                    if step.get('expected_result'):
+                        result = step['expected_result']
+                        story.append(Paragraph(f"期待される結果: {result}", self.styles['CustomNormal']))
+                    
+                    if step.get('button_labels'):
+                        buttons = ', '.join(step['button_labels'])
+                        story.append(Paragraph(f"ボタン: {buttons}", self.styles['CustomNormal']))
+                    
+                    if step.get('input_fields'):
+                        fields = ', '.join(step['input_fields'])
+                        story.append(Paragraph(f"入力項目: {fields}", self.styles['CustomNormal']))
+                    
+                    if step.get('notes'):
+                        story.append(Paragraph('<b>💡 ノート:</b>', self.styles['CustomNormal']))
+                        for note in step['notes']:
+                            story.append(Paragraph(f"• {note}", self.styles['CustomNormal']))
+                    
+                    if step.get('cautions'):
+                        story.append(Paragraph('<b>⚠️ 注意:</b>', self.styles['CustomNormal']))
+                        for caution in step['cautions']:
+                            story.append(Paragraph(f"• {caution}", self.styles['CautionText']))
+                    
+                    story.append(Spacer(1, 4*mm))
+                
+                # Procedure cautions
+                if procedure.get('cautions'):
+                    story.append(Paragraph('<b>手順の注意事項</b>', self.styles['CustomHeading3']))
+                    for caution in procedure['cautions']:
+                        story.append(Paragraph(f"• {caution}", self.styles['CautionText']))
+                    story.append(Spacer(1, 6*mm))
+                
+                # Common mistakes
+                if procedure.get('common_mistakes'):
+                    story.append(Paragraph('<b>よくあるミス</b>', self.styles['CustomHeading3']))
+                    for mistake in procedure['common_mistakes']:
+                        text = f"<b>❌ {mistake.get('mistake', '')}</b>"
+                        story.append(Paragraph(text, self.styles['CustomNormal']))
+                        if mistake.get('cause'):
+                            story.append(Paragraph(f"原因: {mistake['cause']}", self.styles['CustomNormal']))
+                        if mistake.get('impact'):
+                            story.append(Paragraph(f"影響: {mistake['impact']}", self.styles['CustomNormal']))
+                        if mistake.get('recovery_action'):
+                            story.append(Paragraph(f"対策: {mistake['recovery_action']}", self.styles['CustomNormal']))
+                        story.append(Spacer(1, 4*mm))
+                
+                # Checkpoints
+                if procedure.get('checkpoints'):
+                    story.append(Paragraph('<b>✓ チェックポイント</b>', self.styles['CustomHeading3']))
+                    for checkpoint in procedure['checkpoints']:
+                        story.append(Paragraph(f"☐ {checkpoint}", self.styles['CustomNormal']))
+                    story.append(Spacer(1, 6*mm))
+        
+        # FAQ
+        if derived_views.get('faq_candidates'):
+            story.append(PageBreak())
+            story.append(Paragraph('よくある質問（FAQ候補）', self.styles['CustomHeading2']))
+            
+            for faq in derived_views['faq_candidates']:
+                story.append(Paragraph(f"Q: {faq.get('question', '')}", self.styles['CustomHeading3']))
+                story.append(Paragraph(f"A: {faq.get('answer_draft', '')}", self.styles['CustomNormal']))
+                if faq.get('priority'):
+                    story.append(Paragraph(f"優先度: {faq['priority']}", self.styles['CustomNormal']))
+                story.append(Spacer(1, 6*mm))
+        
+        # Global checklist
+        if instructional_core.get('global_checklist'):
+            story.append(PageBreak())
+            story.append(Paragraph('全体チェックリスト', self.styles['CustomHeading2']))
+            
+            for item in instructional_core['global_checklist']:
+                required = '*必須' if item.get('required') else ''
+                story.append(Paragraph(f"☐ {item.get('item')} {required}", self.styles['CustomNormal']))
+            
+            story.append(Spacer(1, 12*mm))
+        
+        # Footer
+        story.append(Spacer(1, 12*mm))
+        generated_at = _metadata.get('generated_at', 'N/A')
+        schema_version = _metadata.get('schema_version', 'N/A')
+        story.append(Paragraph(
+            f"<i>Generated on {generated_at} (Schema v{schema_version})</i>",
+            self.styles['Normal']
+        ))
+        
+        return story
+    
+    def render_to_file(self, asset_spec: dict, output_file: Path) -> Path:
+        output_file.parent.mkdir(parents=True, exist_ok=True)
+        
+        doc = SimpleDocTemplate(
+            str(output_file),
+            pagesize=A4,
+            rightMargin=20*mm,
+            leftMargin=20*mm,
+            topMargin=20*mm,
+            bottomMargin=20*mm,
+        )
+        
+        story = self._build_document(asset_spec)
+        doc.build(story)
+        
+        return output_file
+'''
+
+with open('src/video_asset_manualize/pdf_manual_renderer.py', 'w', encoding='utf-8') as f:
+    f.write(pdf_code)
+
+print('✓ pdf_manual_renderer.py を充実版に更新しました')
