@@ -1,421 +1,126 @@
 # VideoAsset Manualize
 
-既存の研修動画・マニュアル動画を、再利用可能な教育資産・業務資産へ変換するためのプロジェクトです。
+動画→JSON→HTML/PDF マニュアル自動生成パイプライン
 
-VideoAsset Manualize は、社内に蓄積された動画コンテンツを単なる「視聴素材」として扱うのではなく、  
-**構造化データ・テキストマニュアル・PDF・チェックリスト・FAQ候補**へ展開可能な資産として再整理することを目的とします。
+## 機能
 
----
+- 動画ファイルから source_evidence を自動生成
+- source_evidence から training_asset_spec を自動抽出
+- training_asset_spec から HTML/PDF マニュアルを自動生成
+- CLI インターフェース (video / extract / build / validate)
+- 複数の Transcript Provider に対応
 
-## 概要
+## Phase ロードマップ
 
-多くの企業では、研修動画や業務手順動画がすでに存在している一方で、次のような課題を抱えています。
+Phase 1: training_asset_spec の検証、HTML/PDF 生成
+Phase 2: source_evidence の検証、自動抽出
+Phase 3: 動画入力インターフェース、抽象 Provider
+Phase 4: ffprobe メタデータ、Whisper STT、Provider Factory
 
-- 動画はあるが、必要な情報をすぐに探せない
-- 新人教育が「とりあえず動画を見て」で終わりやすい
-- 動画内のノウハウがテキスト資産として整理されていない
-- 文字起こしだけでは、現場で使える手順書にならない
-- OJT や引き継ぎが属人化しやすい
+## セットアップ
 
-VideoAsset Manualize は、こうした状態を解消し、  
-**動画を「見る教材」から「使える教材」へ変換する**ことを目指します。
+### 必須環境
+- Python 3.11+
+- pip
 
----
+### 基本インストール
 
-## このプロジェクトがやること
+git clone https://github.com/nario0715masa0619-create/video-asset-manualize.git
+cd video-asset-manualize
+pip install -r requirements.txt
+pip install -e .
 
-本プロジェクトでは、既存の動画を解析し、以下のような成果物へ変換することを想定しています。
+### ffprobe インストール
 
-- 文字起こしテキスト
-- 要約テキスト
-- 手順・注意点・条件分岐を含む構造化 JSON
-- 業務マニュアルとして利用可能な HTML / PDF
-- FAQ / チェックリスト / 検索基盤に再利用しやすい中間データ
+ffprobe は ffmpeg に含まれています。
 
-中心となる考え方は、以下の変換です。
+Windows:
+choco install ffmpeg
+または https://ffmpeg.org/download.html からダウンロード
 
-**動画 → 証跡付きテキスト化 → 構造化資産化 → マニュアル / PDF / 再利用データ化**
+macOS:
+brew install ffmpeg
 
----
+Linux:
+apt-get install ffmpeg
 
-## 立ち位置
+### Whisper インストール (オプション)
 
-VideoAsset Manualize は、次のような立ち位置のプロジェクトです。
+pip install openai-whisper
 
-- 新しい動画を制作するプロジェクトではない
-- 文字起こしだけを提供するサービスでもない
-- LMS / eラーニングの箱を売るものでもない
+## 使用方法
 
-代わりに、  
-**すでに存在する動画を整理・構造化し、現場で使える形に変換するための基盤**を作ります。
+### 1. 動画 → source_evidence 生成
 
----
+ダミー provider で実行:
+python -m video_asset_manualize.build_asset video input.mp4
 
-## 想定ユースケース
+Whisper で実行:
+python -m video_asset_manualize.build_asset video input.mp4 --provider whisper --whisper-model base
 
-- 新人研修資料の整備
-- 業務手順動画のマニュアル化
-- OJT 内容の標準化
-- 引き継ぎ資料の整備
-- 店舗 / コールセンター / 物流 / 製造現場の SOP 整備
-- 社内 FAQ / ナレッジベース構築の前処理
-- 既存動画資産の棚卸しと再活用
+### 2. source_evidence → training_asset_spec 抽出
 
----
+python -m video_asset_manualize.build_asset extract output/exports/extracted_source_evidence.json
 
-## 提供価値
+### 3. training_asset_spec → HTML/PDF 生成
 
-### 1. 動画を「見る教材」から「使える教材」に変える
+python -m video_asset_manualize.build_asset build output/exports/asset-{id}_spec.json
 
-動画のままでは、見返し・検索・共有に時間がかかります。  
-構造化されたテキストやマニュアルがあれば、必要な箇所だけをすばやく確認できます。
+### スキーマ検証
 
-### 2. 教育・引き継ぎコストを下げる
+python -m video_asset_manualize.build_asset validate input.json
 
-- 毎回同じ説明を繰り返す負担を減らす
-- 動画を最初から見直す回数を減らす
-- 「手順書 + 必要な場面だけ動画確認」の運用に切り替えやすくする
+## CLI コマンド一覧
 
-### 3. 業務品質を標準化する
+video: 動画 → source_evidence 抽出
+extract: source_evidence → training_asset_spec 抽出
+build: training_asset_spec → HTML/PDF 生成
+validate: JSON スキーマ検証
 
-- 手順の粒度を揃える
-- 注意点や NG 例を明文化する
-- 部署・拠点ごとの差異を把握しやすくする
+## ファイル構成
 
-### 4. ナレッジを再利用可能な資産にする
+src/video_asset_manualize/
+  ├── build_asset.py (CLI メイン)
+  ├── build_training_asset_pipeline.py (パイプライン)
+  ├── ffprobe_metadata_extractor.py (メタデータ取得)
+  ├── whisper_transcript_provider.py (Whisper STT)
+  ├── provider_factory.py (Provider 生成)
+  ├── transcript_provider.py (Transcript 抽象)
+  ├── ocr_provider.py (OCR 抽象)
+  ├── video_source_evidence_builder.py (動画ビルダー)
+  ├── source_evidence_validator.py (Validator)
+  ├── training_asset_spec_builder.py
+  ├── schema_validator.py
+  ├── html_manual_renderer.py
+  ├── pdf_manual_renderer.py
+  ├── settings.py
+  └── __init__.py
 
-将来的に、以下への二次利用がしやすい状態をつくります。
+schemas/
+  ├── training_asset_spec.schema.json
+  └── source_evidence.schema.json
 
-- FAQ
-- チェックリスト
-- 社内検索
-- QA ボット
-- ダイジェスト版ハンドブック
+samples/
+  ├── sample_training_video.mp4
+  ├── sample_training_asset_spec.json
+  └── sample_source_evidence.json
 
----
+## トラブルシューティング
 
-## 基本方針
+ffprobe が見つからない:
+→ ffmpeg をインストール
 
-### 1. 要約と手順抽出を分ける
+Whisper が見つからない:
+→ pip install openai-whisper を実行
 
-このプロジェクトで最も重要なのは、  
-**説明部分の要約**と**操作手順の抽出**を同じ処理にしないことです。
+動画ファイルが無効:
+→ 有効な動画ファイルを確認
 
-動画内の情報は、少なくとも次のように分けて扱う必要があります。
+## 次フェーズ予定
 
-- 説明
-- 背景 / 目的
-- 実操作
-- 注意点
-- 例外処理
-- 雑談 / 補足
+Phase 5: OCR 統合 (EasyOCR など)
+Phase 6: AI 処理 (LLM による要約・抽出)
 
-このうち、以下の方針を採用します。
+## リポジトリ
 
-- **説明 / 背景 / 補足** は要約対象
-- **実操作 / ボタン名 / 条件分岐 / 注意点 / チェック項目** は保持・構造化対象
-
-### 2. 手順はステップ単位で残す
-
-「なんとなくの要約」ではなく、  
-実務で使える粒度の手順に落とすことを優先します。
-
-推奨する粒度は以下です。
-
-- 章
-- 手順
-- ステップ
-- 補足 / 注意点 / NG 例 / 分岐条件
-
-### 3. 根拠を残す
-
-最終成果物だけでなく、  
-**元動画のどこから抽出したのか**を追えることを重視します。
-
-そのために以下の証跡を設計対象に含めます。
-
-- 発話開始 / 終了時刻
-- OCR 文字列
-- スクリーンショット候補
-- 話者情報
-- 抽出信頼度
-
----
-
-## 目指すデータモデル
-
-最終的には、動画 1 本ごとに以下のような構造化データを持つことを想定しています。
-
-- `asset_meta`
-- `source_evidence`
-- `instructional_core`
-- `derived_views`
-- `delivery_assets`
-- `_metadata`
-
-この JSON を正本として、そこから各種成果物を派生生成します。
-
-### 想定する主要要素
-
-#### `asset_meta`
-
-- タイトル
-- 対象者
-- 対象部署
-- 目的
-- 前提条件
-- 更新日
-- 版情報
-
-#### `source_evidence`
-
-- transcript
-- OCR
-- タイムスタンプ
-- スクリーンショット候補
-- 証跡断片
-
-#### `instructional_core`
-
-- 手順
-- 条件分岐
-- 注意点
-- NG 例
-- よくあるミス
-- チェックリスト
-
-#### `derived_views`
-
-- 新人向け簡易版
-- 現場向けチェックリスト版
-- FAQ 候補
-- ダイジェスト版
-
-#### `delivery_assets`
-
-- RAW テキスト
-- 要約
-- HTML
-- PDF
-- 再利用用データ
-
----
-
-## 成果物イメージ
-
-### 基本納品物
-
-- 構造化 JSON
-- 文字起こしテキスト
-- 要約テキスト
-- HTML マニュアル
-- PDF マニュアル
-
-### 拡張候補
-
-- 複数動画を束ねた冊子型 PDF
-- ダイジェスト版ハンドブック
-- FAQ 候補一覧
-- チェックリスト版
-- ブランドカラー / ロゴ対応出力
-
----
-
-## アーキテクチャ方針
-
-このプロジェクトでは、次の思想を中核に置きます。
-
-1. 生データをそのまま最終成果物にしない
-2. 一度、構造化 JSON に正規化する
-3. 表示形式は JSON から派生生成する
-4. HTML / Text / PDF を責務分離する
-5. AI は「要約」だけでなく「説明補助」と「抽出補助」に使う
-6. 証跡と追跡可能性を重視する
-
-初期のレンダリング戦略としては、以下を想定します。
-
-**JSON → HTML → PDF**
-
-この流れにすることで、ブラウザプレビューと PDF 出力を両立しやすくします。
-
----
-
-## MVP の考え方
-
-最初から広げすぎず、まずは以下の最小構成で成立させることを目標にします。
-
-**1動画 → 1構造化JSON → 1PDF → 1要約 → 1RAWログ**
-
-### MVP の評価観点
-
-- 手順抜けが大きくないか
-- 粒度が新人でも再現可能か
-- 注意点・事故防止観点が落ちていないか
-- 元動画との対応が追えるか
-
----
-
-## リポジトリの現状
-
-現在は、**初期設計・MVP 定義フェーズ**です。  
-このリポジトリでは、まず以下を優先して固めます。
-
-1. README / 基本ドキュメント
-2. JSON スキーマ初版
-3. 抽出ポリシー / プロンプト設計
-4. マニュアルテンプレート仕様
-5. MVP 対象動画の選定基準
-6. 出力フローの最小実装
-
----
-
-## 初期ドキュメント構成
-
-```text
-video-asset-manualize/
-├── README.md
-├── docs/
-│   ├── project_overview.md
-│   ├── architecture.md
-│   ├── json_schema.md
-│   ├── mvp_scope.md
-│   ├── roadmap.md
-│   ├── prompt_design.md
-│   ├── src_structure.md
-│   └── templates/
-│       └── manual_template_spec.md
-├── schemas/
-│   └── training_asset_spec.schema.json
-├── samples/
-│   └── sample_training_asset_spec.json
-└── src/
-    └── ...
-```
-
----
-
-## ドキュメントマップ
-
-- `README.md`  
-  プロジェクト全体の入口。目的、背景、価値、方向性をまとめる
-
-- `docs/project_overview.md`  
-  背景、課題、目的、対象、納品物、立ち位置の整理
-
-- `docs/architecture.md`  
-  設計思想、処理フロー、証跡設計、レンダリング方針
-
-- `docs/json_schema.md`  
-  `training_asset_spec` の初期スキーマ設計
-
-- `docs/mvp_scope.md`  
-  MVP のスコープ、評価観点、受け入れ条件
-
-- `docs/roadmap.md`  
-  フェーズ分解、依存関係、リスク整理
-
-- `docs/prompt_design.md`  
-  要約と手順抽出を分離するための抽出ポリシー設計
-
-- `docs/src_structure.md`  
-  `src/` 配下の初期ディレクトリ構成案、責務分離、MVP でまず作る最小セットの整理
-
-- `docs/templates/manual_template_spec.md`  
-  `training_asset_spec` から HTML / PDF マニュアルを生成するためのテンプレート仕様
-
-- `schemas/training_asset_spec.schema.json`  
-  正本データ `training_asset_spec` の JSON Schema 初版
-
-- `samples/sample_training_asset_spec.json`  
-  スキーマに整合するサンプル資産データ
-
----
-
-## 想定ロードマップ
-
-### Phase 0
-
-ドキュメント整備、スキーマ固定、MVP 要件整理
-
-### Phase 1
-
-抽出パイプライン MVP
-
-- 文字起こし
-- セグメント分類
-- 手順抽出
-- 要約出力
-
-### Phase 2
-
-HTML / PDF レンダリング
-
-- マニュアルテンプレート
-- プレビュー
-- PDF 出力
-
-### Phase 3
-
-レビュー / フィードバックループ
-
-- 手順抜け修正
-- 粒度調整
-- 注意点抽出精度改善
-
-### Phase 4
-
-複数動画対応・二次利用
-
-- 冊子化
-- FAQ 化
-- 検索向け再利用
-- ダッシュボード / 管理画面展開
-
----
-
-## 設計上の前提
-
-- 現時点では、詳細スキーマとプロンプトは策定中
-- 実装より先に、正本となるデータ構造を固定する
-- PDF デザインは初期段階ではシンプルでよい
-- 重要なのは見た目よりも、再現可能な手順粒度と証跡の一貫性
-- 将来の FAQ / 検索 / QA ボット再利用を見据え、最初から JSON 正本設計を採用する
-
----
-
-## 非ゴール
-
-現時点では、以下は本プロジェクトの初期ゴールに含めません。
-
-- 動画編集・新規動画制作
-- LMS / eラーニングシステム本体の構築
-- 高度なブランドデザインテンプレートの量産
-- 完全自動化のみで人手レビューを不要にすること
-- 初期段階からの大規模マルチテナント SaaS 化
-
----
-
-## 今後まず作るもの
-
-- `README.md`
-- `docs/project_overview.md`
-- `docs/architecture.md`
-- `docs/json_schema.md`
-- `docs/mvp_scope.md`
-- `docs/roadmap.md`
-- `docs/prompt_design.md`
-- `docs/src_structure.md`
-- `docs/templates/manual_template_spec.md`
-- `schemas/training_asset_spec.schema.json`
-- `samples/sample_training_asset_spec.json`
-
----
-
-## コンセプト
-
-VideoAsset Manualize は、動画を単に文字にするためのプロジェクトではなく、  
-**組織で再利用できる教育資産・業務資産へ変換するための基盤**です。
-
-目指すのは、  
-「動画はあるが活かしきれていない」状態を、  
-**「検索できる・読める・配れる・引き継げる」状態へ変えること**です。
+https://github.com/nario0715masa0619-create/video-asset-manualize
