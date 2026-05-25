@@ -1,0 +1,11 @@
+{
+  "project_id": "project-training-001",
+  "title": "Customer Service Training Series",
+  "items": [
+    {
+      "asset_id": "asset-001",
+      "spec_path": "output/exports/phase6_spec_dummy.json",
+      "title": "Customer Registration Manual"
+    }
+  ]
+}

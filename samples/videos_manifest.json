@@ -1,0 +1,25 @@
+{
+  "project_id": "project-training-001",
+  "title": "Customer Service Training Series",
+  "description": "Complete training for customer registration and support procedures",
+  "items": [
+    {
+      "video_id": "video-001",
+      "input_path": "samples/sample_training_video.mp4",
+      "title": "Customer Registration Basics",
+      "audience": [
+        "New Employees",
+        "Store Staff"
+      ]
+    },
+    {
+      "video_id": "video-002",
+      "input_path": "samples/sample_training_video.mp4",
+      "title": "Advanced Customer Management",
+      "audience": [
+        "Staff",
+        "Managers"
+      ]
+    }
+  ]
+}

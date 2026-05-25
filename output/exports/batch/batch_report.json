@@ -1,0 +1,22 @@
+{
+  "project_id": "batch-specs",
+  "title": "Batch Spec Build",
+  "timestamp": "2026-05-25T22:43:30.722132Z",
+  "summary": {
+    "total": 1,
+    "succeeded": 1,
+    "failed": 0
+  },
+  "results": [
+    {
+      "item_id": "asset-001",
+      "status": "success",
+      "outputs": {
+        "html": "output\\exports\\batch\\asset-2cd2e1f2_manual.html",
+        "pdf": "output\\exports\\batch\\asset-2cd2e1f2_manual.pdf",
+        "json": "output\\exports\\batch\\asset-2cd2e1f2_spec.json"
+      }
+    }
+  ],
+  "errors": []
+}
