@@ -1,0 +1,837 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "training_asset_spec",
+  "description": "VideoAsset Manualize における動画1本分の正本データスキーマ。既存の研修動画・マニュアル動画を、証跡付きの構造化資産として保持する。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "asset_meta",
+    "instructional_core",
+    "_metadata"
+  ],
+  "properties": {
+    "asset_meta": {
+      "$ref": "#/$defs/assetMeta"
+    },
+    "source_evidence": {
+      "$ref": "#/$defs/sourceEvidence"
+    },
+    "instructional_core": {
+      "$ref": "#/$defs/instructionalCore"
+    },
+    "derived_views": {
+      "$ref": "#/$defs/derivedViews"
+    },
+    "delivery_assets": {
+      "$ref": "#/$defs/deliveryAssets"
+    },
+    "_metadata": {
+      "$ref": "#/$defs/metadata"
+    }
+  },
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/nonEmptyString"
+      },
+      "default": []
+    },
+    "assetMeta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "asset_id",
+        "title"
+      ],
+      "properties": {
+        "asset_id": {
+          "$ref": "#/$defs/nonEmptyString",
+          "description": "資産の一意識別子"
+        },
+        "source_video_id": {
+          "type": "string",
+          "description": "元動画を識別するID"
+        },
+        "title": {
+          "$ref": "#/$defs/nonEmptyString",
+          "description": "資産タイトル"
+        },
+        "purpose": {
+          "type": "string",
+          "description": "この動画・手順の目的"
+        },
+        "target_audience": {
+          "$ref": "#/$defs/stringArray",
+          "description": "想定利用者"
+        },
+        "target_department": {
+          "$ref": "#/$defs/stringArray",
+          "description": "対象部署"
+        },
+        "prerequisites": {
+          "$ref": "#/$defs/stringArray",
+          "description": "前提条件、必要権限、準備物"
+        },
+        "language": {
+          "type": "string",
+          "description": "言語コード。例: ja-JP"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "reviewed",
+            "approved"
+          ],
+          "description": "資産ステータス"
+        },
+        "version": {
+          "type": "string",
+          "description": "資産バージョン"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "初回生成日時"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "最終更新日時"
+        }
+      }
+    },
+    "sourceEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source_video": {
+          "$ref": "#/$defs/sourceVideo"
+        },
+        "transcript_segments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/transcriptSegment"
+          },
+          "default": []
+        },
+        "ocr_segments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ocrSegment"
+          },
+          "default": []
+        },
+        "screenshot_candidates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/screenshotCandidate"
+          },
+          "default": []
+        },
+        "speaker_segments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/speakerSegment"
+          },
+          "default": []
+        },
+        "evidence_links": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidenceLink"
+          },
+          "default": []
+        }
+      }
+    },
+    "sourceVideo": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "source_type": {
+          "type": "string"
+        },
+        "file_ref": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "transcriptSegment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "segment_id",
+        "start_ms",
+        "end_ms",
+        "text"
+      ],
+      "properties": {
+        "segment_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "start_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "speaker_label": {
+          "type": "string"
+        },
+        "text": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "classification_hint": {
+          "type": "string",
+          "enum": [
+            "explanation",
+            "background",
+            "operation",
+            "caution",
+            "exception",
+            "supplement"
+          ]
+        }
+      }
+    },
+    "ocrSegment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ocr_id",
+        "start_ms",
+        "end_ms",
+        "text"
+      ],
+      "properties": {
+        "ocr_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "start_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "text": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "screen_region": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "screenshotCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "screenshot_id",
+        "at_ms"
+      ],
+      "properties": {
+        "screenshot_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "at_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "description": {
+          "type": "string"
+        },
+        "file_ref": {
+          "type": "string"
+        },
+        "related_step_ids": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "speakerSegment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "speaker_segment_id",
+        "start_ms",
+        "end_ms"
+      ],
+      "properties": {
+        "speaker_segment_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "start_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "speaker_label": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "evidenceLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_ref_id",
+        "related_step_id"
+      ],
+      "properties": {
+        "evidence_ref_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "related_step_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "transcript_segment_ids": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "ocr_segment_ids": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "screenshot_ids": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "instructionalCore": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "chapters"
+      ],
+      "properties": {
+        "summary": {
+          "$ref": "#/$defs/summary"
+        },
+        "chapters": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/chapter"
+          }
+        },
+        "global_cautions": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "global_common_mistakes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/commonMistake"
+          },
+          "default": []
+        },
+        "global_checklist": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/checklistItem"
+          },
+          "default": []
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "purpose_summary": {
+          "type": "string"
+        },
+        "outcome_summary": {
+          "type": "string"
+        },
+        "audience_summary": {
+          "type": "string"
+        },
+        "scope_notes": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "chapter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "chapter_id",
+        "title",
+        "procedures"
+      ],
+      "properties": {
+        "chapter_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "title": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "objective": {
+          "type": "string"
+        },
+        "procedures": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/procedure"
+          }
+        },
+        "chapter_cautions": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "procedure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "procedure_id",
+        "title",
+        "steps"
+      ],
+      "properties": {
+        "procedure_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "title": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "goal": {
+          "type": "string"
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/step"
+          }
+        },
+        "conditions": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "cautions": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "common_mistakes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/commonMistake"
+          },
+          "default": []
+        },
+        "checkpoints": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "step_id",
+        "order",
+        "action"
+      ],
+      "properties": {
+        "step_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "action": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "expected_result": {
+          "type": "string"
+        },
+        "button_labels": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "input_fields": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "branch_condition": {
+          "type": "string"
+        },
+        "notes": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "cautions": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "evidence_refs": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "commonMistake": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mistake"
+      ],
+      "properties": {
+        "mistake": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "cause": {
+          "type": "string"
+        },
+        "impact": {
+          "type": "string"
+        },
+        "recovery_action": {
+          "type": "string"
+        }
+      }
+    },
+    "checklistItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "item"
+      ],
+      "properties": {
+        "item": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "required": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "derivedViews": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "beginner_view": {
+          "$ref": "#/$defs/beginnerView"
+        },
+        "checklist_view": {
+          "$ref": "#/$defs/checklistView"
+        },
+        "faq_candidates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/faqCandidate"
+          },
+          "default": []
+        },
+        "digest_view": {
+          "$ref": "#/$defs/digestView"
+        },
+        "manager_view": {
+          "$ref": "#/$defs/managerView"
+        }
+      }
+    },
+    "beginnerView": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "key_points": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "checklistView": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/checklistViewItem"
+          },
+          "default": []
+        },
+        "usage_notes": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "checklistViewItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "item_id",
+        "text"
+      ],
+      "properties": {
+        "item_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "text": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "required": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "faqCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "faq_id",
+        "question"
+      ],
+      "properties": {
+        "faq_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "question": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "answer_draft": {
+          "type": "string"
+        },
+        "related_step_ids": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "priority": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        }
+      }
+    },
+    "digestView": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "summary_points": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "managerView": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "focus_points": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "review_notes": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "deliveryAssets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "raw_transcript": {
+          "$ref": "#/$defs/rawTranscriptAsset"
+        },
+        "summary_text": {
+          "$ref": "#/$defs/summaryTextAsset"
+        },
+        "html_manual": {
+          "$ref": "#/$defs/renderedAsset"
+        },
+        "pdf_manual": {
+          "$ref": "#/$defs/renderedAsset"
+        },
+        "exported_files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/exportedFile"
+          },
+          "default": []
+        }
+      }
+    },
+    "rawTranscriptAsset": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "file_ref": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "summaryTextAsset": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "renderedAsset": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "file_ref": {
+          "type": "string"
+        },
+        "template_version": {
+          "type": "string"
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "exportedFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "asset_type"
+      ],
+      "properties": {
+        "asset_type": {
+          "type": "string",
+          "enum": [
+            "html",
+            "pdf",
+            "txt",
+            "json",
+            "other"
+          ]
+        },
+        "file_ref": {
+          "type": "string"
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "template_version": {
+          "type": "string"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version"
+      ],
+      "properties": {
+        "schema_version": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "pipeline_version": {
+          "type": "string"
+        },
+        "generation_context": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "mode": {
+              "type": "string"
+            },
+            "review_required": {
+              "type": "boolean"
+            }
+          }
+        },
+        "review_status": {
+          "type": "string",
+          "enum": [
+            "unreviewed",
+            "in_review",
+            "approved",
+            "rejected"
+          ]
+        },
+        "review_notes": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "change_log": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/changeLogEntry"
+          },
+          "default": []
+        }
+      }
+    },
+    "changeLogEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "changed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "changed_by": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
