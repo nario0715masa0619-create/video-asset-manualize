@@ -5,34 +5,31 @@ Asset Indexer - 生成済み成果物のインデックス作成
 import json
 from pathlib import Path
 from typing import List, Dict, Any
-from datetime import datetime
 
 
 class AssetIndexer:
-    '''生成済み成果物をスキャンしてインデックス作成'''
-    
     def __init__(self, exports_dir: str = "output/exports"):
         self.exports_dir = Path(exports_dir)
     
     def scan_assets(self) -> List[Dict[str, Any]]:
-        '''成果物をスキャンしてリスト化（重複排除）'''
-        assets_dict = {}
+        assets_by_id = {}
         
         if not self.exports_dir.exists():
             return []
         
-        # _spec.json ファイルを探す
-        for spec_file in self.exports_dir.glob("*_spec.json"):
+        for spec_file in sorted(self.exports_dir.glob("*_spec.json")):
+            if "_compiled" in spec_file.name or "_booklet" in spec_file.name:
+                continue
+            
             try:
                 with open(spec_file, 'r', encoding='utf-8') as f:
                     spec = json.load(f)
                 
                 asset_meta = spec.get('asset_meta', {})
-                asset_id = asset_meta.get('asset_id', 'unknown')
+                asset_id = asset_meta.get('asset_id', '')
                 
-                # 同じ asset_id なら最新のみ保持
-                if asset_id not in assets_dict:
-                    asset_entry = {
+                if asset_id and asset_id not in assets_by_id:
+                    assets_by_id[asset_id] = {
                         'asset_id': asset_id,
                         'title': asset_meta.get('title', 'Untitled'),
                         'language': asset_meta.get('language', 'unknown'),
@@ -42,31 +39,26 @@ class AssetIndexer:
                         'html_file': str(self.exports_dir / f"{asset_id}_manual.html"),
                         'pdf_file': str(self.exports_dir / f"{asset_id}_manual.pdf"),
                     }
-                    assets_dict[asset_id] = asset_entry
             except Exception as e:
-                print(f"Error processing {spec_file}: {e}")
+                pass
         
-        assets = list(assets_dict.values())
-        return sorted(assets, key=lambda x: x.get('created_at', ''), reverse=True)
+        return sorted(list(assets_by_id.values()), key=lambda x: x.get('created_at', ''), reverse=True)
     
     def scan_booklets(self) -> List[Dict[str, Any]]:
-        '''冊子をスキャンしてリスト化（重複排除）'''
-        booklets_dict = {}
+        booklets_by_id = {}
         
         if not self.exports_dir.exists():
             return []
         
-        # _compiled.json ファイルを探す
-        for compiled_file in self.exports_dir.glob("*_compiled.json"):
+        for compiled_file in sorted(self.exports_dir.glob("*_compiled.json")):
             try:
                 with open(compiled_file, 'r', encoding='utf-8') as f:
                     compiled = json.load(f)
                 
-                project_id = compiled.get('project_id', 'unknown')
+                project_id = compiled.get('project_id', '')
                 
-                # 同じ project_id なら最新のみ保持
-                if project_id not in booklets_dict:
-                    booklet_entry = {
+                if project_id and project_id not in booklets_by_id:
+                    booklets_by_id[project_id] = {
                         'project_id': project_id,
                         'title': compiled.get('title', 'Untitled'),
                         'asset_count': compiled.get('asset_count', 0),
@@ -75,9 +67,7 @@ class AssetIndexer:
                         'html_file': str(self.exports_dir / f"{project_id}_booklet.html"),
                         'pdf_file': str(self.exports_dir / f"{project_id}_booklet.pdf"),
                     }
-                    booklets_dict[project_id] = booklet_entry
             except Exception as e:
-                print(f"Error processing {compiled_file}: {e}")
+                pass
         
-        booklets = list(booklets_dict.values())
-        return sorted(booklets, key=lambda x: x.get('created_at', ''), reverse=True)
+        return sorted(list(booklets_by_id.values()), key=lambda x: x.get('created_at', ''), reverse=True)
