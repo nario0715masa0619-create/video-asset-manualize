@@ -42,8 +42,17 @@ def show_single_video_page():
             
             # Build spec
             st.write("Step 2: Building training asset spec...")
-            spec_builder = SourceEvidenceToTrainingAssetBuilder()
-            spec = spec_builder.build_from_source_evidence(source_evidence)
+            if use_llm:
+                from video_asset_manualize.llm_training_asset_builder import LLMTrainingAssetBuilder
+                from video_asset_manualize.provider_factory import ProviderFactory
+                llm_provider_obj = ProviderFactory.create_llm_provider(provider_type=llm_provider)
+                spec_builder = LLMTrainingAssetBuilder(llm_provider=llm_provider_obj)
+                spec = spec_builder.build_from_source_evidence(source_evidence)
+            else:
+                from video_asset_manualize.source_evidence_to_training_asset_builder import SourceEvidenceToTrainingAssetBuilder
+                spec_builder = SourceEvidenceToTrainingAssetBuilder()
+                spec_builder.source_evidence = source_evidence
+                spec = spec_builder.build_training_asset_spec()
             st.success("Spec built")
             
             # Save and generate
