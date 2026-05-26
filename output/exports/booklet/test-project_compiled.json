@@ -1,0 +1,2053 @@
+{
+  "compiled_id": "compiled-88c70cb2",
+  "project_id": "test-project",
+  "title": "Test Booklet",
+  "description": "Compiled Training Manual",
+  "created_at": "2026-05-26T13:25:19.618147Z",
+  "asset_count": 3,
+  "assets": [
+    {
+      "asset_meta": {
+        "asset_id": "asset-001",
+        "source_video_id": "video-001",
+        "title": "顧客登録手順（基本フロー）",
+        "purpose": "新規顧客を業務システムに正しく登録できるようにする",
+        "target_audience": [
+          "新入社員",
+          "店舗スタッフ"
+        ],
+        "target_department": [
+          "営業部",
+          "店舗運営部"
+        ],
+        "prerequisites": [
+          "業務システムへのログイン権限を持っていること",
+          "顧客情報が事前に手元にあること"
+        ],
+        "language": "ja-JP",
+        "status": "draft",
+        "version": "0.1.0",
+        "created_at": "2026-05-25T09:00:00+09:00",
+        "updated_at": "2026-05-25T09:00:00+09:00"
+      },
+      "source_evidence": {
+        "source_video": {
+          "title": "顧客登録研修動画",
+          "duration_ms": 540000,
+          "source_type": "internal_training_video",
+          "file_ref": "videos/customer-registration-basic.mp4"
+        },
+        "transcript_segments": [
+          {
+            "segment_id": "ts-001",
+            "start_ms": 1000,
+            "end_ms": 8000,
+            "speaker_label": "trainer",
+            "text": "まず画面上部のメニューから顧客管理を開きます。",
+            "confidence": 0.97,
+            "classification_hint": "operation"
+          },
+          {
+            "segment_id": "ts-002",
+            "start_ms": 8001,
+            "end_ms": 15000,
+            "speaker_label": "trainer",
+            "text": "顧客登録の前に、同じ顧客が既に登録されていないか確認してください。",
+            "confidence": 0.98,
+            "classification_hint": "caution"
+          },
+          {
+            "segment_id": "ts-003",
+            "start_ms": 15001,
+            "end_ms": 24000,
+            "speaker_label": "trainer",
+            "text": "新規登録ボタンを押すと入力フォームが開きます。氏名、電話番号、メールアドレスは必須です。",
+            "confidence": 0.96,
+            "classification_hint": "operation"
+          },
+          {
+            "segment_id": "ts-004",
+            "start_ms": 24001,
+            "end_ms": 33000,
+            "speaker_label": "trainer",
+            "text": "法人顧客の場合は担当者名の入力欄も表示されるので、忘れずに入力します。",
+            "confidence": 0.95,
+            "classification_hint": "exception"
+          },
+          {
+            "segment_id": "ts-005",
+            "start_ms": 33001,
+            "end_ms": 42000,
+            "speaker_label": "trainer",
+            "text": "入力後は保存ボタンを押し、登録完了メッセージが表示されたことを確認します。",
+            "confidence": 0.97,
+            "classification_hint": "operation"
+          },
+          {
+            "segment_id": "ts-006",
+            "start_ms": 42001,
+            "end_ms": 50000,
+            "speaker_label": "trainer",
+            "text": "もしエラーが出た場合は、必須項目の未入力やメールアドレス形式を見直してください。",
+            "confidence": 0.96,
+            "classification_hint": "exception"
+          },
+          {
+            "segment_id": "ts-007",
+            "start_ms": 50001,
+            "end_ms": 59000,
+            "speaker_label": "trainer",
+            "text": "この手順は店舗での初回受付時によく使うので、素早く迷わず入力できることが重要です。",
+            "confidence": 0.94,
+            "classification_hint": "background"
+          }
+        ],
+        "ocr_segments": [
+          {
+            "ocr_id": "ocr-001",
+            "start_ms": 2500,
+            "end_ms": 5000,
+            "text": "顧客管理",
+            "screen_region": "top_navigation",
+            "confidence": 0.93
+          },
+          {
+            "ocr_id": "ocr-002",
+            "start_ms": 16000,
+            "end_ms": 22000,
+            "text": "新規登録",
+            "screen_region": "main_action",
+            "confidence": 0.95
+          },
+          {
+            "ocr_id": "ocr-003",
+            "start_ms": 18000,
+            "end_ms": 28000,
+            "text": "氏名",
+            "screen_region": "form_field",
+            "confidence": 0.96
+          },
+          {
+            "ocr_id": "ocr-004",
+            "start_ms": 18000,
+            "end_ms": 28000,
+            "text": "電話番号",
+            "screen_region": "form_field",
+            "confidence": 0.95
+          },
+          {
+            "ocr_id": "ocr-005",
+            "start_ms": 18000,
+            "end_ms": 28000,
+            "text": "メールアドレス",
+            "screen_region": "form_field",
+            "confidence": 0.96
+          },
+          {
+            "ocr_id": "ocr-006",
+            "start_ms": 34000,
+            "end_ms": 39000,
+            "text": "保存",
+            "screen_region": "footer_action",
+            "confidence": 0.94
+          },
+          {
+            "ocr_id": "ocr-007",
+            "start_ms": 36000,
+            "end_ms": 42000,
+            "text": "登録が完了しました",
+            "screen_region": "toast_message",
+            "confidence": 0.92
+          }
+        ],
+        "screenshot_candidates": [
+          {
+            "screenshot_id": "sc-001",
+            "at_ms": 3200,
+            "description": "顧客管理メニューが表示されている画面",
+            "file_ref": "screenshots/sc-001.png",
+            "related_step_ids": [
+              "step-001"
+            ]
+          },
+          {
+            "screenshot_id": "sc-002",
+            "at_ms": 17500,
+            "description": "新規登録フォームが開いた状態の画面",
+            "file_ref": "screenshots/sc-002.png",
+            "related_step_ids": [
+              "step-003",
+              "step-004"
+            ]
+          },
+          {
+            "screenshot_id": "sc-003",
+            "at_ms": 36500,
+            "description": "保存後に登録完了メッセージが表示されている画面",
+            "file_ref": "screenshots/sc-003.png",
+            "related_step_ids": [
+              "step-006"
+            ]
+          }
+        ],
+        "speaker_segments": [
+          {
+            "speaker_segment_id": "spk-001",
+            "start_ms": 1000,
+            "end_ms": 59000,
+            "speaker_label": "trainer",
+            "confidence": 0.99
+          }
+        ],
+        "evidence_links": [
+          {
+            "evidence_ref_id": "ev-001",
+            "related_step_id": "step-001",
+            "transcript_segment_ids": [
+              "ts-001"
+            ],
+            "ocr_segment_ids": [
+              "ocr-001"
+            ],
+            "screenshot_ids": [
+              "sc-001"
+            ]
+          },
+          {
+            "evidence_ref_id": "ev-002",
+            "related_step_id": "step-002",
+            "transcript_segment_ids": [
+              "ts-002"
+            ],
+            "ocr_segment_ids": [],
+            "screenshot_ids": []
+          },
+          {
+            "evidence_ref_id": "ev-003",
+            "related_step_id": "step-003",
+            "transcript_segment_ids": [
+              "ts-003"
+            ],
+            "ocr_segment_ids": [
+              "ocr-002"
+            ],
+            "screenshot_ids": [
+              "sc-002"
+            ]
+          },
+          {
+            "evidence_ref_id": "ev-004",
+            "related_step_id": "step-004",
+            "transcript_segment_ids": [
+              "ts-003"
+            ],
+            "ocr_segment_ids": [
+              "ocr-003",
+              "ocr-004",
+              "ocr-005"
+            ],
+            "screenshot_ids": [
+              "sc-002"
+            ]
+          },
+          {
+            "evidence_ref_id": "ev-005",
+            "related_step_id": "step-005",
+            "transcript_segment_ids": [
+              "ts-004"
+            ],
+            "ocr_segment_ids": [],
+            "screenshot_ids": []
+          },
+          {
+            "evidence_ref_id": "ev-006",
+            "related_step_id": "step-006",
+            "transcript_segment_ids": [
+              "ts-005"
+            ],
+            "ocr_segment_ids": [
+              "ocr-006",
+              "ocr-007"
+            ],
+            "screenshot_ids": [
+              "sc-003"
+            ]
+          },
+          {
+            "evidence_ref_id": "ev-007",
+            "related_step_id": "step-007",
+            "transcript_segment_ids": [
+              "ts-006"
+            ],
+            "ocr_segment_ids": [],
+            "screenshot_ids": []
+          }
+        ]
+      },
+      "instructional_core": {
+        "summary": {
+          "purpose_summary": "顧客管理画面から新規顧客を登録する基本手順を説明する。",
+          "outcome_summary": "必要項目を入力し、登録完了メッセージを確認できる状態を目指す。",
+          "audience_summary": "新人スタッフが初回受付時に迷わず対応できるようにするための基本手順である。",
+          "scope_notes": [
+            "法人顧客の特殊承認フローは対象外",
+            "顧客情報の内容確認は別マニュアルを参照"
+          ]
+        },
+        "chapters": [
+          {
+            "chapter_id": "chapter-001",
+            "title": "登録開始前の準備",
+            "objective": "顧客登録を始める前に、重複登録を防ぎ、正しい画面へ進める状態にする。",
+            "procedures": [
+              {
+                "procedure_id": "procedure-001",
+                "title": "顧客管理画面を開く",
+                "goal": "顧客登録を開始できる画面へ進む。",
+                "steps": [
+                  {
+                    "step_id": "step-001",
+                    "order": 1,
+                    "action": "画面上部メニューから「顧客管理」を押す。",
+                    "expected_result": "顧客管理画面が表示される。",
+                    "button_labels": [
+                      "顧客管理"
+                    ],
+                    "input_fields": [],
+                    "branch_condition": "",
+                    "notes": [
+                      "トップナビゲーションから選択する。"
+                    ],
+                    "cautions": [
+                      "権限がない場合はメニューが表示されない。"
+                    ],
+                    "evidence_refs": [
+                      "ev-001"
+                    ]
+                  },
+                  {
+                    "step_id": "step-002",
+                    "order": 2,
+                    "action": "同一顧客が既に登録されていないか検索して確認する。",
+                    "expected_result": "重複登録の有無を事前に把握できる。",
+                    "button_labels": [],
+                    "input_fields": [],
+                    "branch_condition": "",
+                    "notes": [
+                      "氏名や電話番号などで既存顧客を確認する。"
+                    ],
+                    "cautions": [
+                      "重複登録すると後続処理に影響が出る。"
+                    ],
+                    "evidence_refs": [
+                      "ev-002"
+                    ]
+                  }
+                ],
+                "conditions": [
+                  "業務システムにログイン済みであること"
+                ],
+                "cautions": [
+                  "既存顧客の編集画面と新規登録画面を混同しない。"
+                ],
+                "common_mistakes": [
+                  {
+                    "mistake": "既存顧客の有無を確認せずに新規登録を始める。",
+                    "cause": "重複確認の手順を省略してしまう。",
+                    "impact": "同一顧客が二重登録される。",
+                    "recovery_action": "登録前に顧客検索を行い、既存レコードの有無を確認する。"
+                  }
+                ],
+                "checkpoints": [
+                  "顧客管理画面が表示されている",
+                  "重複確認を実施している"
+                ]
+              }
+            ],
+            "chapter_cautions": [
+              "重複登録は必ず防ぐこと。"
+            ]
+          },
+          {
+            "chapter_id": "chapter-002",
+            "title": "顧客情報の入力と登録",
+            "objective": "入力フォームに必要情報を入力し、顧客登録を完了する。",
+            "procedures": [
+              {
+                "procedure_id": "procedure-002",
+                "title": "新規登録フォームを開いて入力する",
+                "goal": "顧客情報を正しく入力し、保存できる状態にする。",
+                "steps": [
+                  {
+                    "step_id": "step-003",
+                    "order": 1,
+                    "action": "「新規登録」ボタンを押す。",
+                    "expected_result": "顧客入力フォームが開く。",
+                    "button_labels": [
+                      "新規登録"
+                    ],
+                    "input_fields": [],
+                    "branch_condition": "",
+                    "notes": [],
+                    "cautions": [
+                      "編集画面ではなく新規登録画面を開いていることを確認する。"
+                    ],
+                    "evidence_refs": [
+                      "ev-003"
+                    ]
+                  },
+                  {
+                    "step_id": "step-004",
+                    "order": 2,
+                    "action": "「氏名」「電話番号」「メールアドレス」を入力する。",
+                    "expected_result": "必須項目が入力される。",
+                    "button_labels": [],
+                    "input_fields": [
+                      "氏名",
+                      "電話番号",
+                      "メールアドレス"
+                    ],
+                    "branch_condition": "",
+                    "notes": [
+                      "必須項目は空欄のまま進めない。"
+                    ],
+                    "cautions": [
+                      "メールアドレス形式の誤りに注意する。"
+                    ],
+                    "evidence_refs": [
+                      "ev-004"
+                    ]
+                  },
+                  {
+                    "step_id": "step-005",
+                    "order": 3,
+                    "action": "法人顧客の場合は担当者名も入力する。",
+                    "expected_result": "法人顧客に必要な追加情報が入力される。",
+                    "button_labels": [],
+                    "input_fields": [
+                      "担当者名"
+                    ],
+                    "branch_condition": "顧客区分が法人の場合",
+                    "notes": [
+                      "個人顧客の場合はこの入力欄が表示されない場合がある。"
+                    ],
+                    "cautions": [
+                      "法人顧客なのに担当者名を入力し忘れない。"
+                    ],
+                    "evidence_refs": [
+                      "ev-005"
+                    ]
+                  },
+                  {
+                    "step_id": "step-006",
+                    "order": 4,
+                    "action": "「保存」ボタンを押し、登録完了メッセージを確認する。",
+                    "expected_result": "顧客登録が完了し、完了メッセージが表示される。",
+                    "button_labels": [
+                      "保存"
+                    ],
+                    "input_fields": [],
+                    "branch_condition": "",
+                    "notes": [
+                      "保存後は必ず結果メッセージを見る。"
+                    ],
+                    "cautions": [
+                      "保存直後に画面を閉じず、登録完了を確認する。"
+                    ],
+                    "evidence_refs": [
+                      "ev-006"
+                    ]
+                  },
+                  {
+                    "step_id": "step-007",
+                    "order": 5,
+                    "action": "エラーが表示された場合は、未入力項目やメールアドレス形式を見直して再度保存する。",
+                    "expected_result": "入力エラーが解消される。",
+                    "button_labels": [],
+                    "input_fields": [
+                      "氏名",
+                      "電話番号",
+                      "メールアドレス"
+                    ],
+                    "branch_condition": "保存時にエラーが表示された場合",
+                    "notes": [
+                      "必須項目と形式チェックを優先して確認する。"
+                    ],
+                    "cautions": [
+                      "エラー内容を確認せずに繰り返し保存しない。"
+                    ],
+                    "evidence_refs": [
+                      "ev-007"
+                    ]
+                  }
+                ],
+                "conditions": [
+                  "顧客管理画面が開いていること"
+                ],
+                "cautions": [
+                  "保存前に必須項目の未入力がないか確認する。"
+                ],
+                "common_mistakes": [
+                  {
+                    "mistake": "メールアドレス形式を誤って入力する。",
+                    "cause": "入力値確認をせずに保存する。",
+                    "impact": "登録エラーになり処理が進まない。",
+                    "recovery_action": "エラーメッセージを確認し、メールアドレス形式を修正して保存し直す。"
+                  },
+                  {
+                    "mistake": "登録完了メッセージを確認せずに画面を閉じる。",
+                    "cause": "保存ボタン押下のみで完了と判断してしまう。",
+                    "impact": "登録成功の確認ができず、再作業が必要になる場合がある。",
+                    "recovery_action": "保存後は必ず完了メッセージまたは登録済み状態を確認する。"
+                  }
+                ],
+                "checkpoints": [
+                  "必須項目がすべて入力されている",
+                  "保存後に登録完了メッセージを確認している"
+                ]
+              }
+            ],
+            "chapter_cautions": [
+              "必須項目の未入力と入力形式エラーに注意する。"
+            ]
+          }
+        ],
+        "global_cautions": [
+          "登録前に重複顧客の有無を確認する。",
+          "保存後は登録完了メッセージを確認する。"
+        ],
+        "global_common_mistakes": [
+          {
+            "mistake": "入力途中で内容確認をせずに保存する。",
+            "cause": "確認工程を省略する。",
+            "impact": "登録エラーや情報不備が発生する。",
+            "recovery_action": "保存前に必須項目と入力形式を見直す。"
+          }
+        ],
+        "global_checklist": [
+          {
+            "item": "重複顧客の確認を行った",
+            "required": true
+          },
+          {
+            "item": "必須項目をすべて入力した",
+            "required": true
+          },
+          {
+            "item": "登録完了メッセージを確認した",
+            "required": true
+          }
+        ]
+      },
+      "derived_views": {
+        "beginner_view": {
+          "title": "新人向け簡易版",
+          "key_points": [
+            "最初に顧客管理画面を開く",
+            "重複顧客がいないか確認する",
+            "必須項目を入力して保存する",
+            "保存後は登録完了メッセージを確認する"
+          ]
+        },
+        "checklist_view": {
+          "title": "顧客登録チェックリスト",
+          "items": [
+            {
+              "item_id": "check-001",
+              "text": "顧客管理画面を開いた",
+              "required": true
+            },
+            {
+              "item_id": "check-002",
+              "text": "重複顧客の確認を行った",
+              "required": true
+            },
+            {
+              "item_id": "check-003",
+              "text": "必須項目を入力した",
+              "required": true
+            },
+            {
+              "item_id": "check-004",
+              "text": "保存後に完了メッセージを確認した",
+              "required": true
+            }
+          ],
+          "usage_notes": [
+            "新人教育時の実施確認に利用する。",
+            "現場での作業セルフチェックにも利用できる。"
+          ]
+        },
+        "faq_candidates": [
+          {
+            "faq_id": "faq-001",
+            "question": "顧客管理メニューが表示されない場合はどうすればよいですか。",
+            "answer_draft": "ログイン権限またはアカウント権限設定を確認し、必要に応じて管理者へ申請してください。",
+            "related_step_ids": [
+              "step-001"
+            ],
+            "priority": "high"
+          },
+          {
+            "faq_id": "faq-002",
+            "question": "保存時にエラーが出た場合は何を確認すればよいですか。",
+            "answer_draft": "必須項目の未入力とメールアドレス形式を優先して見直してください。",
+            "related_step_ids": [
+              "step-007"
+            ],
+            "priority": "high"
+          }
+        ],
+        "digest_view": {
+          "title": "ダイジェスト",
+          "summary_points": [
+            "顧客登録は顧客管理画面から開始する",
+            "重複確認を先に行う",
+            "必須項目を入力して保存する",
+            "保存後の完了確認まで行って登録完了とする"
+          ]
+        },
+        "manager_view": {
+          "title": "管理者向け確認観点",
+          "focus_points": [
+            "重複確認が手順として守られているか",
+            "必須項目の入力漏れがないか",
+            "保存後の確認工程が省略されていないか"
+          ],
+          "review_notes": [
+            "新人向け説明では、重複確認と完了確認を重点的に指導する。"
+          ]
+        }
+      },
+      "delivery_assets": {
+        "raw_transcript": {
+          "file_ref": "exports/raw_transcript_asset-001.txt",
+          "text": "まず画面上部のメニューから顧客管理を開きます。顧客登録の前に、同じ顧客が既に登録されていないか確認してください。新規登録ボタンを押すと入力フォームが開きます。氏名、電話番号、メールアドレスは必須です。法人顧客の場合は担当者名の入力欄も表示されるので、忘れずに入力します。入力後は保存ボタンを押し、登録完了メッセージが表示されたことを確認します。もしエラーが出た場合は、必須項目の未入力やメールアドレス形式を見直してください。この手順は店舗での初回受付時によく使うので、素早く迷わず入力できることが重要です。"
+        },
+        "summary_text": {
+          "text": "顧客管理画面から新規顧客を登録する基本手順をまとめた。重複確認、必須項目入力、保存後の完了確認が重要である。",
+          "generated_at": "2026-05-25T09:00:00+09:00"
+        },
+        "html_manual": {
+          "file_ref": "exports/manual_asset-001.html",
+          "template_version": "0.1.0",
+          "generated_at": "2026-05-25T09:00:00+09:00"
+        },
+        "pdf_manual": {
+          "file_ref": "exports/manual_asset-001.pdf",
+          "template_version": "0.1.0",
+          "generated_at": "2026-05-25T09:00:00+09:00"
+        },
+        "exported_files": [
+          {
+            "asset_type": "json",
+            "file_ref": "exports/asset-001.json",
+            "generated_at": "2026-05-25T09:00:00+09:00",
+            "template_version": "0.1.0"
+          },
+          {
+            "asset_type": "txt",
+            "file_ref": "exports/raw_transcript_asset-001.txt",
+            "generated_at": "2026-05-25T09:00:00+09:00",
+            "template_version": "0.1.0"
+          },
+          {
+            "asset_type": "html",
+            "file_ref": "exports/manual_asset-001.html",
+            "generated_at": "2026-05-25T09:00:00+09:00",
+            "template_version": "0.1.0"
+          },
+          {
+            "asset_type": "pdf",
+            "file_ref": "exports/manual_asset-001.pdf",
+            "generated_at": "2026-05-25T09:00:00+09:00",
+            "template_version": "0.1.0"
+          }
+        ]
+      },
+      "_metadata": {
+        "schema_version": "0.1.0",
+        "generated_at": "2026-05-25T09:00:00+09:00",
+        "pipeline_version": "0.1.0",
+        "generation_context": {
+          "mode": "mvp",
+          "review_required": true,
+          "source_language": "ja-JP"
+        },
+        "review_status": "unreviewed",
+        "review_notes": [
+          "サンプルデータのため、値は説明用に固定している。"
+        ],
+        "change_log": [
+          {
+            "changed_at": "2026-05-25T09:00:00+09:00",
+            "changed_by": "system",
+            "summary": "初期サンプルを作成"
+          }
+        ]
+      }
+    },
+    {
+      "asset_meta": {
+        "asset_id": "asset-001",
+        "source_video_id": "video-001",
+        "title": "顧客登録手順（基本フロー）",
+        "purpose": "新規顧客を業務システムに正しく登録できるようにする",
+        "target_audience": [
+          "新入社員",
+          "店舗スタッフ"
+        ],
+        "target_department": [
+          "営業部",
+          "店舗運営部"
+        ],
+        "prerequisites": [
+          "業務システムへのログイン権限を持っていること",
+          "顧客情報が事前に手元にあること"
+        ],
+        "language": "ja-JP",
+        "status": "draft",
+        "version": "0.1.0",
+        "created_at": "2026-05-25T09:00:00+09:00",
+        "updated_at": "2026-05-25T09:00:00+09:00"
+      },
+      "source_evidence": {
+        "source_video": {
+          "title": "顧客登録研修動画",
+          "duration_ms": 540000,
+          "source_type": "internal_training_video",
+          "file_ref": "videos/customer-registration-basic.mp4"
+        },
+        "transcript_segments": [
+          {
+            "segment_id": "ts-001",
+            "start_ms": 1000,
+            "end_ms": 8000,
+            "speaker_label": "trainer",
+            "text": "まず画面上部のメニューから顧客管理を開きます。",
+            "confidence": 0.97,
+            "classification_hint": "operation"
+          },
+          {
+            "segment_id": "ts-002",
+            "start_ms": 8001,
+            "end_ms": 15000,
+            "speaker_label": "trainer",
+            "text": "顧客登録の前に、同じ顧客が既に登録されていないか確認してください。",
+            "confidence": 0.98,
+            "classification_hint": "caution"
+          },
+          {
+            "segment_id": "ts-003",
+            "start_ms": 15001,
+            "end_ms": 24000,
+            "speaker_label": "trainer",
+            "text": "新規登録ボタンを押すと入力フォームが開きます。氏名、電話番号、メールアドレスは必須です。",
+            "confidence": 0.96,
+            "classification_hint": "operation"
+          },
+          {
+            "segment_id": "ts-004",
+            "start_ms": 24001,
+            "end_ms": 33000,
+            "speaker_label": "trainer",
+            "text": "法人顧客の場合は担当者名の入力欄も表示されるので、忘れずに入力します。",
+            "confidence": 0.95,
+            "classification_hint": "exception"
+          },
+          {
+            "segment_id": "ts-005",
+            "start_ms": 33001,
+            "end_ms": 42000,
+            "speaker_label": "trainer",
+            "text": "入力後は保存ボタンを押し、登録完了メッセージが表示されたことを確認します。",
+            "confidence": 0.97,
+            "classification_hint": "operation"
+          },
+          {
+            "segment_id": "ts-006",
+            "start_ms": 42001,
+            "end_ms": 50000,
+            "speaker_label": "trainer",
+            "text": "もしエラーが出た場合は、必須項目の未入力やメールアドレス形式を見直してください。",
+            "confidence": 0.96,
+            "classification_hint": "exception"
+          },
+          {
+            "segment_id": "ts-007",
+            "start_ms": 50001,
+            "end_ms": 59000,
+            "speaker_label": "trainer",
+            "text": "この手順は店舗での初回受付時によく使うので、素早く迷わず入力できることが重要です。",
+            "confidence": 0.94,
+            "classification_hint": "background"
+          }
+        ],
+        "ocr_segments": [
+          {
+            "ocr_id": "ocr-001",
+            "start_ms": 2500,
+            "end_ms": 5000,
+            "text": "顧客管理",
+            "screen_region": "top_navigation",
+            "confidence": 0.93
+          },
+          {
+            "ocr_id": "ocr-002",
+            "start_ms": 16000,
+            "end_ms": 22000,
+            "text": "新規登録",
+            "screen_region": "main_action",
+            "confidence": 0.95
+          },
+          {
+            "ocr_id": "ocr-003",
+            "start_ms": 18000,
+            "end_ms": 28000,
+            "text": "氏名",
+            "screen_region": "form_field",
+            "confidence": 0.96
+          },
+          {
+            "ocr_id": "ocr-004",
+            "start_ms": 18000,
+            "end_ms": 28000,
+            "text": "電話番号",
+            "screen_region": "form_field",
+            "confidence": 0.95
+          },
+          {
+            "ocr_id": "ocr-005",
+            "start_ms": 18000,
+            "end_ms": 28000,
+            "text": "メールアドレス",
+            "screen_region": "form_field",
+            "confidence": 0.96
+          },
+          {
+            "ocr_id": "ocr-006",
+            "start_ms": 34000,
+            "end_ms": 39000,
+            "text": "保存",
+            "screen_region": "footer_action",
+            "confidence": 0.94
+          },
+          {
+            "ocr_id": "ocr-007",
+            "start_ms": 36000,
+            "end_ms": 42000,
+            "text": "登録が完了しました",
+            "screen_region": "toast_message",
+            "confidence": 0.92
+          }
+        ],
+        "screenshot_candidates": [
+          {
+            "screenshot_id": "sc-001",
+            "at_ms": 3200,
+            "description": "顧客管理メニューが表示されている画面",
+            "file_ref": "screenshots/sc-001.png",
+            "related_step_ids": [
+              "step-001"
+            ]
+          },
+          {
+            "screenshot_id": "sc-002",
+            "at_ms": 17500,
+            "description": "新規登録フォームが開いた状態の画面",
+            "file_ref": "screenshots/sc-002.png",
+            "related_step_ids": [
+              "step-003",
+              "step-004"
+            ]
+          },
+          {
+            "screenshot_id": "sc-003",
+            "at_ms": 36500,
+            "description": "保存後に登録完了メッセージが表示されている画面",
+            "file_ref": "screenshots/sc-003.png",
+            "related_step_ids": [
+              "step-006"
+            ]
+          }
+        ],
+        "speaker_segments": [
+          {
+            "speaker_segment_id": "spk-001",
+            "start_ms": 1000,
+            "end_ms": 59000,
+            "speaker_label": "trainer",
+            "confidence": 0.99
+          }
+        ],
+        "evidence_links": [
+          {
+            "evidence_ref_id": "ev-001",
+            "related_step_id": "step-001",
+            "transcript_segment_ids": [
+              "ts-001"
+            ],
+            "ocr_segment_ids": [
+              "ocr-001"
+            ],
+            "screenshot_ids": [
+              "sc-001"
+            ]
+          },
+          {
+            "evidence_ref_id": "ev-002",
+            "related_step_id": "step-002",
+            "transcript_segment_ids": [
+              "ts-002"
+            ],
+            "ocr_segment_ids": [],
+            "screenshot_ids": []
+          },
+          {
+            "evidence_ref_id": "ev-003",
+            "related_step_id": "step-003",
+            "transcript_segment_ids": [
+              "ts-003"
+            ],
+            "ocr_segment_ids": [
+              "ocr-002"
+            ],
+            "screenshot_ids": [
+              "sc-002"
+            ]
+          },
+          {
+            "evidence_ref_id": "ev-004",
+            "related_step_id": "step-004",
+            "transcript_segment_ids": [
+              "ts-003"
+            ],
+            "ocr_segment_ids": [
+              "ocr-003",
+              "ocr-004",
+              "ocr-005"
+            ],
+            "screenshot_ids": [
+              "sc-002"
+            ]
+          },
+          {
+            "evidence_ref_id": "ev-005",
+            "related_step_id": "step-005",
+            "transcript_segment_ids": [
+              "ts-004"
+            ],
+            "ocr_segment_ids": [],
+            "screenshot_ids": []
+          },
+          {
+            "evidence_ref_id": "ev-006",
+            "related_step_id": "step-006",
+            "transcript_segment_ids": [
+              "ts-005"
+            ],
+            "ocr_segment_ids": [
+              "ocr-006",
+              "ocr-007"
+            ],
+            "screenshot_ids": [
+              "sc-003"
+            ]
+          },
+          {
+            "evidence_ref_id": "ev-007",
+            "related_step_id": "step-007",
+            "transcript_segment_ids": [
+              "ts-006"
+            ],
+            "ocr_segment_ids": [],
+            "screenshot_ids": []
+          }
+        ]
+      },
+      "instructional_core": {
+        "summary": {
+          "purpose_summary": "顧客管理画面から新規顧客を登録する基本手順を説明する。",
+          "outcome_summary": "必要項目を入力し、登録完了メッセージを確認できる状態を目指す。",
+          "audience_summary": "新人スタッフが初回受付時に迷わず対応できるようにするための基本手順である。",
+          "scope_notes": [
+            "法人顧客の特殊承認フローは対象外",
+            "顧客情報の内容確認は別マニュアルを参照"
+          ]
+        },
+        "chapters": [
+          {
+            "chapter_id": "chapter-001",
+            "title": "登録開始前の準備",
+            "objective": "顧客登録を始める前に、重複登録を防ぎ、正しい画面へ進める状態にする。",
+            "procedures": [
+              {
+                "procedure_id": "procedure-001",
+                "title": "顧客管理画面を開く",
+                "goal": "顧客登録を開始できる画面へ進む。",
+                "steps": [
+                  {
+                    "step_id": "step-001",
+                    "order": 1,
+                    "action": "画面上部メニューから「顧客管理」を押す。",
+                    "expected_result": "顧客管理画面が表示される。",
+                    "button_labels": [
+                      "顧客管理"
+                    ],
+                    "input_fields": [],
+                    "branch_condition": "",
+                    "notes": [
+                      "トップナビゲーションから選択する。"
+                    ],
+                    "cautions": [
+                      "権限がない場合はメニューが表示されない。"
+                    ],
+                    "evidence_refs": [
+                      "ev-001"
+                    ]
+                  },
+                  {
+                    "step_id": "step-002",
+                    "order": 2,
+                    "action": "同一顧客が既に登録されていないか検索して確認する。",
+                    "expected_result": "重複登録の有無を事前に把握できる。",
+                    "button_labels": [],
+                    "input_fields": [],
+                    "branch_condition": "",
+                    "notes": [
+                      "氏名や電話番号などで既存顧客を確認する。"
+                    ],
+                    "cautions": [
+                      "重複登録すると後続処理に影響が出る。"
+                    ],
+                    "evidence_refs": [
+                      "ev-002"
+                    ]
+                  }
+                ],
+                "conditions": [
+                  "業務システムにログイン済みであること"
+                ],
+                "cautions": [
+                  "既存顧客の編集画面と新規登録画面を混同しない。"
+                ],
+                "common_mistakes": [
+                  {
+                    "mistake": "既存顧客の有無を確認せずに新規登録を始める。",
+                    "cause": "重複確認の手順を省略してしまう。",
+                    "impact": "同一顧客が二重登録される。",
+                    "recovery_action": "登録前に顧客検索を行い、既存レコードの有無を確認する。"
+                  }
+                ],
+                "checkpoints": [
+                  "顧客管理画面が表示されている",
+                  "重複確認を実施している"
+                ]
+              }
+            ],
+            "chapter_cautions": [
+              "重複登録は必ず防ぐこと。"
+            ]
+          },
+          {
+            "chapter_id": "chapter-002",
+            "title": "顧客情報の入力と登録",
+            "objective": "入力フォームに必要情報を入力し、顧客登録を完了する。",
+            "procedures": [
+              {
+                "procedure_id": "procedure-002",
+                "title": "新規登録フォームを開いて入力する",
+                "goal": "顧客情報を正しく入力し、保存できる状態にする。",
+                "steps": [
+                  {
+                    "step_id": "step-003",
+                    "order": 1,
+                    "action": "「新規登録」ボタンを押す。",
+                    "expected_result": "顧客入力フォームが開く。",
+                    "button_labels": [
+                      "新規登録"
+                    ],
+                    "input_fields": [],
+                    "branch_condition": "",
+                    "notes": [],
+                    "cautions": [
+                      "編集画面ではなく新規登録画面を開いていることを確認する。"
+                    ],
+                    "evidence_refs": [
+                      "ev-003"
+                    ]
+                  },
+                  {
+                    "step_id": "step-004",
+                    "order": 2,
+                    "action": "「氏名」「電話番号」「メールアドレス」を入力する。",
+                    "expected_result": "必須項目が入力される。",
+                    "button_labels": [],
+                    "input_fields": [
+                      "氏名",
+                      "電話番号",
+                      "メールアドレス"
+                    ],
+                    "branch_condition": "",
+                    "notes": [
+                      "必須項目は空欄のまま進めない。"
+                    ],
+                    "cautions": [
+                      "メールアドレス形式の誤りに注意する。"
+                    ],
+                    "evidence_refs": [
+                      "ev-004"
+                    ]
+                  },
+                  {
+                    "step_id": "step-005",
+                    "order": 3,
+                    "action": "法人顧客の場合は担当者名も入力する。",
+                    "expected_result": "法人顧客に必要な追加情報が入力される。",
+                    "button_labels": [],
+                    "input_fields": [
+                      "担当者名"
+                    ],
+                    "branch_condition": "顧客区分が法人の場合",
+                    "notes": [
+                      "個人顧客の場合はこの入力欄が表示されない場合がある。"
+                    ],
+                    "cautions": [
+                      "法人顧客なのに担当者名を入力し忘れない。"
+                    ],
+                    "evidence_refs": [
+                      "ev-005"
+                    ]
+                  },
+                  {
+                    "step_id": "step-006",
+                    "order": 4,
+                    "action": "「保存」ボタンを押し、登録完了メッセージを確認する。",
+                    "expected_result": "顧客登録が完了し、完了メッセージが表示される。",
+                    "button_labels": [
+                      "保存"
+                    ],
+                    "input_fields": [],
+                    "branch_condition": "",
+                    "notes": [
+                      "保存後は必ず結果メッセージを見る。"
+                    ],
+                    "cautions": [
+                      "保存直後に画面を閉じず、登録完了を確認する。"
+                    ],
+                    "evidence_refs": [
+                      "ev-006"
+                    ]
+                  },
+                  {
+                    "step_id": "step-007",
+                    "order": 5,
+                    "action": "エラーが表示された場合は、未入力項目やメールアドレス形式を見直して再度保存する。",
+                    "expected_result": "入力エラーが解消される。",
+                    "button_labels": [],
+                    "input_fields": [
+                      "氏名",
+                      "電話番号",
+                      "メールアドレス"
+                    ],
+                    "branch_condition": "保存時にエラーが表示された場合",
+                    "notes": [
+                      "必須項目と形式チェックを優先して確認する。"
+                    ],
+                    "cautions": [
+                      "エラー内容を確認せずに繰り返し保存しない。"
+                    ],
+                    "evidence_refs": [
+                      "ev-007"
+                    ]
+                  }
+                ],
+                "conditions": [
+                  "顧客管理画面が開いていること"
+                ],
+                "cautions": [
+                  "保存前に必須項目の未入力がないか確認する。"
+                ],
+                "common_mistakes": [
+                  {
+                    "mistake": "メールアドレス形式を誤って入力する。",
+                    "cause": "入力値確認をせずに保存する。",
+                    "impact": "登録エラーになり処理が進まない。",
+                    "recovery_action": "エラーメッセージを確認し、メールアドレス形式を修正して保存し直す。"
+                  },
+                  {
+                    "mistake": "登録完了メッセージを確認せずに画面を閉じる。",
+                    "cause": "保存ボタン押下のみで完了と判断してしまう。",
+                    "impact": "登録成功の確認ができず、再作業が必要になる場合がある。",
+                    "recovery_action": "保存後は必ず完了メッセージまたは登録済み状態を確認する。"
+                  }
+                ],
+                "checkpoints": [
+                  "必須項目がすべて入力されている",
+                  "保存後に登録完了メッセージを確認している"
+                ]
+              }
+            ],
+            "chapter_cautions": [
+              "必須項目の未入力と入力形式エラーに注意する。"
+            ]
+          }
+        ],
+        "global_cautions": [
+          "登録前に重複顧客の有無を確認する。",
+          "保存後は登録完了メッセージを確認する。"
+        ],
+        "global_common_mistakes": [
+          {
+            "mistake": "入力途中で内容確認をせずに保存する。",
+            "cause": "確認工程を省略する。",
+            "impact": "登録エラーや情報不備が発生する。",
+            "recovery_action": "保存前に必須項目と入力形式を見直す。"
+          }
+        ],
+        "global_checklist": [
+          {
+            "item": "重複顧客の確認を行った",
+            "required": true
+          },
+          {
+            "item": "必須項目をすべて入力した",
+            "required": true
+          },
+          {
+            "item": "登録完了メッセージを確認した",
+            "required": true
+          }
+        ]
+      },
+      "derived_views": {
+        "beginner_view": {
+          "title": "新人向け簡易版",
+          "key_points": [
+            "最初に顧客管理画面を開く",
+            "重複顧客がいないか確認する",
+            "必須項目を入力して保存する",
+            "保存後は登録完了メッセージを確認する"
+          ]
+        },
+        "checklist_view": {
+          "title": "顧客登録チェックリスト",
+          "items": [
+            {
+              "item_id": "check-001",
+              "text": "顧客管理画面を開いた",
+              "required": true
+            },
+            {
+              "item_id": "check-002",
+              "text": "重複顧客の確認を行った",
+              "required": true
+            },
+            {
+              "item_id": "check-003",
+              "text": "必須項目を入力した",
+              "required": true
+            },
+            {
+              "item_id": "check-004",
+              "text": "保存後に完了メッセージを確認した",
+              "required": true
+            }
+          ],
+          "usage_notes": [
+            "新人教育時の実施確認に利用する。",
+            "現場での作業セルフチェックにも利用できる。"
+          ]
+        },
+        "faq_candidates": [
+          {
+            "faq_id": "faq-001",
+            "question": "顧客管理メニューが表示されない場合はどうすればよいですか。",
+            "answer_draft": "ログイン権限またはアカウント権限設定を確認し、必要に応じて管理者へ申請してください。",
+            "related_step_ids": [
+              "step-001"
+            ],
+            "priority": "high"
+          },
+          {
+            "faq_id": "faq-002",
+            "question": "保存時にエラーが出た場合は何を確認すればよいですか。",
+            "answer_draft": "必須項目の未入力とメールアドレス形式を優先して見直してください。",
+            "related_step_ids": [
+              "step-007"
+            ],
+            "priority": "high"
+          }
+        ],
+        "digest_view": {
+          "title": "ダイジェスト",
+          "summary_points": [
+            "顧客登録は顧客管理画面から開始する",
+            "重複確認を先に行う",
+            "必須項目を入力して保存する",
+            "保存後の完了確認まで行って登録完了とする"
+          ]
+        },
+        "manager_view": {
+          "title": "管理者向け確認観点",
+          "focus_points": [
+            "重複確認が手順として守られているか",
+            "必須項目の入力漏れがないか",
+            "保存後の確認工程が省略されていないか"
+          ],
+          "review_notes": [
+            "新人向け説明では、重複確認と完了確認を重点的に指導する。"
+          ]
+        }
+      },
+      "delivery_assets": {
+        "raw_transcript": {
+          "file_ref": "exports/raw_transcript_asset-001.txt",
+          "text": "まず画面上部のメニューから顧客管理を開きます。顧客登録の前に、同じ顧客が既に登録されていないか確認してください。新規登録ボタンを押すと入力フォームが開きます。氏名、電話番号、メールアドレスは必須です。法人顧客の場合は担当者名の入力欄も表示されるので、忘れずに入力します。入力後は保存ボタンを押し、登録完了メッセージが表示されたことを確認します。もしエラーが出た場合は、必須項目の未入力やメールアドレス形式を見直してください。この手順は店舗での初回受付時によく使うので、素早く迷わず入力できることが重要です。"
+        },
+        "summary_text": {
+          "text": "顧客管理画面から新規顧客を登録する基本手順をまとめた。重複確認、必須項目入力、保存後の完了確認が重要である。",
+          "generated_at": "2026-05-25T09:00:00+09:00"
+        },
+        "html_manual": {
+          "file_ref": "exports/manual_asset-001.html",
+          "template_version": "0.1.0",
+          "generated_at": "2026-05-25T09:00:00+09:00"
+        },
+        "pdf_manual": {
+          "file_ref": "exports/manual_asset-001.pdf",
+          "template_version": "0.1.0",
+          "generated_at": "2026-05-25T09:00:00+09:00"
+        },
+        "exported_files": [
+          {
+            "asset_type": "json",
+            "file_ref": "exports/asset-001.json",
+            "generated_at": "2026-05-25T09:00:00+09:00",
+            "template_version": "0.1.0"
+          },
+          {
+            "asset_type": "txt",
+            "file_ref": "exports/raw_transcript_asset-001.txt",
+            "generated_at": "2026-05-25T09:00:00+09:00",
+            "template_version": "0.1.0"
+          },
+          {
+            "asset_type": "html",
+            "file_ref": "exports/manual_asset-001.html",
+            "generated_at": "2026-05-25T09:00:00+09:00",
+            "template_version": "0.1.0"
+          },
+          {
+            "asset_type": "pdf",
+            "file_ref": "exports/manual_asset-001.pdf",
+            "generated_at": "2026-05-25T09:00:00+09:00",
+            "template_version": "0.1.0"
+          }
+        ]
+      },
+      "_metadata": {
+        "schema_version": "0.1.0",
+        "generated_at": "2026-05-25T09:00:00+09:00",
+        "pipeline_version": "0.1.0",
+        "generation_context": {
+          "mode": "mvp",
+          "review_required": true,
+          "source_language": "ja-JP"
+        },
+        "review_status": "unreviewed",
+        "review_notes": [
+          "サンプルデータのため、値は説明用に固定している。"
+        ],
+        "change_log": [
+          {
+            "changed_at": "2026-05-25T09:00:00+09:00",
+            "changed_by": "system",
+            "summary": "初期サンプルを作成"
+          }
+        ]
+      }
+    },
+    {
+      "asset_meta": {
+        "asset_id": "asset-001",
+        "source_video_id": "video-001",
+        "title": "顧客登録手順（基本フロー）",
+        "purpose": "新規顧客を業務システムに正しく登録できるようにする",
+        "target_audience": [
+          "新入社員",
+          "店舗スタッフ"
+        ],
+        "target_department": [
+          "営業部",
+          "店舗運営部"
+        ],
+        "prerequisites": [
+          "業務システムへのログイン権限を持っていること",
+          "顧客情報が事前に手元にあること"
+        ],
+        "language": "ja-JP",
+        "status": "draft",
+        "version": "0.1.0",
+        "created_at": "2026-05-25T09:00:00+09:00",
+        "updated_at": "2026-05-25T09:00:00+09:00"
+      },
+      "source_evidence": {
+        "source_video": {
+          "title": "顧客登録研修動画",
+          "duration_ms": 540000,
+          "source_type": "internal_training_video",
+          "file_ref": "videos/customer-registration-basic.mp4"
+        },
+        "transcript_segments": [
+          {
+            "segment_id": "ts-001",
+            "start_ms": 1000,
+            "end_ms": 8000,
+            "speaker_label": "trainer",
+            "text": "まず画面上部のメニューから顧客管理を開きます。",
+            "confidence": 0.97,
+            "classification_hint": "operation"
+          },
+          {
+            "segment_id": "ts-002",
+            "start_ms": 8001,
+            "end_ms": 15000,
+            "speaker_label": "trainer",
+            "text": "顧客登録の前に、同じ顧客が既に登録されていないか確認してください。",
+            "confidence": 0.98,
+            "classification_hint": "caution"
+          },
+          {
+            "segment_id": "ts-003",
+            "start_ms": 15001,
+            "end_ms": 24000,
+            "speaker_label": "trainer",
+            "text": "新規登録ボタンを押すと入力フォームが開きます。氏名、電話番号、メールアドレスは必須です。",
+            "confidence": 0.96,
+            "classification_hint": "operation"
+          },
+          {
+            "segment_id": "ts-004",
+            "start_ms": 24001,
+            "end_ms": 33000,
+            "speaker_label": "trainer",
+            "text": "法人顧客の場合は担当者名の入力欄も表示されるので、忘れずに入力します。",
+            "confidence": 0.95,
+            "classification_hint": "exception"
+          },
+          {
+            "segment_id": "ts-005",
+            "start_ms": 33001,
+            "end_ms": 42000,
+            "speaker_label": "trainer",
+            "text": "入力後は保存ボタンを押し、登録完了メッセージが表示されたことを確認します。",
+            "confidence": 0.97,
+            "classification_hint": "operation"
+          },
+          {
+            "segment_id": "ts-006",
+            "start_ms": 42001,
+            "end_ms": 50000,
+            "speaker_label": "trainer",
+            "text": "もしエラーが出た場合は、必須項目の未入力やメールアドレス形式を見直してください。",
+            "confidence": 0.96,
+            "classification_hint": "exception"
+          },
+          {
+            "segment_id": "ts-007",
+            "start_ms": 50001,
+            "end_ms": 59000,
+            "speaker_label": "trainer",
+            "text": "この手順は店舗での初回受付時によく使うので、素早く迷わず入力できることが重要です。",
+            "confidence": 0.94,
+            "classification_hint": "background"
+          }
+        ],
+        "ocr_segments": [
+          {
+            "ocr_id": "ocr-001",
+            "start_ms": 2500,
+            "end_ms": 5000,
+            "text": "顧客管理",
+            "screen_region": "top_navigation",
+            "confidence": 0.93
+          },
+          {
+            "ocr_id": "ocr-002",
+            "start_ms": 16000,
+            "end_ms": 22000,
+            "text": "新規登録",
+            "screen_region": "main_action",
+            "confidence": 0.95
+          },
+          {
+            "ocr_id": "ocr-003",
+            "start_ms": 18000,
+            "end_ms": 28000,
+            "text": "氏名",
+            "screen_region": "form_field",
+            "confidence": 0.96
+          },
+          {
+            "ocr_id": "ocr-004",
+            "start_ms": 18000,
+            "end_ms": 28000,
+            "text": "電話番号",
+            "screen_region": "form_field",
+            "confidence": 0.95
+          },
+          {
+            "ocr_id": "ocr-005",
+            "start_ms": 18000,
+            "end_ms": 28000,
+            "text": "メールアドレス",
+            "screen_region": "form_field",
+            "confidence": 0.96
+          },
+          {
+            "ocr_id": "ocr-006",
+            "start_ms": 34000,
+            "end_ms": 39000,
+            "text": "保存",
+            "screen_region": "footer_action",
+            "confidence": 0.94
+          },
+          {
+            "ocr_id": "ocr-007",
+            "start_ms": 36000,
+            "end_ms": 42000,
+            "text": "登録が完了しました",
+            "screen_region": "toast_message",
+            "confidence": 0.92
+          }
+        ],
+        "screenshot_candidates": [
+          {
+            "screenshot_id": "sc-001",
+            "at_ms": 3200,
+            "description": "顧客管理メニューが表示されている画面",
+            "file_ref": "screenshots/sc-001.png",
+            "related_step_ids": [
+              "step-001"
+            ]
+          },
+          {
+            "screenshot_id": "sc-002",
+            "at_ms": 17500,
+            "description": "新規登録フォームが開いた状態の画面",
+            "file_ref": "screenshots/sc-002.png",
+            "related_step_ids": [
+              "step-003",
+              "step-004"
+            ]
+          },
+          {
+            "screenshot_id": "sc-003",
+            "at_ms": 36500,
+            "description": "保存後に登録完了メッセージが表示されている画面",
+            "file_ref": "screenshots/sc-003.png",
+            "related_step_ids": [
+              "step-006"
+            ]
+          }
+        ],
+        "speaker_segments": [
+          {
+            "speaker_segment_id": "spk-001",
+            "start_ms": 1000,
+            "end_ms": 59000,
+            "speaker_label": "trainer",
+            "confidence": 0.99
+          }
+        ],
+        "evidence_links": [
+          {
+            "evidence_ref_id": "ev-001",
+            "related_step_id": "step-001",
+            "transcript_segment_ids": [
+              "ts-001"
+            ],
+            "ocr_segment_ids": [
+              "ocr-001"
+            ],
+            "screenshot_ids": [
+              "sc-001"
+            ]
+          },
+          {
+            "evidence_ref_id": "ev-002",
+            "related_step_id": "step-002",
+            "transcript_segment_ids": [
+              "ts-002"
+            ],
+            "ocr_segment_ids": [],
+            "screenshot_ids": []
+          },
+          {
+            "evidence_ref_id": "ev-003",
+            "related_step_id": "step-003",
+            "transcript_segment_ids": [
+              "ts-003"
+            ],
+            "ocr_segment_ids": [
+              "ocr-002"
+            ],
+            "screenshot_ids": [
+              "sc-002"
+            ]
+          },
+          {
+            "evidence_ref_id": "ev-004",
+            "related_step_id": "step-004",
+            "transcript_segment_ids": [
+              "ts-003"
+            ],
+            "ocr_segment_ids": [
+              "ocr-003",
+              "ocr-004",
+              "ocr-005"
+            ],
+            "screenshot_ids": [
+              "sc-002"
+            ]
+          },
+          {
+            "evidence_ref_id": "ev-005",
+            "related_step_id": "step-005",
+            "transcript_segment_ids": [
+              "ts-004"
+            ],
+            "ocr_segment_ids": [],
+            "screenshot_ids": []
+          },
+          {
+            "evidence_ref_id": "ev-006",
+            "related_step_id": "step-006",
+            "transcript_segment_ids": [
+              "ts-005"
+            ],
+            "ocr_segment_ids": [
+              "ocr-006",
+              "ocr-007"
+            ],
+            "screenshot_ids": [
+              "sc-003"
+            ]
+          },
+          {
+            "evidence_ref_id": "ev-007",
+            "related_step_id": "step-007",
+            "transcript_segment_ids": [
+              "ts-006"
+            ],
+            "ocr_segment_ids": [],
+            "screenshot_ids": []
+          }
+        ]
+      },
+      "instructional_core": {
+        "summary": {
+          "purpose_summary": "顧客管理画面から新規顧客を登録する基本手順を説明する。",
+          "outcome_summary": "必要項目を入力し、登録完了メッセージを確認できる状態を目指す。",
+          "audience_summary": "新人スタッフが初回受付時に迷わず対応できるようにするための基本手順である。",
+          "scope_notes": [
+            "法人顧客の特殊承認フローは対象外",
+            "顧客情報の内容確認は別マニュアルを参照"
+          ]
+        },
+        "chapters": [
+          {
+            "chapter_id": "chapter-001",
+            "title": "登録開始前の準備",
+            "objective": "顧客登録を始める前に、重複登録を防ぎ、正しい画面へ進める状態にする。",
+            "procedures": [
+              {
+                "procedure_id": "procedure-001",
+                "title": "顧客管理画面を開く",
+                "goal": "顧客登録を開始できる画面へ進む。",
+                "steps": [
+                  {
+                    "step_id": "step-001",
+                    "order": 1,
+                    "action": "画面上部メニューから「顧客管理」を押す。",
+                    "expected_result": "顧客管理画面が表示される。",
+                    "button_labels": [
+                      "顧客管理"
+                    ],
+                    "input_fields": [],
+                    "branch_condition": "",
+                    "notes": [
+                      "トップナビゲーションから選択する。"
+                    ],
+                    "cautions": [
+                      "権限がない場合はメニューが表示されない。"
+                    ],
+                    "evidence_refs": [
+                      "ev-001"
+                    ]
+                  },
+                  {
+                    "step_id": "step-002",
+                    "order": 2,
+                    "action": "同一顧客が既に登録されていないか検索して確認する。",
+                    "expected_result": "重複登録の有無を事前に把握できる。",
+                    "button_labels": [],
+                    "input_fields": [],
+                    "branch_condition": "",
+                    "notes": [
+                      "氏名や電話番号などで既存顧客を確認する。"
+                    ],
+                    "cautions": [
+                      "重複登録すると後続処理に影響が出る。"
+                    ],
+                    "evidence_refs": [
+                      "ev-002"
+                    ]
+                  }
+                ],
+                "conditions": [
+                  "業務システムにログイン済みであること"
+                ],
+                "cautions": [
+                  "既存顧客の編集画面と新規登録画面を混同しない。"
+                ],
+                "common_mistakes": [
+                  {
+                    "mistake": "既存顧客の有無を確認せずに新規登録を始める。",
+                    "cause": "重複確認の手順を省略してしまう。",
+                    "impact": "同一顧客が二重登録される。",
+                    "recovery_action": "登録前に顧客検索を行い、既存レコードの有無を確認する。"
+                  }
+                ],
+                "checkpoints": [
+                  "顧客管理画面が表示されている",
+                  "重複確認を実施している"
+                ]
+              }
+            ],
+            "chapter_cautions": [
+              "重複登録は必ず防ぐこと。"
+            ]
+          },
+          {
+            "chapter_id": "chapter-002",
+            "title": "顧客情報の入力と登録",
+            "objective": "入力フォームに必要情報を入力し、顧客登録を完了する。",
+            "procedures": [
+              {
+                "procedure_id": "procedure-002",
+                "title": "新規登録フォームを開いて入力する",
+                "goal": "顧客情報を正しく入力し、保存できる状態にする。",
+                "steps": [
+                  {
+                    "step_id": "step-003",
+                    "order": 1,
+                    "action": "「新規登録」ボタンを押す。",
+                    "expected_result": "顧客入力フォームが開く。",
+                    "button_labels": [
+                      "新規登録"
+                    ],
+                    "input_fields": [],
+                    "branch_condition": "",
+                    "notes": [],
+                    "cautions": [
+                      "編集画面ではなく新規登録画面を開いていることを確認する。"
+                    ],
+                    "evidence_refs": [
+                      "ev-003"
+                    ]
+                  },
+                  {
+                    "step_id": "step-004",
+                    "order": 2,
+                    "action": "「氏名」「電話番号」「メールアドレス」を入力する。",
+                    "expected_result": "必須項目が入力される。",
+                    "button_labels": [],
+                    "input_fields": [
+                      "氏名",
+                      "電話番号",
+                      "メールアドレス"
+                    ],
+                    "branch_condition": "",
+                    "notes": [
+                      "必須項目は空欄のまま進めない。"
+                    ],
+                    "cautions": [
+                      "メールアドレス形式の誤りに注意する。"
+                    ],
+                    "evidence_refs": [
+                      "ev-004"
+                    ]
+                  },
+                  {
+                    "step_id": "step-005",
+                    "order": 3,
+                    "action": "法人顧客の場合は担当者名も入力する。",
+                    "expected_result": "法人顧客に必要な追加情報が入力される。",
+                    "button_labels": [],
+                    "input_fields": [
+                      "担当者名"
+                    ],
+                    "branch_condition": "顧客区分が法人の場合",
+                    "notes": [
+                      "個人顧客の場合はこの入力欄が表示されない場合がある。"
+                    ],
+                    "cautions": [
+                      "法人顧客なのに担当者名を入力し忘れない。"
+                    ],
+                    "evidence_refs": [
+                      "ev-005"
+                    ]
+                  },
+                  {
+                    "step_id": "step-006",
+                    "order": 4,
+                    "action": "「保存」ボタンを押し、登録完了メッセージを確認する。",
+                    "expected_result": "顧客登録が完了し、完了メッセージが表示される。",
+                    "button_labels": [
+                      "保存"
+                    ],
+                    "input_fields": [],
+                    "branch_condition": "",
+                    "notes": [
+                      "保存後は必ず結果メッセージを見る。"
+                    ],
+                    "cautions": [
+                      "保存直後に画面を閉じず、登録完了を確認する。"
+                    ],
+                    "evidence_refs": [
+                      "ev-006"
+                    ]
+                  },
+                  {
+                    "step_id": "step-007",
+                    "order": 5,
+                    "action": "エラーが表示された場合は、未入力項目やメールアドレス形式を見直して再度保存する。",
+                    "expected_result": "入力エラーが解消される。",
+                    "button_labels": [],
+                    "input_fields": [
+                      "氏名",
+                      "電話番号",
+                      "メールアドレス"
+                    ],
+                    "branch_condition": "保存時にエラーが表示された場合",
+                    "notes": [
+                      "必須項目と形式チェックを優先して確認する。"
+                    ],
+                    "cautions": [
+                      "エラー内容を確認せずに繰り返し保存しない。"
+                    ],
+                    "evidence_refs": [
+                      "ev-007"
+                    ]
+                  }
+                ],
+                "conditions": [
+                  "顧客管理画面が開いていること"
+                ],
+                "cautions": [
+                  "保存前に必須項目の未入力がないか確認する。"
+                ],
+                "common_mistakes": [
+                  {
+                    "mistake": "メールアドレス形式を誤って入力する。",
+                    "cause": "入力値確認をせずに保存する。",
+                    "impact": "登録エラーになり処理が進まない。",
+                    "recovery_action": "エラーメッセージを確認し、メールアドレス形式を修正して保存し直す。"
+                  },
+                  {
+                    "mistake": "登録完了メッセージを確認せずに画面を閉じる。",
+                    "cause": "保存ボタン押下のみで完了と判断してしまう。",
+                    "impact": "登録成功の確認ができず、再作業が必要になる場合がある。",
+                    "recovery_action": "保存後は必ず完了メッセージまたは登録済み状態を確認する。"
+                  }
+                ],
+                "checkpoints": [
+                  "必須項目がすべて入力されている",
+                  "保存後に登録完了メッセージを確認している"
+                ]
+              }
+            ],
+            "chapter_cautions": [
+              "必須項目の未入力と入力形式エラーに注意する。"
+            ]
+          }
+        ],
+        "global_cautions": [
+          "登録前に重複顧客の有無を確認する。",
+          "保存後は登録完了メッセージを確認する。"
+        ],
+        "global_common_mistakes": [
+          {
+            "mistake": "入力途中で内容確認をせずに保存する。",
+            "cause": "確認工程を省略する。",
+            "impact": "登録エラーや情報不備が発生する。",
+            "recovery_action": "保存前に必須項目と入力形式を見直す。"
+          }
+        ],
+        "global_checklist": [
+          {
+            "item": "重複顧客の確認を行った",
+            "required": true
+          },
+          {
+            "item": "必須項目をすべて入力した",
+            "required": true
+          },
+          {
+            "item": "登録完了メッセージを確認した",
+            "required": true
+          }
+        ]
+      },
+      "derived_views": {
+        "beginner_view": {
+          "title": "新人向け簡易版",
+          "key_points": [
+            "最初に顧客管理画面を開く",
+            "重複顧客がいないか確認する",
+            "必須項目を入力して保存する",
+            "保存後は登録完了メッセージを確認する"
+          ]
+        },
+        "checklist_view": {
+          "title": "顧客登録チェックリスト",
+          "items": [
+            {
+              "item_id": "check-001",
+              "text": "顧客管理画面を開いた",
+              "required": true
+            },
+            {
+              "item_id": "check-002",
+              "text": "重複顧客の確認を行った",
+              "required": true
+            },
+            {
+              "item_id": "check-003",
+              "text": "必須項目を入力した",
+              "required": true
+            },
+            {
+              "item_id": "check-004",
+              "text": "保存後に完了メッセージを確認した",
+              "required": true
+            }
+          ],
+          "usage_notes": [
+            "新人教育時の実施確認に利用する。",
+            "現場での作業セルフチェックにも利用できる。"
+          ]
+        },
+        "faq_candidates": [
+          {
+            "faq_id": "faq-001",
+            "question": "顧客管理メニューが表示されない場合はどうすればよいですか。",
+            "answer_draft": "ログイン権限またはアカウント権限設定を確認し、必要に応じて管理者へ申請してください。",
+            "related_step_ids": [
+              "step-001"
+            ],
+            "priority": "high"
+          },
+          {
+            "faq_id": "faq-002",
+            "question": "保存時にエラーが出た場合は何を確認すればよいですか。",
+            "answer_draft": "必須項目の未入力とメールアドレス形式を優先して見直してください。",
+            "related_step_ids": [
+              "step-007"
+            ],
+            "priority": "high"
+          }
+        ],
+        "digest_view": {
+          "title": "ダイジェスト",
+          "summary_points": [
+            "顧客登録は顧客管理画面から開始する",
+            "重複確認を先に行う",
+            "必須項目を入力して保存する",
+            "保存後の完了確認まで行って登録完了とする"
+          ]
+        },
+        "manager_view": {
+          "title": "管理者向け確認観点",
+          "focus_points": [
+            "重複確認が手順として守られているか",
+            "必須項目の入力漏れがないか",
+            "保存後の確認工程が省略されていないか"
+          ],
+          "review_notes": [
+            "新人向け説明では、重複確認と完了確認を重点的に指導する。"
+          ]
+        }
+      },
+      "delivery_assets": {
+        "raw_transcript": {
+          "file_ref": "exports/raw_transcript_asset-001.txt",
+          "text": "まず画面上部のメニューから顧客管理を開きます。顧客登録の前に、同じ顧客が既に登録されていないか確認してください。新規登録ボタンを押すと入力フォームが開きます。氏名、電話番号、メールアドレスは必須です。法人顧客の場合は担当者名の入力欄も表示されるので、忘れずに入力します。入力後は保存ボタンを押し、登録完了メッセージが表示されたことを確認します。もしエラーが出た場合は、必須項目の未入力やメールアドレス形式を見直してください。この手順は店舗での初回受付時によく使うので、素早く迷わず入力できることが重要です。"
+        },
+        "summary_text": {
+          "text": "顧客管理画面から新規顧客を登録する基本手順をまとめた。重複確認、必須項目入力、保存後の完了確認が重要である。",
+          "generated_at": "2026-05-25T09:00:00+09:00"
+        },
+        "html_manual": {
+          "file_ref": "exports/manual_asset-001.html",
+          "template_version": "0.1.0",
+          "generated_at": "2026-05-25T09:00:00+09:00"
+        },
+        "pdf_manual": {
+          "file_ref": "exports/manual_asset-001.pdf",
+          "template_version": "0.1.0",
+          "generated_at": "2026-05-25T09:00:00+09:00"
+        },
+        "exported_files": [
+          {
+            "asset_type": "json",
+            "file_ref": "exports/asset-001.json",
+            "generated_at": "2026-05-25T09:00:00+09:00",
+            "template_version": "0.1.0"
+          },
+          {
+            "asset_type": "txt",
+            "file_ref": "exports/raw_transcript_asset-001.txt",
+            "generated_at": "2026-05-25T09:00:00+09:00",
+            "template_version": "0.1.0"
+          },
+          {
+            "asset_type": "html",
+            "file_ref": "exports/manual_asset-001.html",
+            "generated_at": "2026-05-25T09:00:00+09:00",
+            "template_version": "0.1.0"
+          },
+          {
+            "asset_type": "pdf",
+            "file_ref": "exports/manual_asset-001.pdf",
+            "generated_at": "2026-05-25T09:00:00+09:00",
+            "template_version": "0.1.0"
+          }
+        ]
+      },
+      "_metadata": {
+        "schema_version": "0.1.0",
+        "generated_at": "2026-05-25T09:00:00+09:00",
+        "pipeline_version": "0.1.0",
+        "generation_context": {
+          "mode": "mvp",
+          "review_required": true,
+          "source_language": "ja-JP"
+        },
+        "review_status": "unreviewed",
+        "review_notes": [
+          "サンプルデータのため、値は説明用に固定している。"
+        ],
+        "change_log": [
+          {
+            "changed_at": "2026-05-25T09:00:00+09:00",
+            "changed_by": "system",
+            "summary": "初期サンプルを作成"
+          }
+        ]
+      }
+    }
+  ]
+}
