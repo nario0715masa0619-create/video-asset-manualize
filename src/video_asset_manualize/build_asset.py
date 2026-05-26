@@ -151,7 +151,7 @@ def video(
 ):
     """Extract source_evidence from video file (Phase 3/5)."""
     from video_asset_manualize.video_source_evidence_builder import VideoSourceEvidenceBuilder
-    from video_asset_manualize import settings
+    from video_asset_manualize.settings import settings
     import json
     
     input_path = Path(input_file)
@@ -164,10 +164,10 @@ def video(
     
     try:
         # Temporarily set provider settings
-        settings.settings.TRANSCRIPT_PROVIDER_TYPE = provider
-        settings.settings.WHISPER_MODEL = whisper_model
-        settings.settings.OCR_PROVIDER_TYPE = ocr_provider
-        settings.settings.EASYOCR_GPU = ocr_gpu
+        settings.TRANSCRIPT_PROVIDER_TYPE = provider
+        settings.WHISPER_MODEL = whisper_model
+        settings.OCR_PROVIDER_TYPE = ocr_provider
+        settings.EASYOCR_GPU = ocr_gpu
         
         console.print("[yellow]🔍 Extracting source evidence...[/yellow]")
         builder = VideoSourceEvidenceBuilder()

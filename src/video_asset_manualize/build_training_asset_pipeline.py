@@ -49,7 +49,7 @@ class BuildTrainingAssetPipeline:
         
         # Output directory setup
         if output_dir is None:
-            output_dir = settings.settings.EXPORTS_DIR
+            output_dir = settings.EXPORTS_DIR
         
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
