@@ -1,0 +1,21 @@
+{
+  "project_id": "project-phase10-test",
+  "items": [
+    {
+      "title": "Training Module 1",
+      "asset_id": "asset-phase10-001",
+      "spec_path": "output/exports/spec-test-001.json"
+    },
+    {
+      "title": "Training Module 2",
+      "asset_id": "asset-phase10-002",
+      "spec_path": "output/exports/spec-test-002.json"
+    },
+    {
+      "title": "Training Module 3",
+      "asset_id": "asset-phase10-003",
+      "spec_path": "output/exports/spec-test-003.json"
+    }
+  ],
+  "title": "Phase 10 Batch Test"
+}
