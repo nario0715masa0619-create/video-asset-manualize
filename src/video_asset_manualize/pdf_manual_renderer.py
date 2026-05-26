@@ -27,20 +27,30 @@ class PDFManualRenderer:
     
     def _register_fonts(self):
         """Register Japanese fonts."""
+        self.jp_font_name = 'JP'
         try:
+            from reportlab.pdfbase.cidfonts import CIDFont
             font_paths = [
                 'C:/Windows/Fonts/meiryo.ttc',
-                'C:/Windows/Fonts/msmincho.ttc',
+                'C:/Windows/Fonts/msgothic.ttc',
                 'C:/Windows/Fonts/yugothic.ttf',
+                '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc',
+                '/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc'
             ]
             
+            font_registered = False
             for font_path in font_paths:
                 if Path(font_path).exists():
                     try:
                         pdfmetrics.registerFont(TTFont('JP', font_path))
+                        font_registered = True
                         break
                     except:
                         continue
+            
+            if not font_registered:
+                pdfmetrics.registerFont(CIDFont('HeiseiKakuGo-W5'))
+                self.jp_font_name = 'HeiseiKakuGo-W5'
         except:
             pass
     
@@ -50,8 +60,8 @@ class PDFManualRenderer:
             parent=self.styles['Heading1'],
             fontSize=28,
             textColor=colors.HexColor('#000000'),
-            spaceAfter=24,
-            fontName='JP',
+            spaceAfter=32,
+            fontName=self.jp_font_name,
             alignment=TA_CENTER,
         ))
         self.styles.add(ParagraphStyle(
@@ -59,9 +69,9 @@ class PDFManualRenderer:
             parent=self.styles['Heading2'],
             fontSize=18,
             textColor=colors.HexColor('#007bff'),
-            spaceAfter=16,
-            spaceBefore=20,
-            fontName='JP',
+            spaceAfter=20,
+            spaceBefore=28,
+            fontName=self.jp_font_name,
             fontBold=True,
         ))
         self.styles.add(ParagraphStyle(
@@ -69,20 +79,20 @@ class PDFManualRenderer:
             parent=self.styles['Heading3'],
             fontSize=14,
             textColor=colors.HexColor('#333333'),
-            spaceAfter=12,
-            spaceBefore=16,
-            fontName='JP',
+            spaceAfter=16,
+            spaceBefore=20,
+            fontName=self.jp_font_name,
             fontBold=True,
         ))
         self.styles.add(ParagraphStyle(
             name='CustomNormal',
             parent=self.styles['Normal'],
             fontSize=11,
-            leading=18,
+            leading=20,
             textColor=colors.HexColor('#333333'),
             spaceAfter=8,
             alignment=TA_LEFT,
-            fontName='JP',
+            fontName=self.jp_font_name,
         ))
         self.styles.add(ParagraphStyle(
             name='StepLabel',
@@ -91,7 +101,7 @@ class PDFManualRenderer:
             textColor=colors.HexColor('#ffffff'),
             backColor=colors.HexColor('#007bff'),
             spaceAfter=6,
-            fontName='JP',
+            fontName=self.jp_font_name,
             fontBold=True,
             leftIndent=4,
             rightIndent=4,
@@ -105,7 +115,7 @@ class PDFManualRenderer:
             textColor=colors.HexColor('#ffffff'),
             backColor=colors.HexColor('#28a745'),
             spaceAfter=6,
-            fontName='JP',
+            fontName=self.jp_font_name,
             fontBold=True,
             leftIndent=4,
             rightIndent=4,
@@ -119,7 +129,7 @@ class PDFManualRenderer:
             textColor=colors.HexColor('#ffffff'),
             backColor=colors.HexColor('#dc3545'),
             spaceAfter=6,
-            fontName='JP',
+            fontName=self.jp_font_name,
             fontBold=True,
             leftIndent=4,
             rightIndent=4,
@@ -132,7 +142,7 @@ class PDFManualRenderer:
             fontSize=10,
             textColor=colors.HexColor('#8b0000'),
             spaceAfter=4,
-            fontName='JP',
+            fontName=self.jp_font_name,
             leftIndent=12,
         ))
     
@@ -153,13 +163,13 @@ class PDFManualRenderer:
         
         meta_html = f"<b>目的:</b> {purpose}<br/><b>対象者:</b> {audience}<br/><b>ステータス:</b> {status}<br/><b>バージョン:</b> {version}"
         story.append(Paragraph(meta_html, self.styles['CustomNormal']))
-        story.append(Spacer(1, 12*mm))
+        story.append(Spacer(1, 16*mm))
         
         if asset_meta.get('prerequisites'):
             story.append(Paragraph('前提条件・準備', self.styles['CustomHeading2']))
             for pre in asset_meta['prerequisites']:
                 story.append(Paragraph(f"• {pre}", self.styles['CustomNormal']))
-            story.append(Spacer(1, 6*mm))
+            story.append(Spacer(1, 12*mm))
         
         summary = instructional_core.get('summary', {})
         if summary:
@@ -168,13 +178,13 @@ class PDFManualRenderer:
                 story.append(Paragraph(f"<b>目的:</b> {summary['purpose_summary']}", self.styles['CustomNormal']))
             if summary.get('outcome_summary'):
                 story.append(Paragraph(f"<b>期待する成果:</b> {summary['outcome_summary']}", self.styles['CustomNormal']))
-            story.append(Spacer(1, 6*mm))
+            story.append(Spacer(1, 12*mm))
         
         if instructional_core.get('global_cautions'):
             story.append(Paragraph('⚠️ 全体注意事項', self.styles['CustomHeading2']))
             for caution in instructional_core['global_cautions']:
                 story.append(Paragraph(f"• {caution}", self.styles['CautionText']))
-            story.append(Spacer(1, 6*mm))
+            story.append(Spacer(1, 12*mm))
         
         for chapter in instructional_core.get('chapters', []):
             story.append(PageBreak())
@@ -230,13 +240,13 @@ class PDFManualRenderer:
                         for caution in step['cautions']:
                             story.append(Paragraph(f"• {caution}", self.styles['CautionText']))
                     
-                    story.append(Spacer(1, 6*mm))
+                    story.append(Spacer(1, 10*mm))
                 
                 if procedure.get('cautions'):
                     story.append(Paragraph('<b>手順の注意事項</b>', self.styles['CustomHeading3']))
                     for caution in procedure['cautions']:
                         story.append(Paragraph(f"• {caution}", self.styles['CautionText']))
-                    story.append(Spacer(1, 6*mm))
+                    story.append(Spacer(1, 10*mm))
                 
                 if procedure.get('common_mistakes'):
                     story.append(Paragraph('<b>よくあるミス</b>', self.styles['CustomHeading3']))
@@ -249,13 +259,13 @@ class PDFManualRenderer:
                             story.append(Paragraph(f"<b>影響:</b> {mistake['impact']}", self.styles['CustomNormal']))
                         if mistake.get('recovery_action'):
                             story.append(Paragraph(f"<b>対策:</b> {mistake['recovery_action']}", self.styles['CustomNormal']))
-                        story.append(Spacer(1, 4*mm))
+                        story.append(Spacer(1, 6*mm))
                 
                 if procedure.get('checkpoints'):
                     story.append(Paragraph('<b>✓ チェックポイント</b>', self.styles['CustomHeading3']))
                     for checkpoint in procedure['checkpoints']:
                         story.append(Paragraph(f"☐ {checkpoint}", self.styles['CustomNormal']))
-                    story.append(Spacer(1, 6*mm))
+                    story.append(Spacer(1, 10*mm))
         
         if derived_views.get('faq_candidates'):
             story.append(PageBreak())
