@@ -37,10 +37,33 @@ def show_assets_page():
                 st.write(f"Current State: {current_state}")
             
             with col3:
-                st.write(f"Files:")
-                st.write(f"- Spec: OK")
-                st.write(f"- HTML: OK")
-                st.write(f"- PDF: OK")
+                st.write("Files:")
+                
+                from pathlib import Path
+                
+                # Spec
+                spec_path = Path(f"output/exports/{asset_id}_spec.json")
+                if spec_path.exists():
+                    with open(spec_path, "rb") as f:
+                        st.download_button(label="Spec: OK [ダウンロード]", data=f, file_name=f"{asset_id}_spec.json", key=f"dl_spec_{unique_key}")
+                else:
+                    st.write("• Spec: N/A")
+                
+                # HTML
+                html_path = Path(f"output/exports/{asset_id}_manual.html")
+                if html_path.exists():
+                    with open(html_path, "rb") as f:
+                        st.download_button(label="HTML: OK [ダウンロード]", data=f, file_name=f"{asset_id}_manual.html", mime="text/html", key=f"dl_html_{unique_key}")
+                else:
+                    st.write("• HTML: N/A")
+                
+                # PDF
+                pdf_path = Path(f"output/exports/{asset_id}_manual.pdf")
+                if pdf_path.exists():
+                    with open(pdf_path, "rb") as f:
+                        st.download_button(label="PDF: OK [ダウンロード]", data=f, file_name=f"{asset_id}_manual.pdf", mime="application/pdf", key=f"dl_pdf_{unique_key}")
+                else:
+                    st.write("• PDF: N/A")
             
             st.markdown("---")
             
