@@ -20,422 +20,699 @@ Requires-Dist: ruff<1.0,>=0.11; extra == "dev"
 
 # VideoAsset Manualize
 
-既存の研修動画・マニュアル動画を、再利用可能な教育資産・業務資産へ変換するためのプロジェクトです。
-
-VideoAsset Manualize は、社内に蓄積された動画コンテンツを単なる「視聴素材」として扱うのではなく、  
-**構造化データ・テキストマニュアル・PDF・チェックリスト・FAQ候補**へ展開可能な資産として再整理することを目的とします。
-
----
+**動画を再利用可能な教育資産に変換する、エンドツーエンドの自動マニュアル生成プラットフォーム**
 
 ## 概要
 
-多くの企業では、研修動画や業務手順動画がすでに存在している一方で、次のような課題を抱えています。
+VideoAsset Manualize は、既存の研修動画やマニュアル動画を、高品質な教育資産（トレーニング資産）として再利用するためのオープンソース・プラットフォームです。
 
-- 動画はあるが、必要な情報をすぐに探せない
-- 新人教育が「とりあえず動画を見て」で終わりやすい
-- 動画内のノウハウがテキスト資産として整理されていない
-- 文字起こしだけでは、現場で使える手順書にならない
-- OJT や引き継ぎが属人化しやすい
+### 出力物
 
-VideoAsset Manualize は、こうした状態を解消し、  
-**動画を「見る教材」から「使える教材」へ変換する**ことを目指します。
+このプロジェクトは、入力動画から以下の成果物を自動生成します：
 
----
+- **source_evidence.json** – 動画から抽出した字幕・OCR・タイムスタンプの evidence layer（証拠層）
+- **training_asset_spec.json** – 標準的な教育資産仕様
+- **HTML マニュアル** – ブラウザで閲覧可能なマニュアル
+- **PDF マニュアル** – 印刷可能な高品質マニュアル
+- **冊子（booklet）** – 複数の動画資産を1つの統合マニュアルに
 
-## このプロジェクトがやること
+### 設計の基本方針
 
-本プロジェクトでは、既存の動画を解析し、以下のような成果物へ変換することを想定しています。
-
-- 文字起こしテキスト
-- 要約テキスト
-- 手順・注意点・条件分岐を含む構造化 JSON
-- 業務マニュアルとして利用可能な HTML / PDF
-- FAQ / チェックリスト / 検索基盤に再利用しやすい中間データ
-
-中心となる考え方は、以下の変換です。
-
-**動画 → 証跡付きテキスト化 → 構造化資産化 → マニュアル / PDF / 再利用データ化**
+- **training_asset_spec は canonical source** – すべての出力の基になる公式仕様
+- **source_evidence は evidence base** – 動画から抽出したデータを保持し、traceability を確保
+- **モジュラー設計** – Provider を抽象化し、実装の切り替えが容易
+- **CLI と UI の両立** – スクリプト処理にも対応、ブラウザ UI でも操作可能
 
 ---
 
-## 立ち位置
+## 何ができるか
 
-VideoAsset Manualize は、次のような立ち位置のプロジェクトです。
+### 単一動画処理
 
-- 新しい動画を制作するプロジェクトではない
-- 文字起こしだけを提供するサービスでもない
-- LMS / eラーニングの箱を売るものでもない
+1. **動画 → source_evidence の自動抽出**
+   - ffprobe でメタデータ取得
+   - Whisper で字幕生成
+   - EasyOCR でテキスト抽出
 
-代わりに、  
-**すでに存在する動画を整理・構造化し、現場で使える形に変換するための基盤**を作ります。
+2. **source_evidence → training_asset_spec の変換・生成**
+   - LLM でサマリー自動生成
+   - 章・手順・ステップの抽出
+   - 注意事項・FAQ の自動生成
 
----
+3. **training_asset_spec → HTML/PDF マニュアルの自動生成**
+   - レスポンシブ HTML マニュアル
+   - 高品質 PDF マニュアル
+   - JSON export
 
-## 想定ユースケース
+### 複数動画処理・冊子化
 
-- 新人研修資料の整備
-- 業務手順動画のマニュアル化
-- OJT 内容の標準化
-- 引き継ぎ資料の整備
-- 店舗 / コールセンター / 物流 / 製造現場の SOP 整備
-- 社内 FAQ / ナレッジベース構築の前処理
-- 既存動画資産の棚卸しと再活用
+- **batch-specs** – 複数の training_asset_spec をバッチ処理
+- **booklet-build** – 複数資産を1つの冊子に統合
+- **Manifest JSON** – 処理対象の一覧管理
 
----
+### 管理機能
 
-## 提供価値
+- **レビュー状態管理** – draft / in_review / approved / rejected
+- **コメント保存** – 各資産のレビューコメントを JSON で管理
+- **Web UI ダッシュボード** – 生成済みアセットの一覧・プレビュー・状態管理
 
-### 1. 動画を「見る教材」から「使える教材」に変える
-
-動画のままでは、見返し・検索・共有に時間がかかります。  
-構造化されたテキストやマニュアルがあれば、必要な箇所だけをすばやく確認できます。
-
-### 2. 教育・引き継ぎコストを下げる
-
-- 毎回同じ説明を繰り返す負担を減らす
-- 動画を最初から見直す回数を減らす
-- 「手順書 + 必要な場面だけ動画確認」の運用に切り替えやすくする
-
-### 3. 業務品質を標準化する
-
-- 手順の粒度を揃える
-- 注意点や NG 例を明文化する
-- 部署・拠点ごとの差異を把握しやすくする
-
-### 4. ナレッジを再利用可能な資産にする
-
-将来的に、以下への二次利用がしやすい状態をつくります。
-
-- FAQ
-- チェックリスト
-- 社内検索
-- QA ボット
-- ダイジェスト版ハンドブック
 
 ---
 
-## 基本方針
+## 処理フロー
 
-### 1. 要約と手順抽出を分ける
+### 単一動画フロー
 
-このプロジェクトで最も重要なのは、  
-**説明部分の要約**と**操作手順の抽出**を同じ処理にしないことです。
+入力動画から source_evidence を生成し、
+training_asset_spec に変換して、
+HTML/PDF マニュアルを作成するフロー：
 
-動画内の情報は、少なくとも次のように分けて扱う必要があります。
+1. video コマンド → source_evidence.json を生成
+2. extract コマンド → training_asset_spec.json を生成
+3. build コマンド → HTML/PDF マニュアルを生成
 
-- 説明
-- 背景 / 目的
-- 実操作
-- 注意点
-- 例外処理
-- 雑談 / 補足
+### 複数動画・冊子化フロー
 
-このうち、以下の方針を採用します。
+複数の training_asset_spec を統合して、
+1つの冊子を生成するフロー：
 
-- **説明 / 背景 / 補足** は要約対象
-- **実操作 / ボタン名 / 条件分岐 / 注意点 / チェック項目** は保持・構造化対象
-
-### 2. 手順はステップ単位で残す
-
-「なんとなくの要約」ではなく、  
-実務で使える粒度の手順に落とすことを優先します。
-
-推奨する粒度は以下です。
-
-- 章
-- 手順
-- ステップ
-- 補足 / 注意点 / NG 例 / 分岐条件
-
-### 3. 根拠を残す
-
-最終成果物だけでなく、  
-**元動画のどこから抽出したのか**を追えることを重視します。
-
-そのために以下の証跡を設計対象に含めます。
-
-- 発話開始 / 終了時刻
-- OCR 文字列
-- スクリーンショット候補
-- 話者情報
-- 抽出信頼度
+1. batch-specs コマンド → 複数 spec をバッチ処理
+2. booklet-build コマンド → compiled asset を生成
+3. HTML/PDF 冊子を生成
 
 ---
 
-## 目指すデータモデル
+## 実装済みフェーズ一覧（Phase 1～8）
 
-最終的には、動画 1 本ごとに以下のような構造化データを持つことを想定しています。
+| Phase | タイトル | 実装内容 |
+|-------|---------|--------|
+| **Phase 1** | training_asset_spec 仕様・検証・出力 | スキーマ定義、HTML/PDF レンダラー、CLI build/validate |
+| **Phase 2** | source_evidence 仕様・検証・変換 | スキーマ定義、validator、自動変換、CLI extract |
+| **Phase 3** | 動画入力・Provider 抽象化 | Provider インターフェース、video CLI、Provider Factory |
+| **Phase 4** | ffprobe・Whisper 統合 | メタデータ取得、WhisperTranscriptProvider、切り替え機能 |
+| **Phase 5** | EasyOCR・FrameExtractor 実装 | EasyOCRProvider、フレーム抽出、OCR Provider 切り替え |
+| **Phase 6** | LLM ベース抽出 | LLM Provider、サマリー/章/手順/FAQ 自動生成、--use-llm オプション |
+| **Phase 7** | 複数動画・冊子化 | Manifest JSON、バッチ処理、compiled asset、booklet 生成 |
+| **Phase 8** | Web UI・ダッシュボード・レビュー管理 | Streamlit UI、ダッシュボード、アセット一覧、レビュー状態管理 |
 
-- `asset_meta`
-- `source_evidence`
-- `instructional_core`
-- `derived_views`
-- `delivery_assets`
-- `_metadata`
+**現在の成熟度**: Phase 1～8 完全実装・動作確認済み
 
-この JSON を正本として、そこから各種成果物を派生生成します。
-
-### 想定する主要要素
-
-#### `asset_meta`
-
-- タイトル
-- 対象者
-- 対象部署
-- 目的
-- 前提条件
-- 更新日
-- 版情報
-
-#### `source_evidence`
-
-- transcript
-- OCR
-- タイムスタンプ
-- スクリーンショット候補
-- 証跡断片
-
-#### `instructional_core`
-
-- 手順
-- 条件分岐
-- 注意点
-- NG 例
-- よくあるミス
-- チェックリスト
-
-#### `derived_views`
-
-- 新人向け簡易版
-- 現場向けチェックリスト版
-- FAQ 候補
-- ダイジェスト版
-
-#### `delivery_assets`
-
-- RAW テキスト
-- 要約
-- HTML
-- PDF
-- 再利用用データ
 
 ---
 
-## 成果物イメージ
+## 必要環境
 
-### 基本納品物
+### 要件
 
-- 構造化 JSON
-- 文字起こしテキスト
-- 要約テキスト
-- HTML マニュアル
-- PDF マニュアル
+- **Python 3.11 以上**
+- **pip** （Python パッケージマネージャー）
+- **ffmpeg / ffprobe** （動画メタデータ取得用）
 
-### 拡張候補
+### オプション依存
 
-- 複数動画を束ねた冊子型 PDF
-- ダイジェスト版ハンドブック
-- FAQ 候補一覧
-- チェックリスト版
-- ブランドカラー / ロゴ対応出力
+以下は機能に応じて不要な場合があります：
+
+- **openai-whisper** （字幕生成用）
+- **easyocr** （OCR テキスト抽出用）
+- **streamlit** （Web UI 用）
 
 ---
 
-## アーキテクチャ方針
+## セットアップ手順
 
-このプロジェクトでは、次の思想を中核に置きます。
+### 1. リポジトリのクローン
 
-1. 生データをそのまま最終成果物にしない
-2. 一度、構造化 JSON に正規化する
-3. 表示形式は JSON から派生生成する
-4. HTML / Text / PDF を責務分離する
-5. AI は「要約」だけでなく「説明補助」と「抽出補助」に使う
-6. 証跡と追跡可能性を重視する
+\\\ash
+git clone https://github.com/nario0715masa0619-create/video-asset-manualize.git
+cd video-asset-manualize
+\\\
 
-初期のレンダリング戦略としては、以下を想定します。
+### 2. Python 依存関係のインストール
 
-**JSON → HTML → PDF**
+\\\ash
+pip install -r requirements.txt
+pip install -e .
+\\\
 
-この流れにすることで、ブラウザプレビューと PDF 出力を両立しやすくします。
+### 3. ffmpeg / ffprobe のインストール
+
+**Windows（Chocolatey）**:
+
+\\\powershell
+choco install ffmpeg
+\\\
+
+**macOS**:
+
+\\\ash
+brew install ffmpeg
+\\\
+
+**Linux（Ubuntu/Debian）**:
+
+\\\ash
+sudo apt-get update
+sudo apt-get install ffmpeg
+\\\
+
+### 4. オプション：Whisper のセットアップ
+
+\\\ash
+pip install openai-whisper
+\\\
+
+初回実行時にモデルが自動ダウンロードされます。
+
+### 5. オプション：EasyOCR のセットアップ
+
+\\\ash
+pip install easyocr
+\\\
+
+初回実行時にモデルが自動ダウンロードされます。
+
+### 6. オプション：環境変数の設定
+
+\.env\ ファイルを作成：
+
+\\\ash
+TRANSCRIPT_PROVIDER_TYPE=dummy
+WHISPER_MODEL=base
+WHISPER_LANGUAGE=ja
+
+OCR_PROVIDER_TYPE=dummy
+EASYOCR_LANGUAGES=ja,en
+EASYOCR_GPU=false
+
+LLM_PROVIDER_TYPE=dummy
+LLM_MODEL=gpt-3.5-turbo
+OPENAI_API_KEY=your_api_key_here
+ENABLE_LLM_EXTRACTION=false
+\\\
+
 
 ---
 
-## MVP の考え方
+## CLI の使い方
 
-最初から広げすぎず、まずは以下の最小構成で成立させることを目標にします。
+### コマンド一覧
 
-**1動画 → 1構造化JSON → 1PDF → 1要約 → 1RAWログ**
+\\\
+python -m video_asset_manualize.build_asset <command> [options]
+\\\
 
-### MVP の評価観点
+| コマンド | 説明 |
+|---------|------|
+| **validate** | JSON ファイルのスキーマ検証 |
+| **video** | 入力動画から source_evidence を生成 |
+| **extract** | source_evidence から training_asset_spec を生成 |
+| **build** | training_asset_spec から HTML/PDF マニュアルを生成 |
+| **batch-specs** | 複数 spec をバッチ処理 |
+| **booklet-build** | 複数 spec から冊子を生成 |
 
-- 手順抜けが大きくないか
-- 粒度が新人でも再現可能か
-- 注意点・事故防止観点が落ちていないか
-- 元動画との対応が追えるか
+### 基本的な実行例
+
+#### 1. スキーマ検証
+
+\\\ash
+python -m video_asset_manualize.build_asset validate \\
+  schemas/training_asset_spec.schema.json
+\\\
+
+#### 2. 動画から source_evidence を生成（dummy provider）
+
+\\\ash
+python -m video_asset_manualize.build_asset video \\
+  samples/sample_training_video.mp4
+\\\
+
+#### 3. Whisper + EasyOCR を使用
+
+\\\ash
+python -m video_asset_manualize.build_asset video \\
+  samples/sample_training_video.mp4 \\
+  --provider whisper \\
+  --ocr-provider easyocr
+\\\
+
+#### 4. Whisper モデル・言語を指定
+
+\\\ash
+python -m video_asset_manualize.build_asset video \\
+  samples/sample_training_video.mp4 \\
+  --provider whisper \\
+  --whisper-model large \\
+  --whisper-language ja \\
+  --ocr-provider easyocr
+\\\
+
+生成ファイル: \output/exports/extracted_source_evidence.json\
+
+#### 5. source_evidence から training_asset_spec を生成（LLM なし）
+
+\\\ash
+python -m video_asset_manualize.build_asset extract \\
+  output/exports/extracted_source_evidence.json
+\\\
+
+#### 6. LLM を使用（Dummy LLM）
+
+\\\ash
+python -m video_asset_manualize.build_asset extract \\
+  output/exports/extracted_source_evidence.json \\
+  --use-llm \\
+  --llm-provider dummy
+\\\
+
+#### 7. LLM を使用（OpenAI）
+
+\\\ash
+export OPENAI_API_KEY=sk-...
+python -m video_asset_manualize.build_asset extract \\
+  output/exports/extracted_source_evidence.json \\
+  --use-llm \\
+  --llm-provider openai
+\\\
+
+生成ファイル: \output/exports/asset-{id}_spec.json\
+
+#### 8. training_asset_spec から HTML/PDF を生成
+
+\\\ash
+python -m video_asset_manualize.build_asset build \\
+  output/exports/asset-{id}_spec.json \\
+  --output-dir output/exports
+\\\
+
+生成ファイル:
+- \output/exports/asset-{id}_manual.html\
+- \output/exports/asset-{id}_manual.pdf\
+
 
 ---
 
-## リポジトリの現状
+## Web UI の使い方
 
-現在は、**初期設計・MVP 定義フェーズ**です。  
-このリポジトリでは、まず以下を優先して固めます。
+### 起動
 
-1. README / 基本ドキュメント
-2. JSON スキーマ初版
-3. 抽出ポリシー / プロンプト設計
-4. マニュアルテンプレート仕様
-5. MVP 対象動画の選定基準
-6. 出力フローの最小実装
+\\\ash
+streamlit run streamlit_app.py
+\\\
+
+ブラウザが自動で開き、以下の URL にアクセス：
+
+**http://localhost:8501**
+
+### UI 画面一覧
+
+#### Dashboard（ダッシュボード）
+
+生成済みアセット全体の概要を表示：
+
+- 生成済みアセット数
+- 生成済み冊子数
+- 承認済みアセット数
+- 最近の資産・冊子の一覧
+
+**用途**: プロジェクト全体の進捗を一目で把握
+
+#### Single Video Processing（単一動画処理）
+
+動画 1 個を処理し、マニュアルを生成：
+
+**入力フィールド**:
+- Video File Path – 処理対象の MP4/MKV/AVI ファイルパス
+- Transcript Provider – dummy / whisper から選択
+- OCR Provider – dummy / easyocr から選択
+- Use LLM Extraction – checkbox（有効にすると LLM を使用）
+
+**動作**: Process Video ボタンをクリック → 結果リンク表示
+
+#### Assets（アセット一覧）
+
+生成済みアセット全体を一覧表示・管理：
+
+**機能**:
+- アセット ID、タイトル、言語を表示
+- レビュー状態表示・変更（draft → in_review → approved → rejected）
+- コメント入力・保存
+- ファイルリンク（HTML/PDF/JSON）へのアクセス
+
+**用途**: レビュー者が各資産の承認状況を管理
+
+#### Batch & Booklet Processing（バッチ・冊子処理）
+
+複数資産のバッチ処理と冊子生成：
+
+**Batch Specs Build タブ**:
+- Specs Manifest Path – \specs_manifest.json\ へのパス
+- Output Directory – 出力先ディレクトリ
+- Run Batch Build ボタン
+
+**Build Booklet タブ**:
+- Specs Manifest Path – \specs_manifest.json\ へのパス
+- Output Directory – 出力先ディレクトリ
+- Project ID – 冊子のプロジェクト ID
+- Project Title – 冊子のタイトル
+- Build Booklet ボタン
+
+**用途**: 複数動画の統合マニュアル生成・冊子化
+
 
 ---
 
-## 初期ドキュメント構成
+## 複数動画処理・冊子化
 
-```text
+### Manifest JSON の概要
+
+複数の動画・spec を処理する場合、**Manifest JSON** を使って入力を一覧管理します。
+
+### specs_manifest.json（推奨）
+
+複数の training_asset_spec をバッチ処理・冊子化するための manifest：
+
+\\\json
+{
+  "project_id": "customer-training-001",
+  "title": "Customer Service Training Series",
+  "description": "Complete training for customer registration",
+  "items": [
+    {
+      "asset_id": "asset-001",
+      "spec_path": "output/exports/asset-001_spec.json",
+      "title": "Customer Registration Manual"
+    },
+    {
+      "asset_id": "asset-002",
+      "spec_path": "output/exports/asset-002_spec.json",
+      "title": "Support Procedures Guide"
+    }
+  ]
+}
+\\\
+
+### videos_manifest.json（今後の拡張）
+
+複数の動画ファイルを処理対象に指定：
+
+\\\json
+{
+  "project_id": "project-training-001",
+  "title": "Customer Service Training Series",
+  "items": [
+    {
+      "video_id": "video-001",
+      "input_path": "samples/video_1.mp4",
+      "title": "Customer Registration",
+      "audience": "New Staff"
+    },
+    {
+      "video_id": "video-002",
+      "input_path": "samples/video_2.mp4",
+      "title": "Support Procedures",
+      "audience": "Support Team"
+    }
+  ]
+}
+\\\
+
+### batch-specs コマンド
+
+複数の spec を順序処理し、各動画のマニュアルを生成：
+
+\\\ash
+python -m video_asset_manualize.build_asset batch-specs \\
+  samples/specs_manifest.json \\
+  --output-dir output/exports/batch
+\\\
+
+**出力**:
+- \output/exports/batch/asset-001_manual.html\
+- \output/exports/batch/asset-001_manual.pdf\
+- \output/exports/batch/asset-002_manual.html\
+- \output/exports/batch/batch_report.json\
+
+### booklet-build コマンド
+
+複数の spec を統合し、1つの冊子を生成：
+
+\\\ash
+python -m video_asset_manualize.build_asset booklet-build \\
+  samples/specs_manifest.json \\
+  --output-dir output/exports/booklet \\
+  --project-id customer-training \\
+  --project-title "Customer Service Training Manual"
+\\\
+
+**出力**:
+- \output/exports/booklet/customer-training_compiled.json\
+- \output/exports/booklet/customer-training_booklet.html\
+- \output/exports/booklet/customer-training_booklet.pdf\
+
+**冊子の構成**:
+- 表紙（Project Title / 生成日時）
+- 目次（含まれるすべての章・手順）
+- 各資産ごとのセクション
+- 裏表紙
+
+
+---
+
+## 出力ファイル一覧
+
+### 単一動画処理の出力
+
+| ファイル | 説明 |
+|---------|------|
+| **extracted_source_evidence.json** | 動画から抽出した字幕・OCR・メタデータ |
+| **asset-{id}_spec.json** | 教育資産仕様（training_asset_spec） |
+| **asset-{id}_manual.html** | ブラウザ閲覧用マニュアル |
+| **asset-{id}_manual.pdf** | 印刷用マニュアル |
+
+### 複数動画処理・冊子の出力
+
+| ファイル | 説明 |
+|---------|------|
+| **batch_report.json** | バッチ処理の結果報告 |
+| **{project_id}_compiled.json** | 複数 spec を統合したメタデータ |
+| **{project_id}_booklet.html** | 統合 HTML 冊子 |
+| **{project_id}_booklet.pdf** | 統合 PDF 冊子 |
+
+### レビュー・状態管理の出力
+
+| ファイル | 説明 |
+|---------|------|
+| **data/reviews/{asset_id}.json** | 各資産のレビュー状態・コメント |
+
+---
+
+## ディレクトリ構成
+
+\\\
 video-asset-manualize/
 ├── README.md
-├── docs/
-│   ├── project_overview.md
-│   ├── architecture.md
-│   ├── json_schema.md
-│   ├── mvp_scope.md
-│   ├── roadmap.md
-│   ├── prompt_design.md
-│   ├── src_structure.md
-│   └── templates/
-│       └── manual_template_spec.md
+├── requirements.txt
+├── pyproject.toml
+├── .gitignore
+├── streamlit_app.py
+│
+├── src/video_asset_manualize/
+│   ├── __init__.py
+│   ├── build_asset.py
+│   ├── settings.py
+│   ├── provider_factory.py
+│   ├── build_training_asset_pipeline.py
+│   ├── batch_pipeline.py
+│   ├── batch_manifest_loader.py
+│   ├── video_source_evidence_builder.py
+│   ├── source_evidence_validator.py
+│   ├── training_asset_spec_builder.py
+│   ├── llm_training_asset_builder.py
+│   ├── schema_validator.py
+│   ├── html_manual_renderer.py
+│   ├── pdf_manual_renderer.py
+│   ├── compiled_training_asset_builder.py
+│   ├── booklet_html_renderer.py
+│   ├── booklet_pdf_renderer.py
+│   ├── transcript_provider.py
+│   ├── whisper_transcript_provider.py
+│   ├── ocr_provider.py
+│   ├── easyocr_provider.py
+│   ├── frame_extractor.py
+│   ├── llm_provider.py
+│   ├── openai_llm_provider.py
+│   ├── summary_generator.py
+│   ├── instruction_extractor.py
+│   ├── caution_generator.py
+│   ├── faq_generator.py
+│   ├── prompt_templates.py
+│   ├── ffprobe_metadata_extractor.py
+│   ├── review_repository.py
+│   ├── asset_indexer.py
+│   └── ui/
+│       ├── __init__.py
+│       ├── dashboard.py
+│       ├── single_video_page.py
+│       ├── assets_page.py
+│       └── batch_page.py
+│
 ├── schemas/
-│   └── training_asset_spec.schema.json
+│   ├── training_asset_spec.schema.json
+│   └── source_evidence.schema.json
+│
 ├── samples/
-│   └── sample_training_asset_spec.json
-└── src/
-    └── ...
-```
+│   ├── sample_training_video.mp4
+│   ├── sample_source_evidence.json
+│   ├── sample_training_asset_spec.json
+│   ├── videos_manifest.json
+│   └── specs_manifest.json
+│
+├── output/
+│   └── exports/
+│       ├── extracted_source_evidence.json
+│       ├── asset-xxxx_spec.json
+│       ├── asset-xxxx_manual.html
+│       ├── asset-xxxx_manual.pdf
+│       ├── batch/
+│       └── booklet/
+│
+├── data/
+│   └── reviews/
+│
+└── tests/
+\\\
 
 ---
 
-## ドキュメントマップ
+## 設定と環境変数
 
-- `README.md`  
-  プロジェクト全体の入口。目的、背景、価値、方向性をまとめる
+### グローバル設定ファイル
 
-- `docs/project_overview.md`  
-  背景、課題、目的、対象、納品物、立ち位置の整理
+\src/video_asset_manualize/settings.py\ で設定：
 
-- `docs/architecture.md`  
-  設計思想、処理フロー、証跡設計、レンダリング方針
+\\\python
+# Transcript Provider
+TRANSCRIPT_PROVIDER_TYPE = "dummy"
+WHISPER_MODEL = "base"
+WHISPER_LANGUAGE = "ja"
 
-- `docs/json_schema.md`  
-  `training_asset_spec` の初期スキーマ設計
+# OCR Provider
+OCR_PROVIDER_TYPE = "dummy"
+EASYOCR_LANGUAGES = ["ja", "en"]
+EASYOCR_GPU = False
 
-- `docs/mvp_scope.md`  
-  MVP のスコープ、評価観点、受け入れ条件
+# LLM Provider
+LLM_PROVIDER_TYPE = "dummy"
+LLM_MODEL = "gpt-3.5-turbo"
+OPENAI_API_KEY = ""
+ENABLE_LLM_EXTRACTION = False
 
-- `docs/roadmap.md`  
-  フェーズ分解、依存関係、リスク整理
+# Output
+EXPORTS_DIR = "output/exports"
+REVIEWS_DATA_DIR = "data/reviews"
+\\\
 
-- `docs/prompt_design.md`  
-  要約と手順抽出を分離するための抽出ポリシー設計
+### 環境変数での上書き
 
-- `docs/src_structure.md`  
-  `src/` 配下の初期ディレクトリ構成案、責務分離、MVP でまず作る最小セットの整理
+\.env\ ファイルまたは OS 環境変数で上書き：
 
-- `docs/templates/manual_template_spec.md`  
-  `training_asset_spec` から HTML / PDF マニュアルを生成するためのテンプレート仕様
+\\\ash
+export TRANSCRIPT_PROVIDER_TYPE=whisper
+export OPENAI_API_KEY=sk-...
+\\\
 
-- `schemas/training_asset_spec.schema.json`  
-  正本データ `training_asset_spec` の JSON Schema 初版
-
-- `samples/sample_training_asset_spec.json`  
-  スキーマに整合するサンプル資産データ
-
----
-
-## 想定ロードマップ
-
-### Phase 0
-
-ドキュメント整備、スキーマ固定、MVP 要件整理
-
-### Phase 1
-
-抽出パイプライン MVP
-
-- 文字起こし
-- セグメント分類
-- 手順抽出
-- 要約出力
-
-### Phase 2
-
-HTML / PDF レンダリング
-
-- マニュアルテンプレート
-- プレビュー
-- PDF 出力
-
-### Phase 3
-
-レビュー / フィードバックループ
-
-- 手順抜け修正
-- 粒度調整
-- 注意点抽出精度改善
-
-### Phase 4
-
-複数動画対応・二次利用
-
-- 冊子化
-- FAQ 化
-- 検索向け再利用
-- ダッシュボード / 管理画面展開
 
 ---
 
-## 設計上の前提
+## トラブルシューティング
 
-- 現時点では、詳細スキーマとプロンプトは策定中
-- 実装より先に、正本となるデータ構造を固定する
-- PDF デザインは初期段階ではシンプルでよい
-- 重要なのは見た目よりも、再現可能な手順粒度と証跡の一貫性
-- 将来の FAQ / 検索 / QA ボット再利用を見据え、最初から JSON 正本設計を採用する
+### ffprobe が見つからない
+
+**エラー**: \fprobe: command not found\
+
+**対策**:
+- Windows: ffmpeg を再インストール
+- macOS: \rew install ffmpeg\
+- Linux: \pt-get install ffmpeg\
+
+### Whisper がダウンロードできない
+
+**エラー**: \Connection timeout\
+
+**対策**:
+- ネットワーク接続を確認
+- 初回実行時は数分待つ
+- \--whisper-model tiny\ で試す
+
+### EasyOCR が遅い
+
+**対策**:
+- GPU を使用: \EASYOCR_GPU=true\
+- 初回実行時はモデルダウンロード時間がかかります
+- 不要言語を削除: \EASYOCR_LANGUAGES=ja\
+
+### LLM API エラー
+
+**エラー**: \Authentication error\ または \Rate limit exceeded\
+
+**対策**:
+- API key を確認（OPENAI_API_KEY に正しく設定）
+- 残額・利用限度を確認
+
+### Streamlit が起動しない
+
+**エラー**: \ModuleNotFoundError: No module named 'streamlit'\
+
+**対策**: \pip install streamlit>=1.28.0\
 
 ---
 
-## 非ゴール
+## 注意点・制約
 
-現時点では、以下は本プロジェクトの初期ゴールに含めません。
+### 現在の制約事項
 
-- 動画編集・新規動画制作
-- LMS / eラーニングシステム本体の構築
-- 高度なブランドデザインテンプレートの量産
-- 完全自動化のみで人手レビューを不要にすること
-- 初期段階からの大規模マルチテナント SaaS 化
+- **開発・ローカル運用想定** – 本番デプロイメント向けのセキュリティ機能は未実装
+- **認証・権限管理未実装** – Web UI はローカル開発用
+- **バッチ処理は順序実行** – 大量の動画処理は時間がかかる
+- **LLM サマリーの品質** – 動画内容・言語によって精度が変わる
+- **OCR 精度** – 画質・言語・フォントに依存
+- **Whisper 実行時間** – 動画の長さに比例
 
----
+### 推奨される使用方法
 
-## 今後まず作るもの
-
-- `README.md`
-- `docs/project_overview.md`
-- `docs/architecture.md`
-- `docs/json_schema.md`
-- `docs/mvp_scope.md`
-- `docs/roadmap.md`
-- `docs/prompt_design.md`
-- `docs/src_structure.md`
-- `docs/templates/manual_template_spec.md`
-- `schemas/training_asset_spec.schema.json`
-- `samples/sample_training_asset_spec.json`
+1. **開発機で prototype** – dummy provider で動作確認
+2. **テストデータで validation** – 小規模な動画で検証
+3. **本運用は staging で** – 本格的な動画処理は staging 環境で実施
+4. **レビュー workflow** – draft → in_review → approved フローを確立
+5. **定期バックアップ** – output/exports / data/reviews を定期的にバックアップ
 
 ---
 
-## コンセプト
+## 今後の拡張候補
 
-VideoAsset Manualize は、動画を単に文字にするためのプロジェクトではなく、  
-**組織で再利用できる教育資産・業務資産へ変換するための基盤**です。
+- **UI からの実処理統合** – Single Video ページから直接 LLM 処理実行
+- **テスト整備** – ユニットテスト・統合テストの充実
+- **並列処理** – バッチ処理の並列実行オプション
+- **動画横断の意味統合** – 複数動画の関連性を自動検出
+- **レビュー UI の強化** – diff 表示・承認フロー・承認者管理
+- **多言語サポート** – 字幕・UI の多言語化
+- **API サーバー化** – REST API 化、Web サーバーデプロイ
+- **コンテナ化** – Docker image の提供
+- **性能改善** – キャッシング・インデックス管理
 
-目指すのは、  
-「動画はあるが活かしきれていない」状態を、  
-**「検索できる・読める・配れる・引き継げる」状態へ変えること**です。
+---
+
+## 貢献・サポート
+
+バグ報告・機能リクエスト・プルリクエストを歓迎します。
+
+**リポジトリ**: https://github.com/nario0715masa0619-create/video-asset-manualize
+
+---
+
+## 参考資料
+
+- [training_asset_spec スキーマ](schemas/training_asset_spec.schema.json)
+- [source_evidence スキーマ](schemas/source_evidence.schema.json)
+- [サンプル仕様](samples/)
+
