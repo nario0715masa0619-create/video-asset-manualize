@@ -50,7 +50,7 @@ class PDFManualRenderer:
             parent=self.styles['Heading1'],
             fontSize=28,
             textColor=colors.HexColor('#000000'),
-            spaceAfter=12,
+            spaceAfter=24,
             fontName='JP',
             alignment=TA_CENTER,
         ))
@@ -59,8 +59,8 @@ class PDFManualRenderer:
             parent=self.styles['Heading2'],
             fontSize=18,
             textColor=colors.HexColor('#007bff'),
-            spaceAfter=12,
-            spaceBefore=12,
+            spaceAfter=16,
+            spaceBefore=20,
             fontName='JP',
             fontBold=True,
         ))
@@ -69,8 +69,8 @@ class PDFManualRenderer:
             parent=self.styles['Heading3'],
             fontSize=14,
             textColor=colors.HexColor('#333333'),
-            spaceAfter=10,
-            spaceBefore=10,
+            spaceAfter=12,
+            spaceBefore=16,
             fontName='JP',
             fontBold=True,
         ))
@@ -78,8 +78,9 @@ class PDFManualRenderer:
             name='CustomNormal',
             parent=self.styles['Normal'],
             fontSize=11,
+            leading=18,
             textColor=colors.HexColor('#333333'),
-            spaceAfter=6,
+            spaceAfter=8,
             alignment=TA_LEFT,
             fontName='JP',
         ))
