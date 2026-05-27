@@ -86,7 +86,7 @@ def show_single_video_page():
                         if html_path.exists():
                             with open(html_path, 'r', encoding='utf-8') as html_file:
                                 st.download_button(
-                                    label="📄 View HTML",
+                                    label="📥 Download HTML",
                                     data=html_file.read(),
                                     file_name=html_path.name,
                                     mime="text/html",
@@ -102,7 +102,7 @@ def show_single_video_page():
                         if pdf_path.exists():
                             with open(pdf_path, 'rb') as pdf_file:
                                 st.download_button(
-                                    label="📋 View PDF",
+                                    label="📥 Download PDF",
                                     data=pdf_file.read(),
                                     file_name=pdf_path.name,
                                     mime="application/pdf",
@@ -118,7 +118,7 @@ def show_single_video_page():
                         if json_path.exists():
                             with open(json_path, 'r', encoding='utf-8') as json_file:
                                 st.download_button(
-                                    label="📝 View JSON",
+                                    label="📥 Download JSON",
                                     data=json_file.read(),
                                     file_name=json_path.name,
                                     mime="application/json",
@@ -129,5 +129,6 @@ def show_single_video_page():
         
         except Exception as e:
             st.error(f"Error: {str(e)}")
+
 
 
