@@ -85,19 +85,7 @@ def show_single_video_page():
             
             with col2:
                 if results.get('pdf'):
-                    if results.get('pdf'):
-                        pdf_path = Path(results['pdf'])
-                        if pdf_path.exists():
-                            with open(pdf_path, 'rb') as pdf_file:
-                                st.download_button(
-                                    label="📋 View PDF",
-                                    data=pdf_file.read(),
-                                    file_name=pdf_path.name,
-                                    mime="application/pdf",
-                                    key="download_pdf_single_video"
-                                )
-                        else:
-                            st.error("⚠️ PDF ファイルが見つかりません")
+                    st.markdown(f"[📋 View PDF]({results['pdf']})")
             
             with col3:
                 if results.get('json'):
@@ -105,4 +93,3 @@ def show_single_video_page():
         
         except Exception as e:
             st.error(f"Error: {str(e)}")
-

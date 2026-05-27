@@ -59,8 +59,10 @@ class PDFManualRenderer:
             name='CustomTitle',
             parent=self.styles['Heading1'],
             fontSize=28,
+            leading=36,
+            spaceBefore=16,
+            spaceAfter=28,
             textColor=colors.HexColor('#000000'),
-            spaceAfter=32,
             fontName=self.jp_font_name,
             alignment=TA_CENTER,
         ))
@@ -314,3 +316,4 @@ class PDFManualRenderer:
         doc.build(story)
         
         return output_file
+
