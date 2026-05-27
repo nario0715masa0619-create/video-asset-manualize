@@ -81,7 +81,19 @@ def show_single_video_page():
             
             with col1:
                 if results.get('html'):
-                    st.markdown(f"[📄 View HTML]({results['html']})")
+                    if results.get('html'):
+                        html_path = Path(results['html'])
+                        if html_path.exists():
+                            with open(html_path, 'r', encoding='utf-8') as html_file:
+                                st.download_button(
+                                    label="📄 View HTML",
+                                    data=html_file.read(),
+                                    file_name=html_path.name,
+                                    mime="text/html",
+                                    key="download_html_single_video"
+                                )
+                        else:
+                            st.error("⚠️ HTML ファイルが見つかりません")
             
             with col2:
                 if results.get('pdf'):
@@ -101,8 +113,21 @@ def show_single_video_page():
             
             with col3:
                 if results.get('json'):
-                    st.markdown(f"[📝 View JSON]({results['json']})")
+                    if results.get('json'):
+                        json_path = Path(results['json'])
+                        if json_path.exists():
+                            with open(json_path, 'r', encoding='utf-8') as json_file:
+                                st.download_button(
+                                    label="📝 View JSON",
+                                    data=json_file.read(),
+                                    file_name=json_path.name,
+                                    mime="application/json",
+                                    key="download_json_single_video"
+                                )
+                        else:
+                            st.error("⚠️ JSON ファイルが見つかりません")
         
         except Exception as e:
             st.error(f"Error: {str(e)}")
+
 
