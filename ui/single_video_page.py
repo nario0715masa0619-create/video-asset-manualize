@@ -2,8 +2,8 @@
 Single Video Run Page - 単一動画の処理実行
 '''
 
-import streamlit as st
 from pathlib import Path
+import streamlit as st
 from video_asset_manualize.video_source_evidence_builder import VideoSourceEvidenceBuilder
 from video_asset_manualize.source_evidence_to_training_asset_builder import SourceEvidenceToTrainingAssetBuilder
 from video_asset_manualize.build_training_asset_pipeline import BuildTrainingAssetPipeline
@@ -61,7 +61,6 @@ def show_single_video_page():
             # Save and generate
             st.write("Step 3: Generating HTML/PDF...")
             import json
-            from pathlib import Path
             
             output_dir = Path("output/exports")
             output_dir.mkdir(parents=True, exist_ok=True)
