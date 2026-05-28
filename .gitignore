@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+output/exports/
+*.old
+* (1).py
+* (2).py
+.env

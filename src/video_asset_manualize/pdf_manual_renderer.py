@@ -19,6 +19,27 @@ from .settings import settings
 
 class PDFManualRenderer:
     """Renders training_asset_spec JSON to PDF manual."""
+"""
+PDF Manual Renderer - Renders training_asset_spec to PDF.
+"""
+
+import json
+from pathlib import Path
+from datetime import datetime
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import mm
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_LEFT, TA_CENTER
+from reportlab.lib import colors
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+
+from .settings import settings
+
+
+class PDFManualRenderer:
+    """Renders training_asset_spec JSON to PDF manual."""
     
     def __init__(self):
         self.styles = getSampleStyleSheet()
@@ -28,8 +49,12 @@ class PDFManualRenderer:
     def _register_fonts(self):
         """Register Japanese fonts."""
         self.jp_font_name = 'JP'
+        font_registered = False
+        
         try:
-            from reportlab.pdfbase.cidfonts import CIDFont
+            from reportlab.pdfbase.cidfonts import UnicodeCIDFont
+            
+            # Known hardcoded paths for Windows and common Linux distributions
             font_paths = [
                 'C:/Windows/Fonts/meiryo.ttc',
                 'C:/Windows/Fonts/msgothic.ttc',
@@ -38,20 +63,48 @@ class PDFManualRenderer:
                 '/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc'
             ]
             
-            font_registered = False
+            # Dynamically find Noto Sans CJK in Linux
+            import glob
+            linux_font_search_paths = [
+                '/usr/share/fonts/**/NotoSansCJK*.ttc',
+                '/usr/share/fonts/**/NotoSansCJK*.otf',
+                '/usr/share/fonts/**/NotoSansJP*.otf',
+                '/usr/share/fonts/**/NotoSansJP*.ttf'
+            ]
+            for search_path in linux_font_search_paths:
+                found_fonts = glob.glob(search_path, recursive=True)
+                if found_fonts:
+                    font_paths.extend(found_fonts)
+            
+            # Optional debug: use fc-list if available
+            try:
+                import subprocess
+                result = subprocess.run(['fc-list', ':lang=ja', 'file'], capture_output=True, text=True)
+                for line in result.stdout.splitlines():
+                    path = line.split(':')[0].strip()
+                    if path.endswith(('.ttc', '.ttf', '.otf')) and path not in font_paths:
+                        font_paths.append(path)
+            except Exception as e:
+                import logging
+                logging.debug(f"fc-list check skipped: {e}")
+
             for font_path in font_paths:
                 if Path(font_path).exists():
                     try:
                         pdfmetrics.registerFont(TTFont('JP', font_path))
                         font_registered = True
                         break
-                    except:
+                    except Exception as e:
+                        import logging
+                        logging.debug(f"Failed to register font {font_path}: {e}")
                         continue
             
             if not font_registered:
-                pdfmetrics.registerFont(CIDFont('HeiseiKakuGo-W5'))
+                pdfmetrics.registerFont(UnicodeCIDFont('HeiseiKakuGo-W5'))
                 self.jp_font_name = 'HeiseiKakuGo-W5'
-        except:
+        except Exception as e:
+            import logging
+            logging.error(f"Font registration failed completely: {e}")
             pass
     
     def _setup_custom_styles(self):

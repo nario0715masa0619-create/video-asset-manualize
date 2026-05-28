@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    ports:
+      - "8501:8501"
+    volumes:
+      # Mount the exports directory for easy access on the host machine
+      - ./output/exports:/app/output/exports
+    environment:
+      # Pass through the OpenAI API key from the host environment
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    # Ensure correct tty allocation for Windows compatibility in interactive terminals
+    tty: true
+    stdin_open: true

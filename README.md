@@ -190,6 +190,62 @@ OPENAI_API_KEY=your_api_key_here
 ENABLE_LLM_EXTRACTION=false
 \\\
 
+---
+
+## Docker での実行（推奨）
+
+Docker と Docker Compose を使用することで、環境構築を自動化し、依存関係（ffmpeg, 日本語フォント等）のインストールなしにアプリケーションを実行できます。
+
+### 1. Docker イメージのビルドと起動
+
+`.env.example` をコピーして `.env` を作成し、必要に応じて環境変数を設定します。
+
+```bash
+cp .env.example .env
+# Windows (PowerShell) の場合: copy .env.example .env
+```
+
+Docker Compose を使用してビルドと起動を行います。
+
+```bash
+docker compose up -d --build
+```
+
+### 2. Web UI へのアクセス
+
+起動後、ブラウザで以下の URL にアクセスします：
+
+**http://localhost:8501**
+
+ホストマシンの `output/exports/` ディレクトリがコンテナと共有（ボリュームマウント）されるため、生成された PDF や HTML はホスト側で直接確認できます。
+
+### 3. Docker 内での CLI コマンド実行例
+
+コンテナ内で CLI コマンドを実行する場合は `docker compose exec` を使用します。
+
+**単一動画からの生成:**
+```bash
+docker compose exec app python -m video_asset_manualize.build_asset video samples/sample_training_video.mp4
+```
+
+**マニュアルのビルド:**
+```bash
+docker compose exec app python -m video_asset_manualize.build_asset build output/exports/asset-001_spec.json --output-dir output/exports
+```
+
+### Docker に関するよくあるエラーと対処法
+
+#### `address already in use` (ポート 8501 の競合)
+**エラー**: `bind: address already in use`
+**対策**: ホストの別のプロセス（ローカルで起動した Streamlit など）が 8501 ポートを使用しています。ローカルのプロセスを停止するか、`docker-compose.yml` の ports を `8502:8501` などに変更してください。
+
+#### `FileNotFoundError` (マウントされたディレクトリの不整合)
+**エラー**: `No such file or directory: 'output/exports/...'`
+**対策**: 初回起動時にホスト側に `output/exports/` が存在しない場合、Docker がルート権限のディレクトリとして自動作成し、パーミッションエラーになることがあります。ホスト側で先に `mkdir -p output/exports` などを実行してからビルドしてください。
+
+#### Windows 特有のエラー (パスや改行コード)
+**エラー**: `\r: command not found` など
+**対策**: Git の `autocrlf` 設定によりスクリプトの改行コードが CRLF になっている場合に発生することがあります。`.gitattributes` を設定するか、エディタで LF に変換してください。
 
 ---
 
