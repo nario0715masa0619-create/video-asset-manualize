@@ -259,36 +259,34 @@
       "type": "object",
       "required": [
         "screenshot_id",
-        "at_ms"
+        "timestamp_ms",
+        "image_path"
       ],
       "properties": {
         "screenshot_id": {
           "$ref": "#/$defs/nonEmptyString"
         },
-        "at_ms": {
+        "timestamp_ms": {
           "type": "integer",
           "minimum": 0
         },
+        "image_path": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
         "description": {
           "type": "string"
-        },
-        "file_ref": {
-          "type": "string"
-        },
-        "related_step_ids": {
-          "$ref": "#/$defs/stringArray"
         }
       }
     },
     "speakerSegment": {
       "type": "object",
       "required": [
-        "speaker_segment_id",
+        "speaker_id",
         "start_ms",
         "end_ms"
       ],
       "properties": {
-        "speaker_segment_id": {
+        "speaker_id": {
           "$ref": "#/$defs/nonEmptyString"
         },
         "start_ms": {
@@ -299,8 +297,8 @@
           "type": "integer",
           "minimum": 0
         },
-        "speaker_label": {
-          "$ref": "#/$defs/nonEmptyString"
+        "label": {
+          "type": "string"
         },
         "confidence": {
           "type": "number",
@@ -312,24 +310,41 @@
     "evidenceLink": {
       "type": "object",
       "required": [
-        "evidence_ref_id",
-        "related_step_id"
+        "link_id",
+        "target_type",
+        "target_id",
+        "evidence_type",
+        "evidence_id"
       ],
       "properties": {
-        "evidence_ref_id": {
+        "link_id": {
           "$ref": "#/$defs/nonEmptyString"
         },
-        "related_step_id": {
+        "target_type": {
+          "type": "string",
+          "enum": [
+            "summary",
+            "chapter",
+            "procedure",
+            "step",
+            "caution",
+            "faq_candidate"
+          ]
+        },
+        "target_id": {
           "$ref": "#/$defs/nonEmptyString"
         },
-        "transcript_segment_ids": {
-          "$ref": "#/$defs/stringArray"
+        "evidence_type": {
+          "type": "string",
+          "enum": [
+            "transcript_segment",
+            "ocr_segment",
+            "screenshot_candidate",
+            "speaker_segment"
+          ]
         },
-        "ocr_segment_ids": {
-          "$ref": "#/$defs/stringArray"
-        },
-        "screenshot_ids": {
-          "$ref": "#/$defs/stringArray"
+        "evidence_id": {
+          "$ref": "#/$defs/nonEmptyString"
         }
       }
     },
