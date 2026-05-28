@@ -194,6 +194,8 @@ ENABLE_LLM_EXTRACTION=false
 
 ## Docker での実行（推奨）
 
+詳細な Docker セットアップ手順は [docs/docker_setup.md](docs/docker_setup.md) を参照してください。
+
 Docker と Docker Compose を使用することで、環境構築を自動化し、依存関係（ffmpeg, 日本語フォント等）のインストールなしにアプリケーションを実行できます。
 
 ### 1. Docker イメージのビルドと起動
