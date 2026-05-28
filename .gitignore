@@ -5,3 +5,6 @@ output/exports/
 * (1).py
 * (2).py
 .env
+.env.*
+!.env.example
+
