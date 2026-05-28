@@ -30,6 +30,9 @@ def show_single_video_page():
     transcript_provider = st.selectbox("Transcript Provider", ["dummy", "whisper"])
     ocr_provider = st.selectbox("OCR Provider", ["dummy", "easyocr"])
     
+    if "single_video_processing_result" not in st.session_state:
+        st.session_state.single_video_processing_result = None
+    
     if st.button("Process Video", key="process_video"):
         st.info("Processing video...")
         
@@ -72,63 +75,67 @@ def show_single_video_page():
             pipeline = BuildTrainingAssetPipeline()
             results = pipeline.generate_outputs(str(spec_file), output_dir=str(output_dir))
             
+            st.session_state.single_video_processing_result = {
+                "results": results,
+                "asset_id": asset_id
+            }
             st.success("Processing complete!")
             
-            st.markdown("### Results")
-            st.write(f"**Asset ID:** {asset_id}")
-            
-            col1, col2, col3 = st.columns(3)
-            
-            with col1:
-                if results.get('html'):
-                    if results.get('html'):
-                        html_path = Path(results['html'])
-                        if html_path.exists():
-                            with open(html_path, 'r', encoding='utf-8') as html_file:
-                                st.download_button(
-                                    label="📥 Download HTML",
-                                    data=html_file.read(),
-                                    file_name=html_path.name,
-                                    mime="text/html",
-                                    key="download_html_single_video"
-                                )
-                        else:
-                            st.error("⚠️ HTML ファイルが見つかりません")
-            
-            with col2:
-                if results.get('pdf'):
-                    if results.get('pdf'):
-                        pdf_path = Path(results['pdf'])
-                        if pdf_path.exists():
-                            with open(pdf_path, 'rb') as pdf_file:
-                                st.download_button(
-                                    label="📥 Download PDF",
-                                    data=pdf_file.read(),
-                                    file_name=pdf_path.name,
-                                    mime="application/pdf",
-                                    key="download_pdf_single_video"
-                                )
-                        else:
-                            st.error("⚠️ PDF ファイルが見つかりません")
-            
-            with col3:
-                if results.get('json'):
-                    if results.get('json'):
-                        json_path = Path(results['json'])
-                        if json_path.exists():
-                            with open(json_path, 'r', encoding='utf-8') as json_file:
-                                st.download_button(
-                                    label="📥 Download JSON",
-                                    data=json_file.read(),
-                                    file_name=json_path.name,
-                                    mime="application/json",
-                                    key="download_json_single_video"
-                                )
-                        else:
-                            st.error("⚠️ JSON ファイルが見つかりません")
-        
         except Exception as e:
             st.error(f"Error: {str(e)}")
-
-
-
+            st.session_state.single_video_processing_result = None
+            
+    if st.session_state.single_video_processing_result:
+        data = st.session_state.single_video_processing_result
+        results = data["results"]
+        asset_id = data["asset_id"]
+        
+        st.markdown("### Results")
+        st.write(f"**Asset ID:** {asset_id}")
+        
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            if results.get('html'):
+                html_path = Path(results['html'])
+                if html_path.exists():
+                    with open(html_path, 'r', encoding='utf-8') as html_file:
+                        st.download_button(
+                            label="📥 Download HTML",
+                            data=html_file.read(),
+                            file_name=html_path.name,
+                            mime="text/html",
+                            key="download_html_single_video"
+                        )
+                else:
+                    st.error("⚠️ HTML ファイルが見つかりません")
+        
+        with col2:
+            if results.get('pdf'):
+                pdf_path = Path(results['pdf'])
+                if pdf_path.exists():
+                    with open(pdf_path, 'rb') as pdf_file:
+                        st.download_button(
+                            label="📥 Download PDF",
+                            data=pdf_file.read(),
+                            file_name=pdf_path.name,
+                            mime="application/pdf",
+                            key="download_pdf_single_video"
+                        )
+                else:
+                    st.error("⚠️ PDF ファイルが見つかりません")
+        
+        with col3:
+            if results.get('json'):
+                json_path = Path(results['json'])
+                if json_path.exists():
+                    with open(json_path, 'r', encoding='utf-8') as json_file:
+                        st.download_button(
+                            label="📥 Download JSON",
+                            data=json_file.read(),
+                            file_name=json_path.name,
+                            mime="application/json",
+                            key="download_json_single_video"
+                        )
+                else:
+                    st.error("⚠️ JSON ファイルが見つかりません")
