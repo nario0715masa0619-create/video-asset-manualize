@@ -121,3 +121,40 @@ def test_canonical_acceptance_validator_canonical_pass():
     result = CanonicalAcceptanceValidator.validate_canonical(spec)
     assert result["is_valid"] == True
     assert result["level"] == "canonical"
+
+
+def test_llm_builder_adds_chapter_id():
+    """Test that LLMTrainingAssetBuilder normalizes instructional_core and adds missing chapter_id."""
+    from video_asset_manualize.llm_training_asset_builder import LLMTrainingAssetBuilder
+    from video_asset_manualize.llm_provider import DummyLLMProvider
+    
+    # Use dummy provider to avoid API calls
+    builder = LLMTrainingAssetBuilder(llm_provider=DummyLLMProvider())
+    
+    raw_core = {
+        "chapters": [
+            {
+                "title": "Chapter without ID",
+                "procedures": [
+                    {
+                        "title": "Proc without ID",
+                        "steps": [
+                            {"action": "Do something"}
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+    
+    normalized = builder._normalize_instructional_core(raw_core)
+    
+    chapter = normalized["chapters"][0]
+    assert chapter["chapter_id"] == "chapter-001"
+    
+    proc = chapter["procedures"][0]
+    assert proc["procedure_id"] == "proc-001-001"
+    
+    step = proc["steps"][0]
+    assert step["step_id"] == "step-001-001-001"
+    assert step["order"] == 1

@@ -39,6 +39,26 @@ class LLMTrainingAssetBuilder:
         self.caution_generator = CautionGenerator(llm_provider)
         self.faq_generator = FAQGenerator(llm_provider)
     
+    def _normalize_instructional_core(self, core: dict) -> dict:
+        """Ensure missing structural IDs are added deterministically."""
+        chapters = core.get("chapters", [])
+        for c_idx, chapter in enumerate(chapters, 1):
+            if "chapter_id" not in chapter or not str(chapter["chapter_id"]).strip():
+                chapter["chapter_id"] = f"chapter-{c_idx:03d}"
+            
+            procedures = chapter.get("procedures", [])
+            for p_idx, proc in enumerate(procedures, 1):
+                if "procedure_id" not in proc or not str(proc["procedure_id"]).strip():
+                    proc["procedure_id"] = f"proc-{c_idx:03d}-{p_idx:03d}"
+                
+                steps = proc.get("steps", [])
+                for s_idx, step in enumerate(steps, 1):
+                    if "step_id" not in step or not str(step["step_id"]).strip():
+                        step["step_id"] = f"step-{c_idx:03d}-{p_idx:03d}-{s_idx:03d}"
+                    if "order" not in step:
+                        step["order"] = s_idx
+        return core
+
     def build_from_source_evidence(self, source_evidence: Dict[str, Any]) -> Dict[str, Any]:
         """source_evidence から training_asset_spec を生成"""
         
@@ -59,6 +79,9 @@ class LLMTrainingAssetBuilder:
         
         # Extract instructions
         instructional_core = self.instruction_extractor.extract_instructions(transcript_text)
+        
+        # Post-process to ensure schema stability
+        instructional_core = self._normalize_instructional_core(instructional_core)
         
         # Generate cautions
         cautions = self.caution_generator.generate_cautions(transcript_text)
