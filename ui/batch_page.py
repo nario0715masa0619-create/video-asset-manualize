@@ -3,8 +3,36 @@ Batch / Booklet Run Page - バッチ処理と冊子化の実行
 '''
 
 import streamlit as st
+import json
 from pathlib import Path
 from video_asset_manualize.ui_pipeline_runner import UIPipelineRunner
+from video_asset_manualize.batch_manifest_loader import BatchManifestLoader
+
+
+def _check_modes(manifest_file: str):
+    """Check specs in manifest for non-canonical generation modes."""
+    try:
+        _, _, specs = BatchManifestLoader.load_specs_manifest(manifest_file)
+        has_non_canonical = False
+        modes = set()
+        
+        for spec_item in specs:
+            spec_path = Path(spec_item.spec_path)
+            if spec_path.exists():
+                with open(spec_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    mode = data.get("metadata", {}).get("generation_mode", "unknown")
+                    modes.add(mode)
+                    if mode != "canonical":
+                        has_non_canonical = True
+                        
+        if has_non_canonical:
+            st.warning(f"⚠️ 対象に非正本 (non-canonical) spec が含まれています。Modes: {', '.join(modes)}")
+        elif "canonical" in modes:
+            st.success("🟢 全ての spec が canonical (Production-ready) です。")
+    except Exception:
+        pass
+
 
 def show_batch_page():
     st.title("Batch & Booklet Processing")
@@ -21,6 +49,7 @@ def show_batch_page():
         output_dir = st.text_input("Output Directory", value="output/exports/batch", key="batch_output")
         
         if st.button("Run Batch Build", key="run_batch"):
+            _check_modes(manifest_file)
             st.info("Running batch build...")
             result = runner.run_batch_specs(manifest_file, output_dir)
             
@@ -58,6 +87,7 @@ def show_batch_page():
         project_title = st.text_input("Project Title", value="Training Booklet", key="project_title")
         
         if st.button("Build Booklet", key="build_booklet"):
+            _check_modes(specs_manifest)
             st.info("Building booklet...")
             result = runner.run_booklet_build(specs_manifest, output_dir_booklet, project_id, project_title)
             

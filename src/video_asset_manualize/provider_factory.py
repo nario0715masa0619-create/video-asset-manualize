@@ -2,6 +2,7 @@
 Provider Factory - Provider の生成と切り替え
 """
 
+import os
 from typing import Literal
 from .transcript_provider import (
     TranscriptProvider,
@@ -20,13 +21,6 @@ class ProviderFactory:
     ) -> TranscriptProvider:
         """
         Transcript Provider を生成
-        
-        Args:
-            provider_type: "dummy" または "whisper"
-            **kwargs: Provider に渡すオプション
-        
-        Returns:
-            TranscriptProvider インスタンス
         """
         if provider_type == "whisper":
             try:
@@ -50,13 +44,6 @@ class ProviderFactory:
     ) -> OCRProvider:
         """
         OCR Provider を生成
-        
-        Args:
-            provider_type: "dummy" または "easyocr"
-            **kwargs: Provider に渡すオプション
-        
-        Returns:
-            OCRProvider インスタンス
         """
         if provider_type == "easyocr":
             try:
@@ -82,10 +69,17 @@ class ProviderFactory:
                 api_key = kwargs.get('api_key') or os.getenv('OPENAI_API_KEY')
                 model = kwargs.get('model', 'gpt-3.5-turbo')
                 if not api_key:
-                    raise ValueError("OPENAI_API_KEY is required for OpenAI provider")
+                    raise ValueError(
+                        "OPENAI_API_KEY is required for Canonical generation. "
+                        "Please set the OPENAI_API_KEY environment variable. "
+                        "To try without AI, use fallback mode: --mode fallback"
+                    )
                 return OpenAILLMProvider(api_key=api_key, model=model)
             except ImportError:
-                raise ImportError("OpenAI library not found. Install with: pip install openai")
+                raise ImportError(
+                    "OpenAI library not found. Install with: pip install openai\n"
+                    "To try without AI, use fallback mode: --mode fallback"
+                )
         else:
             from .llm_provider import DummyLLMProvider
             return DummyLLMProvider()

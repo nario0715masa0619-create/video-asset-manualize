@@ -4,7 +4,7 @@ Configuration and settings management for VideoAsset Manualize.
 
 import os
 from pathlib import Path
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     PROJECT_ROOT: Path = Path(__file__).parent.parent.parent
@@ -27,20 +27,24 @@ class Settings(BaseSettings):
     PDF_MARGIN_LEFT: int = 20
     PDF_MARGIN_RIGHT: int = 20
     
-    # Provider settings (Phase 4)
+    # Provider settings
     TRANSCRIPT_PROVIDER_TYPE: str = "dummy"
     WHISPER_MODEL: str = "base"
     WHISPER_LANGUAGE: str = "ja"
     
-    # OCR Provider settings (Phase 5)
+    # OCR Provider settings
     OCR_PROVIDER_TYPE: str = "dummy"
     EASYOCR_LANGUAGES: list = ["ja", "en"]
     EASYOCR_GPU: bool = False
     
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        case_sensitive = True
+    # Phase 12 - Canonical Generation settings
+    GENERATION_MODE_DEFAULT: str = "canonical"
+    LLM_PROVIDER_TYPE: str = "openai"
+    LLM_MODEL: str = "gpt-3.5-turbo"
+    OPENAI_API_KEY: str = ""
+    ENABLE_LLM_EXTRACTION: bool = False
+    
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -48,11 +52,3 @@ class Settings(BaseSettings):
         self.EXPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
 settings = Settings()
-
-
-# ===== LLM Settings (Phase 6) =====
-LLM_PROVIDER_TYPE: str = "dummy"  # "dummy" or "openai"
-LLM_MODEL: str = "gpt-3.5-turbo"  # OpenAI model name
-OPENAI_API_KEY: str = ""  # Set via environment variable OPENAI_API_KEY
-ENABLE_LLM_EXTRACTION: bool = False  # Enable LLM-based extraction in CLI
-

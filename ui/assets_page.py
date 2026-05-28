@@ -3,6 +3,8 @@ Assets List Page - 生成済み成果物の一覧と詳細
 '''
 
 import streamlit as st
+import json
+from pathlib import Path
 from video_asset_manualize.asset_indexer import AssetIndexer
 from video_asset_manualize.review_repository import ReviewRepository, ReviewState
 
@@ -25,7 +27,34 @@ def show_assets_page():
         review = review_repo.load_review(asset_id)
         unique_key = f"{idx}_{asset_id}"
         
-        with st.expander(f"{asset['title']} ({asset_id})"):
+        spec_path = Path(f"output/exports/{asset_id}_spec.json")
+        mode = "unknown"
+        provider = "n/a"
+        if spec_path.exists():
+            try:
+                with open(spec_path, "r", encoding="utf-8") as f:
+                    spec_data = json.load(f)
+                    mode = spec_data.get("metadata", {}).get("generation_mode", "unknown")
+                    provider = spec_data.get("metadata", {}).get("provider", "n/a")
+            except Exception:
+                pass
+                
+        # Determine color for mode display
+        if mode == "canonical":
+            mode_color = "🟢"
+        elif mode in ["fallback", "test"]:
+            mode_color = "🟡"
+        else:
+            mode_color = "🔴"
+            
+        with st.expander(f"{mode_color} {asset['title']} ({asset_id})"):
+            if mode == "canonical":
+                st.success(f"**Generation Mode:** CANONICAL - Provider: {provider}")
+            elif mode in ["fallback", "test"]:
+                st.warning(f"**Generation Mode:** {mode.upper()} - ⚠️ 非正本 (Production-ready ではありません)")
+            else:
+                st.error(f"**Generation Mode:** UNKNOWN - ⚠️ 非 canonical spec")
+                
             col1, col2, col3 = st.columns(3)
             
             with col1:
@@ -39,12 +68,9 @@ def show_assets_page():
             with col3:
                 st.markdown("<b>Files:</b>", unsafe_allow_html=True)
                 
-                from pathlib import Path
-                
                 dl_col1, dl_col2, dl_col3 = st.columns(3)
                 
                 # Spec
-                spec_path = Path(f"output/exports/{asset_id}_spec.json")
                 if spec_path.exists():
                     with open(spec_path, "rb") as f:
                         dl_col1.download_button(label="📄 JSON", data=f, file_name=f"{asset_id}_spec.json", use_container_width=True, key=f"dl_spec_{unique_key}")

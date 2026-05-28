@@ -79,18 +79,23 @@ class SourceEvidenceToTrainingAssetBuilder:
             "review_notes": ["自動抽出のため、レビューが必要です"]
         }
 
-        # Build complete spec (source_evidence は最小限に)
+        # Build complete spec
         spec = {
             "asset_meta": asset_meta,
             "instructional_core": instructional_core,
             "derived_views": derived_views,
-            "_metadata": metadata
+            "metadata": metadata
         }
 
         # Store in builder
         self.spec_builder.spec = spec
 
         return spec
+
+    def build_from_file(self, file_path: str) -> dict:
+        """Convenience method to load and build in one step."""
+        self.load_source_evidence(Path(file_path))
+        return self.build_training_asset_spec()
 
     def _build_asset_meta(self) -> dict:
         """Build asset_meta from source_evidence."""

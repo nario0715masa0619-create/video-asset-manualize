@@ -5,8 +5,9 @@ Single Video Run Page - 単一動画の処理実行
 from pathlib import Path
 import streamlit as st
 from video_asset_manualize.video_source_evidence_builder import VideoSourceEvidenceBuilder
-from video_asset_manualize.source_evidence_to_training_asset_builder import SourceEvidenceToTrainingAssetBuilder
 from video_asset_manualize.build_training_asset_pipeline import BuildTrainingAssetPipeline
+from video_asset_manualize.orchestration import Orchestrator
+from video_asset_manualize.generation_mode import GenerationMode
 
 
 def show_single_video_page():
@@ -20,15 +21,15 @@ def show_single_video_page():
         video_path = st.text_input("Video File Path", value="samples/sample_training_video.mp4")
     
     with col2:
-        use_llm = st.checkbox("Use LLM Extraction", value=False)
+        mode_str = st.selectbox("Generation Mode", ["canonical", "fallback", "test"], index=0)
     
-    if use_llm:
-        llm_provider = st.selectbox("LLM Provider", ["dummy", "openai"])
+    if mode_str == "canonical":
+        llm_provider = st.selectbox("LLM Provider", ["openai", "dummy"], index=0)
     else:
         llm_provider = "dummy"
     
-    transcript_provider = st.selectbox("Transcript Provider", ["dummy", "whisper"])
-    ocr_provider = st.selectbox("OCR Provider", ["dummy", "easyocr"])
+    transcript_provider = st.selectbox("Transcript Provider", ["whisper", "dummy"], index=0)
+    ocr_provider = st.selectbox("OCR Provider", ["easyocr", "dummy"], index=0)
     
     if "single_video_processing_result" not in st.session_state:
         st.session_state.single_video_processing_result = None
@@ -43,25 +44,26 @@ def show_single_video_page():
             source_evidence = evidence_builder.build_from_video(video_path)
             st.success("Source evidence extracted")
             
-            # Build spec
-            st.write("Step 2: Building training asset spec...")
-            if use_llm:
-                from video_asset_manualize.llm_training_asset_builder import LLMTrainingAssetBuilder
-                from video_asset_manualize.provider_factory import ProviderFactory
-                llm_provider_obj = ProviderFactory.create_llm_provider(provider_type=llm_provider)
-                spec_builder = LLMTrainingAssetBuilder(llm_provider=llm_provider_obj)
-                spec = spec_builder.build_from_source_evidence(source_evidence)
-            else:
-                from video_asset_manualize.source_evidence_to_training_asset_builder import SourceEvidenceToTrainingAssetBuilder
-                spec_builder = SourceEvidenceToTrainingAssetBuilder()
-                spec_builder.source_evidence = source_evidence
-                spec = spec_builder.build_training_asset_spec()
+            # Temporary save for orchestration (Orchestrator takes file path)
+            import json
+            temp_dir = Path("output/temp")
+            temp_dir.mkdir(parents=True, exist_ok=True)
+            temp_evidence = temp_dir / "temp_evidence.json"
+            with open(temp_evidence, 'w', encoding='utf-8') as f:
+                json.dump(source_evidence, f, ensure_ascii=False)
+            
+            # Build spec via Orchestrator
+            st.write(f"Step 2: Building training asset spec ({mode_str} mode)...")
+            gen_mode = Orchestrator.resolve_generation_mode(mode_str)
+            spec = Orchestrator.extract_with_mode(
+                source_evidence_path=str(temp_evidence),
+                mode=gen_mode,
+                llm_provider_name=llm_provider
+            )
             st.success("Spec built")
             
             # Save and generate
             st.write("Step 3: Generating HTML/PDF...")
-            import json
-            
             output_dir = Path("output/exports")
             output_dir.mkdir(parents=True, exist_ok=True)
             
@@ -76,7 +78,9 @@ def show_single_video_page():
             
             st.session_state.single_video_processing_result = {
                 "results": results,
-                "asset_id": asset_id
+                "asset_id": asset_id,
+                "mode": mode_str,
+                "provider": spec.get('metadata', {}).get('provider', 'n/a')
             }
             st.success("Processing complete!")
             
@@ -88,8 +92,18 @@ def show_single_video_page():
         data = st.session_state.single_video_processing_result
         results = data["results"]
         asset_id = data["asset_id"]
+        mode = data.get("mode", "unknown")
         
         st.markdown("### Results")
+        
+        # Display Mode Warnings
+        if mode == "canonical":
+            st.success(f"**Generation Mode:** CANONICAL (Production Ready) - Provider: {data.get('provider')}")
+        elif mode in ["fallback", "test"]:
+            st.warning(f"**Generation Mode:** {mode.upper()} - ⚠️ この spec は production canonical ではありません。正本として扱うには canonical generation を実行してください。")
+        else:
+            st.error("**Generation Mode:** UNKNOWN - ⚠️ この spec は非 canonical です。")
+            
         st.write(f"**Asset ID:** {asset_id}")
         
         col1, col2, col3 = st.columns(3)
