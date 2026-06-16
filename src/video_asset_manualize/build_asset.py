@@ -147,6 +147,8 @@ def extract(
         summary_table.add_row("Title", title)
         summary_table.add_row("Generation mode", gen_mode.value)
         summary_table.add_row("LLM Provider", spec.get('metadata', {}).get('provider', 'n/a'))
+        summary_table.add_row("Modality", spec.get('metadata', {}).get('dominant_modality', 'unknown'))
+        summary_table.add_row("Evidence Quality", spec.get('metadata', {}).get('evidence_quality', 'unknown'))
         
         console.print(summary_table)
         console.print(f"\n[green]✅ Extraction completed in '{gen_mode.value}' mode![/green]")

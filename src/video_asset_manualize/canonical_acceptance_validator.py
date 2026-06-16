@@ -12,7 +12,9 @@ class CanonicalAcceptanceValidator:
         'generation_mode',
         'provider',
         'model',
-        'pipeline_version'
+        'pipeline_version',
+        'dominant_modality',
+        'evidence_quality'
     ]
     
     @staticmethod
@@ -118,6 +120,13 @@ class CanonicalAcceptanceValidator:
             
         if 'source_evidence' not in spec:
             errors.append("acceptance validation failed: 'source_evidence' block is missing (required for traceability)")
+            
+        metadata = spec.get('metadata', {})
+        modality = metadata.get('dominant_modality', 'unknown')
+        quality = metadata.get('evidence_quality', 'unknown')
+        
+        if modality == 'weak_evidence' or quality == 'weak':
+            errors.append(f"acceptance validation failed: evidence quality is '{quality}' (modality: '{modality}'). This requires human review and cannot pass automatic acceptance.")
             
         return CanonicalAcceptanceValidator._create_result(
             is_valid=len(errors) == 0,

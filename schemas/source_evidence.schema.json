@@ -51,6 +51,19 @@
         "$ref": "#/$defs/evidenceLink"
       },
       "default": []
+    },
+    "modality_profile": {
+      "type": "object",
+      "description": "Profile of the video's dominant modality and evidence quality.",
+      "additionalProperties": true
+    },
+    "visual_text_segments": {
+      "type": "array",
+      "description": "Aggregated visual text (OCR) segments.",
+      "items": {
+        "$ref": "#/$defs/visualTextSegment"
+      },
+      "default": []
     }
   },
   "$defs": {
@@ -116,6 +129,18 @@
             "string",
             "null"
           ]
+        },
+        "fps": {
+          "type": "number"
+        },
+        "has_audio": {
+          "type": "boolean"
+        },
+        "height": {
+          "type": "integer"
+        },
+        "width": {
+          "type": "integer"
         }
       }
     },
@@ -207,6 +232,45 @@
         }
       }
     },
+    "visualTextSegment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "segment_id",
+        "start_ms",
+        "end_ms",
+        "text"
+      ],
+      "properties": {
+        "segment_id": {
+          "type": "string"
+        },
+        "start_ms": {
+          "$ref": "#/$defs/msTimestamp"
+        },
+        "end_ms": {
+          "$ref": "#/$defs/msTimestamp"
+        },
+        "text": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "bbox": {
+          "$ref": "#/$defs/bbox"
+        },
+        "confidence": {
+          "$ref": "#/$defs/confidenceScore"
+        },
+        "source_frames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "text_role": {
+          "type": "string"
+        }
+      }
+    },
     "screenshotCandidate": {
       "type": "object",
       "additionalProperties": false,
@@ -218,7 +282,7 @@
       "properties": {
         "screenshot_id": {
           "type": "string",
-          "pattern": "^sc-[A-Za-z0-9._-]+$"
+          "pattern": "^scr?-[A-Za-z0-9._-]+$"
         },
         "timestamp_ms": {
           "$ref": "#/$defs/msTimestamp"

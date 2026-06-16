@@ -20,18 +20,18 @@ class CautionGenerator:
         """
         self.llm = llm_provider
     
-    def generate_cautions(self, transcript: str) -> Dict[str, Any]:
+    def generate_cautions(self, evidence_text: str) -> Dict[str, Any]:
         """
         Transcript から cautions を生成
         
         Args:
-            transcript: 文字起こし
+            evidence_text: 抽出ログ（文字起こしやOCR等）
         
         Returns:
             cautions と common_mistakes
         """
         try:
-            prompt = PromptTemplates.caution_prompt(transcript)
+            prompt = PromptTemplates.caution_prompt(evidence_text)
             response = self.llm.generate_text(prompt, max_tokens=1000)
             
             # JSON をパース

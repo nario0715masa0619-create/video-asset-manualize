@@ -42,12 +42,13 @@ class OCRProvider(ABC):
     """OCR プロバイダーの抽象基底クラス"""
     
     @abstractmethod
-    def extract_ocr(self, video_path: Path) -> List[OCRSegment]:
+    def extract_ocr(self, video_path: Path, screenshot_candidates: List[Dict] = None) -> List[OCRSegment]:
         """
         動画フレームから OCR を抽出
         
         Args:
             video_path: 動画ファイルのパス
+            screenshot_candidates: 事前抽出されたスクリーンショット候補（任意）
         
         Returns:
             OCRSegment のリスト
@@ -58,7 +59,7 @@ class OCRProvider(ABC):
 class DummyOCRProvider(OCRProvider):
     """ダミー実装 - テスト用"""
     
-    def extract_ocr(self, video_path: Path) -> List[OCRSegment]:
+    def extract_ocr(self, video_path: Path, screenshot_candidates: List[Dict] = None) -> List[OCRSegment]:
         """ダミー OCR テキストを返す"""
         return [
             OCRSegment(

@@ -37,12 +37,13 @@ class EasyOCRProvider(OCRProvider):
         except Exception as e:
             raise RuntimeError(f"EasyOCR initialization failed: {str(e)}")
     
-    def extract_ocr(self, video_path: Path) -> List[OCRSegment]:
+    def extract_ocr(self, video_path: Path, screenshot_candidates: List[dict] = None) -> List[OCRSegment]:
         """
         動画から OCR を抽出
         
         Args:
             video_path: 動画ファイルのパス
+            screenshot_candidates: 事前抽出されたスクリーンショット候補（任意）
         
         Returns:
             OCRSegment のリスト
@@ -53,13 +54,22 @@ class EasyOCRProvider(OCRProvider):
             raise FileNotFoundError(f"Video file not found: {video_path}")
         
         try:
-            from .frame_extractor import FrameExtractor
+            import cv2
             
-            # 動画からキーフレームを抽出
-            frames = FrameExtractor.extract_key_frames(
-                video_path,
-                num_frames=3
-            )
+            # Use pre-extracted frames if available
+            frames = []
+            if screenshot_candidates:
+                for candidate in screenshot_candidates:
+                    img = cv2.imread(candidate["image_path"])
+                    if img is not None:
+                        frames.append((candidate["timestamp_ms"], img))
+            else:
+                from .frame_extractor import FrameExtractor
+                # 動画から定期的にフレームを抽出（2秒間隔）
+                frames = FrameExtractor.extract_frames_by_interval(
+                    video_path,
+                    interval_seconds=2.0
+                )
             
             ocr_segments = []
             segment_id_counter = 1

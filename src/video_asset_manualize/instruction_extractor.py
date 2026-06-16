@@ -22,21 +22,19 @@ class InstructionExtractor:
     
     def extract_instructions(
         self,
-        transcript: str,
-        ocr_text: str = ""
+        evidence_text: str
     ) -> Dict[str, Any]:
         """
         Transcript から chapters を抽出
         
         Args:
-            transcript: 文字起こし
-            ocr_text: OCR テキスト
+            evidence_text: 抽出ログ（文字起こしやOCR等）
         
         Returns:
             chapters 構造
         """
         try:
-            prompt = PromptTemplates.instruction_prompt(transcript, ocr_text)
+            prompt = PromptTemplates.instruction_prompt(evidence_text)
             response = self.llm.generate_text(prompt, max_tokens=2000)
             
             # JSON をパース

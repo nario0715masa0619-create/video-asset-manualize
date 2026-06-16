@@ -1,0 +1,22 @@
+{
+    "project_id": "test_batch_modality",
+    "project_title": "Test Batch Modality",
+    "description": "Test manifest containing multiple modalities",
+    "items": [
+        {
+            "asset_id": "item_1",
+            "spec_path": "output/exports/real_tests/speech_spec.json",
+            "options": {}
+        },
+        {
+            "asset_id": "item_2",
+            "spec_path": "output/exports/real_tests/text_spec.json",
+            "options": {}
+        },
+        {
+            "asset_id": "item_3",
+            "spec_path": "output/exports/real_tests/mixed_spec.json",
+            "options": {}
+        }
+    ]
+}

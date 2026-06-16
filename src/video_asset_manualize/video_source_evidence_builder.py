@@ -80,10 +80,36 @@ class VideoSourceEvidenceBuilder:
         except Exception as e:
             print(f"Warning: Transcript extraction failed: {e}")
         
+        # Screenshot candidates を抽出
+        screenshot_candidates = []
+        try:
+            import cv2
+            from .frame_extractor import FrameExtractor
+            
+            # create dir
+            image_dir = Path("output/exports/images") / source_video["video_id"]
+            image_dir.mkdir(parents=True, exist_ok=True)
+            
+            frames = FrameExtractor.extract_frames_by_interval(video_path, interval_seconds=2.0)
+            for i, (timestamp_ms, frame) in enumerate(frames):
+                image_name = f"scr_{timestamp_ms:08d}.jpg"
+                image_path = image_dir / image_name
+                cv2.imwrite(str(image_path), frame)
+                
+                # Make relative path or absolute path? Let's use absolute for now, or relative to output
+                screenshot_candidates.append({
+                    "screenshot_id": f"scr-{i+1:03d}",
+                    "timestamp_ms": timestamp_ms,
+                    "image_path": str(image_path.absolute()),
+                    "description": ""
+                })
+        except Exception as e:
+            print(f"Warning: Screenshot extraction failed: {e}")
+
         # OCR を抽出
         ocr_segments = []
         try:
-            segments = self.ocr_provider.extract_ocr(video_path)
+            segments = self.ocr_provider.extract_ocr(video_path, screenshot_candidates=screenshot_candidates)
             ocr_segments = [seg.to_dict() for seg in segments]
         except Exception as e:
             print(f"Warning: OCR extraction failed: {e}")
@@ -93,7 +119,7 @@ class VideoSourceEvidenceBuilder:
             "source_video": source_video,
             "transcript_segments": transcript_segments,
             "ocr_segments": ocr_segments,
-            "screenshot_candidates": [],
+            "screenshot_candidates": screenshot_candidates,
             "speaker_segments": [],
             "evidence_links": []
         }

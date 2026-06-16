@@ -14,7 +14,9 @@ def _check_modes(manifest_file: str):
     try:
         _, _, specs = BatchManifestLoader.load_specs_manifest(manifest_file)
         has_non_canonical = False
+        has_weak_evidence = False
         modes = set()
+        modalities = set()
         
         for spec_item in specs:
             spec_path = Path(spec_item.spec_path)
@@ -22,14 +24,22 @@ def _check_modes(manifest_file: str):
                 with open(spec_path, 'r', encoding='utf-8') as f:
                     data = json.load(f)
                     mode = data.get("metadata", {}).get("generation_mode", "unknown")
+                    modality = data.get("metadata", {}).get("dominant_modality", "unknown")
+                    quality = data.get("metadata", {}).get("evidence_quality", "unknown")
                     modes.add(mode)
+                    modalities.add(modality)
                     if mode != "canonical":
                         has_non_canonical = True
+                    if modality == "weak_evidence" or quality == "weak":
+                        has_weak_evidence = True
                         
         if has_non_canonical:
             st.warning(f"⚠️ 対象に非正本 (non-canonical) spec が含まれています。Modes: {', '.join(modes)}")
         elif "canonical" in modes:
             st.success("🟢 全ての spec が canonical (Production-ready) です。")
+            
+        if has_weak_evidence:
+            st.warning("⚠️ 対象に証拠不十分 (weak_evidence) の spec が含まれています。目視レビューが必要です。")
     except Exception:
         pass
 

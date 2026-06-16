@@ -112,7 +112,9 @@ def test_canonical_acceptance_validator_canonical_pass():
             "generated_at": "2026-05-28T00:00:00Z",
             "provider": "openai",
             "model": "gpt-3.5-turbo",
-            "pipeline_version": "12.0.0"
+            "pipeline_version": "12.0.0",
+            "dominant_modality": "visual",
+            "evidence_quality": "strong"
         },
         "asset_meta": {"asset_id": "test-001"},
         "instructional_core": {}

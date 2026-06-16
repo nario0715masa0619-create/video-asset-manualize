@@ -20,18 +20,18 @@ class SummaryGenerator:
         """
         self.llm = llm_provider
     
-    def generate_summary(self, transcript: str) -> Dict[str, str]:
+    def generate_summary(self, evidence_text: str) -> Dict[str, str]:
         """
         Transcript から summary を生成
         
         Args:
-            transcript: 文字起こし
+            evidence_text: 抽出ログ（文字起こしやOCR等）
         
         Returns:
             summary dict
         """
         try:
-            prompt = PromptTemplates.summary_prompt(transcript)
+            prompt = PromptTemplates.summary_prompt(evidence_text)
             response = self.llm.generate_text(prompt, max_tokens=500)
             
             # 応答をパース

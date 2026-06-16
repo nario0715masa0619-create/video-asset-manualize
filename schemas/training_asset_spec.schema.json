@@ -501,6 +501,15 @@
         "branch_condition": {
           "type": "string"
         },
+        "target_ui_element": {
+          "type": "string"
+        },
+        "check_point": {
+          "type": "string"
+        },
+        "primary_screenshot": {
+          "type": "string"
+        },
         "notes": {
           "$ref": "#/$defs/stringArray"
         },
@@ -809,6 +818,15 @@
             "$ref": "#/$defs/changeLogEntry"
           },
           "default": []
+        },
+        "dominant_modality": {
+          "type": "string"
+        },
+        "evidence_quality": {
+          "type": "string"
+        },
+        "fusion_mode": {
+          "type": "string"
         }
       }
     },

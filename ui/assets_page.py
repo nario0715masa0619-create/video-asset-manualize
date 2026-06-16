@@ -30,12 +30,16 @@ def show_assets_page():
         spec_path = Path(f"output/exports/{asset_id}_spec.json")
         mode = "unknown"
         provider = "n/a"
+        modality = "unknown"
+        quality = "unknown"
         if spec_path.exists():
             try:
                 with open(spec_path, "r", encoding="utf-8") as f:
                     spec_data = json.load(f)
                     mode = spec_data.get("metadata", {}).get("generation_mode", "unknown")
                     provider = spec_data.get("metadata", {}).get("provider", "n/a")
+                    modality = spec_data.get("metadata", {}).get("dominant_modality", "unknown")
+                    quality = spec_data.get("metadata", {}).get("evidence_quality", "unknown")
             except Exception:
                 pass
                 
@@ -54,6 +58,11 @@ def show_assets_page():
                 st.warning(f"**Generation Mode:** {mode.upper()} - ⚠️ 非正本 (Production-ready ではありません)")
             else:
                 st.error(f"**Generation Mode:** UNKNOWN - ⚠️ 非 canonical spec")
+                
+            if modality == "weak_evidence" or quality == "weak":
+                st.error(f"**Modality:** {modality.upper()} | **Quality:** {quality.upper()} - ⚠️ 証拠不十分")
+            else:
+                st.info(f"**Modality:** {modality.upper()} | **Quality:** {quality.upper()}")
                 
             col1, col2, col3 = st.columns(3)
             

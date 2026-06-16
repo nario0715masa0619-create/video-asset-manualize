@@ -1,38 +1,29 @@
 {
   "project_id": "batch-specs",
   "title": "Batch Spec Build",
-  "timestamp": "2026-05-26T22:55:59.352355Z",
+  "timestamp": "2026-05-28T14:02:28.561293Z",
   "summary": {
-    "total": 3,
-    "succeeded": 3,
+    "total": 2,
+    "succeeded": 2,
     "failed": 0
   },
   "results": [
     {
-      "item_id": "asset-phase10-001",
+      "item_id": "asset-054772ab",
       "status": "success",
       "outputs": {
-        "html": "output\\exports\\batch\\asset-001_manual.html",
-        "pdf": "output\\exports\\batch\\asset-001_manual.pdf",
-        "json": "output\\exports\\batch\\asset-001_spec.json"
+        "html": "output\\exports\\batch\\asset-054772ab_manual.html",
+        "pdf": "output\\exports\\batch\\asset-054772ab_manual.pdf",
+        "json": "output\\exports\\batch\\asset-054772ab_spec.json"
       }
     },
     {
-      "item_id": "asset-phase10-002",
+      "item_id": "asset-054772ab",
       "status": "success",
       "outputs": {
-        "html": "output\\exports\\batch\\asset-001_manual.html",
-        "pdf": "output\\exports\\batch\\asset-001_manual.pdf",
-        "json": "output\\exports\\batch\\asset-001_spec.json"
-      }
-    },
-    {
-      "item_id": "asset-phase10-003",
-      "status": "success",
-      "outputs": {
-        "html": "output\\exports\\batch\\asset-001_manual.html",
-        "pdf": "output\\exports\\batch\\asset-001_manual.pdf",
-        "json": "output\\exports\\batch\\asset-001_spec.json"
+        "html": "output\\exports\\batch\\asset-054772ab_manual.html",
+        "pdf": "output\\exports\\batch\\asset-054772ab_manual.pdf",
+        "json": "output\\exports\\batch\\asset-054772ab_spec.json"
       }
     }
   ],

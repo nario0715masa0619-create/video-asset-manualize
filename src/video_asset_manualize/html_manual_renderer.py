@@ -19,16 +19,35 @@ class HTMLManualRenderer:
     <meta charset="UTF-8">
     <title>{{ asset_meta.title }}</title>
     <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: #f5f5f5; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        h1 { color: #000; border-bottom: 3px solid #007bff; padding-bottom: 10px; }
-        h2 { color: #007bff; border-left: 4px solid #007bff; padding-left: 10px; margin-top: 30px; }
-        h3 { color: #333; margin-top: 20px; }
-        .step { margin: 15px 0; padding: 10px; background: #f0f8ff; border-left: 3px solid #007bff; }
-        .caution { background: #fff3cd; border: 1px solid #ffc107; padding: 10px; margin: 10px 0; }
-        code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; }
-        .metadata { font-size: 12px; color: #666; margin: 10px 0; }
-        footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #ccc; font-size: 11px; color: #999; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; background: #eef2f5; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; font-size: 2.2em; }
+        h2 { color: #2980b9; border-left: 5px solid #3498db; padding-left: 15px; margin-top: 40px; background: #f8fbfe; padding-top: 5px; padding-bottom: 5px;}
+        h3 { color: #34495e; margin-top: 30px; font-size: 1.4em; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        
+        .step-card { display: flex; flex-direction: column; margin: 20px 0; border: 1px solid #e1e8ed; border-radius: 8px; overflow: hidden; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .step-header { background: #3498db; color: white; padding: 10px 15px; font-weight: bold; font-size: 1.1em; }
+        .step-body { display: flex; flex-direction: row; padding: 15px; gap: 20px; }
+        .step-content { flex: 1; }
+        .step-visual { flex: 1; max-width: 450px; }
+        .step-visual img { width: 100%; border-radius: 4px; border: 1px solid #ddd; }
+        
+        .action-text { font-size: 1.15em; font-weight: bold; margin-bottom: 15px; color: #2c3e50; }
+        .target-ui { display: inline-block; background: #e8f4f8; color: #0277bd; padding: 3px 8px; border-radius: 4px; font-size: 0.9em; margin-bottom: 10px; border: 1px solid #b3e5fc; }
+        
+        .checkpoint { background: #e8f5e9; border-left: 4px solid #4caf50; padding: 10px; margin: 10px 0; border-radius: 0 4px 4px 0; }
+        .checkpoint::before { content: '✓ 確認: '; font-weight: bold; color: #2e7d32; }
+        
+        .caution { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin: 10px 0; border-radius: 0 4px 4px 0; }
+        .caution::before { content: '⚠️ 注意: '; font-weight: bold; color: #f57c00; }
+        
+        .metadata { font-size: 13px; color: #666; margin: 15px 0; background: #f9f9f9; padding: 15px; border-radius: 6px; }
+        footer { margin-top: 50px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #999; text-align: center; }
+        
+        @media (max-width: 768px) {
+            .step-body { flex-direction: column; }
+            .step-visual { max-width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -51,7 +70,6 @@ class HTMLManualRenderer:
         
         {% if instructional_core.global_cautions %}
         <div class="caution">
-            <strong>⚠️ 注意事項</strong>
             <ul>
             {% for caution in instructional_core.global_cautions %}
                 <li>{{ caution }}</li>
@@ -65,9 +83,36 @@ class HTMLManualRenderer:
         {% for procedure in chapter.procedures %}
             <h3>{{ procedure.title }}</h3>
             {% for step in procedure.steps %}
-            <div class="step">
-                <strong>ステップ {{ step.order }}:</strong> {{ step.action }}
-                {% if step.expected_result %}<div><em>期待: {{ step.expected_result }}</em></div>{% endif %}
+            <div class="step-card">
+                <div class="step-header">ステップ {{ step.order }}</div>
+                <div class="step-body">
+                    <div class="step-content">
+                        <div class="action-text">{{ step.action }}</div>
+                        
+                        {% if step.target_ui_element %}
+                        <div class="target-ui">操作対象: {{ step.target_ui_element }}</div>
+                        {% endif %}
+                        
+                        {% if step.expected_result %}
+                        <div><em>期待される結果: {{ step.expected_result }}</em></div>
+                        {% endif %}
+                        
+                        {% if step.check_point %}
+                        <div class="checkpoint">{{ step.check_point }}</div>
+                        {% endif %}
+                        
+                        {% if step.cautions %}
+                            {% for c in step.cautions %}
+                            <div class="caution">{{ c }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    {% if step.primary_screenshot and screenshot_map.get(step.primary_screenshot) %}
+                    <div class="step-visual">
+                        <img src="{{ screenshot_map[step.primary_screenshot] }}" alt="Step Screenshot">
+                    </div>
+                    {% endif %}
+                </div>
             </div>
             {% endfor %}
         {% endfor %}
@@ -84,10 +129,31 @@ class HTMLManualRenderer:
         self.template = Template(self.DEFAULT_TEMPLATE)
     
     def render(self, asset_spec: dict) -> str:
+        import base64
+        import mimetypes
+        
+        screenshot_map = {}
+        source_evidence = asset_spec.get("source_evidence", {})
+        candidates = source_evidence.get("screenshot_candidates", [])
+        
+        for cand in candidates:
+            path = cand.get("image_path")
+            if path and Path(path).exists():
+                try:
+                    with open(path, "rb") as img_f:
+                        encoded = base64.b64encode(img_f.read()).decode('utf-8')
+                        mime, _ = mimetypes.guess_type(path)
+                        if not mime:
+                            mime = "image/jpeg"
+                        screenshot_map[cand["screenshot_id"]] = f"data:{mime};base64,{encoded}"
+                except Exception as e:
+                    print(f"Warning: Could not encode image {path}: {e}")
+                    
         html = self.template.render(
             asset_meta=asset_spec.get("asset_meta", {}),
             instructional_core=asset_spec.get("instructional_core", {}),
             _metadata=asset_spec.get("_metadata", {}),
+            screenshot_map=screenshot_map
         )
         return html
     

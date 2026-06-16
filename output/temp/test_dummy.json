@@ -1,0 +1,16 @@
+{
+  "source_video": {
+    "video_id": "video-sample_training_video",
+    "file_name": "sample_training_video.mp4",
+    "file_path": "D:\\AI_スクリプト成果物\\video-asset-manualize\\samples\\sample_training_video.mp4",
+    "source_type": "local_file",
+    "duration_ms": 0,
+    "language": "ja",
+    "checksum": null
+  },
+  "transcript_segments": [],
+  "ocr_segments": [],
+  "screenshot_candidates": [],
+  "speaker_segments": [],
+  "evidence_links": []
+}

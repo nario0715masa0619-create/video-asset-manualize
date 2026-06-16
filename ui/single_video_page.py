@@ -15,12 +15,41 @@ def show_single_video_page():
     
     st.markdown("### Input")
     
+    st.markdown("#### Video Source")
+    input_method = st.radio("Input Method", ["Select Sample Video", "Upload Video File"], horizontal=True)
+    
+    video_path = None
+    if input_method == "Select Sample Video":
+        samples_dir = Path("samples")
+        real_tests_dir = Path("samples/real_test_videos")
+        sample_files = []
+        if samples_dir.exists():
+            sample_files.extend(list(samples_dir.glob("*.mp4")))
+        if real_tests_dir.exists():
+            sample_files.extend(list(real_tests_dir.glob("*.mp4")))
+            
+        sample_options = [str(p).replace('\\', '/') for p in sample_files]
+        # Sort so that real_test_videos (like text.mp4) appear at the top
+        sample_options = sorted(sample_options, key=lambda x: "real_test_videos/text.mp4" not in x)
+        
+        if sample_options:
+            video_path = st.selectbox("Select Sample Video", sample_options, index=0)
+        else:
+            st.warning("No sample videos found.")
+    else:
+        uploaded_file = st.file_uploader("Upload Video File", type=["mp4", "mov", "avi"])
+        if uploaded_file is not None:
+            temp_dir = Path("output/temp")
+            temp_dir.mkdir(parents=True, exist_ok=True)
+            video_path = str(temp_dir / uploaded_file.name)
+            with open(video_path, "wb") as f:
+                f.write(uploaded_file.getbuffer())
+            st.success(f"Uploaded: {uploaded_file.name}")
+
+    st.markdown("#### Settings")
     col1, col2 = st.columns(2)
     
     with col1:
-        video_path = st.text_input("Video File Path", value="samples/sample_training_video.mp4")
-    
-    with col2:
         mode_str = st.selectbox("Generation Mode", ["canonical", "fallback", "test"], index=0)
     
     if mode_str == "canonical":
@@ -35,54 +64,73 @@ def show_single_video_page():
         st.session_state.single_video_processing_result = None
     
     if st.button("Process Video", key="process_video"):
+        if not video_path:
+            st.error("Please provide a video file by either selecting a sample or uploading a file.")
+            st.stop()
+            
         st.info("Processing video...")
         
         try:
-            # Extract source_evidence
-            st.write("Step 1: Extracting source evidence...")
-            evidence_builder = VideoSourceEvidenceBuilder()
-            source_evidence = evidence_builder.build_from_video(video_path)
-            st.success("Source evidence extracted")
-            
-            # Temporary save for orchestration (Orchestrator takes file path)
-            import json
-            temp_dir = Path("output/temp")
-            temp_dir.mkdir(parents=True, exist_ok=True)
-            temp_evidence = temp_dir / "temp_evidence.json"
-            with open(temp_evidence, 'w', encoding='utf-8') as f:
-                json.dump(source_evidence, f, ensure_ascii=False)
-            
-            # Build spec via Orchestrator
-            st.write(f"Step 2: Building training asset spec ({mode_str} mode)...")
-            gen_mode = Orchestrator.resolve_generation_mode(mode_str)
-            spec = Orchestrator.extract_with_mode(
-                source_evidence_path=str(temp_evidence),
-                mode=gen_mode,
-                llm_provider_name=llm_provider
-            )
-            st.success("Spec built")
-            
-            # Save and generate
-            st.write("Step 3: Generating HTML/PDF...")
-            output_dir = Path("output/exports")
-            output_dir.mkdir(parents=True, exist_ok=True)
-            
-            asset_id = spec.get('asset_meta', {}).get('asset_id', 'unknown')
-            spec_file = output_dir / f"{asset_id}_spec.json"
-            
-            with open(spec_file, 'w', encoding='utf-8') as f:
-                json.dump(spec, f, ensure_ascii=False, indent=2)
-            
-            pipeline = BuildTrainingAssetPipeline()
-            results = pipeline.generate_outputs(str(spec_file), output_dir=str(output_dir))
+            with st.status("🚀 Processing Video...", expanded=True) as status:
+                # Extract source_evidence
+                st.write(f"⏳ Step 1: Extracting source evidence (Transcript: {transcript_provider}, OCR: {ocr_provider}). This may take a while...")
+                
+                from video_asset_manualize.provider_factory import ProviderFactory
+                tp = ProviderFactory.create_transcript_provider(provider_type=transcript_provider)
+                op = ProviderFactory.create_ocr_provider(provider_type=ocr_provider)
+                
+                evidence_builder = VideoSourceEvidenceBuilder(
+                    transcript_provider=tp,
+                    ocr_provider=op
+                )
+                source_evidence = evidence_builder.build_from_video(video_path)
+                st.success("✅ Step 1: Source evidence extracted successfully")
+                
+                # Temporary save for orchestration (Orchestrator takes file path)
+                import json
+                temp_dir = Path("output/temp")
+                temp_dir.mkdir(parents=True, exist_ok=True)
+                temp_evidence = temp_dir / "temp_evidence.json"
+                with open(temp_evidence, 'w', encoding='utf-8') as f:
+                    json.dump(source_evidence, f, ensure_ascii=False)
+                
+                # Build spec via Orchestrator
+                st.write(f"⏳ Step 2: Building training asset spec ({mode_str} mode). Calling LLM...")
+                gen_mode = Orchestrator.resolve_generation_mode(mode_str)
+                spec = Orchestrator.extract_with_mode(
+                    source_evidence_path=str(temp_evidence),
+                    mode=gen_mode,
+                    llm_provider_name=llm_provider
+                )
+                st.success("✅ Step 2: Spec built successfully")
+                
+                # Save and generate
+                st.write("⏳ Step 3: Generating HTML/PDF outputs...")
+                output_dir = Path("output/exports")
+                output_dir.mkdir(parents=True, exist_ok=True)
+                
+                asset_id = spec.get('asset_meta', {}).get('asset_id', 'unknown')
+                spec_file = output_dir / f"{asset_id}_spec.json"
+                
+                with open(spec_file, 'w', encoding='utf-8') as f:
+                    json.dump(spec, f, ensure_ascii=False, indent=2)
+                
+                pipeline = BuildTrainingAssetPipeline()
+                results = pipeline.generate_outputs(str(spec_file), output_dir=str(output_dir))
+                st.success("✅ Step 3: Generating outputs complete")
+                
+                status.update(label="🎉 Processing Complete!", state="complete", expanded=False)
             
             st.session_state.single_video_processing_result = {
                 "results": results,
                 "asset_id": asset_id,
                 "mode": mode_str,
-                "provider": spec.get('metadata', {}).get('provider', 'n/a')
+                "provider": spec.get('metadata', {}).get('provider', 'unknown'),
+                "model": spec.get('metadata', {}).get('model', 'unknown'),
+                "generated_at": spec.get('metadata', {}).get('generated_at', 'unknown'),
+                "modality": spec.get('metadata', {}).get('dominant_modality', 'unknown'),
+                "quality": spec.get('metadata', {}).get('evidence_quality', 'unknown')
             }
-            st.success("Processing complete!")
             
         except Exception as e:
             st.error(f"Error: {str(e)}")
@@ -103,6 +151,13 @@ def show_single_video_page():
             st.warning(f"**Generation Mode:** {mode.upper()} - ⚠️ この spec は production canonical ではありません。正本として扱うには canonical generation を実行してください。")
         else:
             st.error("**Generation Mode:** UNKNOWN - ⚠️ この spec は非 canonical です。")
+            
+        modality = data.get("modality", "unknown")
+        quality = data.get("quality", "unknown")
+        if modality == "weak_evidence" or quality == "weak":
+            st.error(f"**Evidence Modality:** {modality.upper()} | **Quality:** {quality.upper()} - ⚠️ 証拠不十分のため、自動 acceptance されません。レビューが必要です。")
+        else:
+            st.info(f"**Evidence Modality:** {modality.upper()} | **Quality:** {quality.upper()}")
             
         st.write(f"**Asset ID:** {asset_id}")
         

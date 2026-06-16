@@ -22,21 +22,21 @@ class FAQGenerator:
     
     def generate_faqs(
         self,
-        transcript: str,
+        evidence_text: str,
         instructional_core: str
     ) -> List[Dict[str, str]]:
         """
         FAQ 候補を生成
         
         Args:
-            transcript: 文字起こし
+            evidence_text: 抽出ログ（文字起こしやOCR等）
             instructional_core: 抽出された手順
         
         Returns:
             FAQ リスト
         """
         try:
-            prompt = PromptTemplates.faq_prompt(transcript, instructional_core)
+            prompt = PromptTemplates.faq_prompt(evidence_text, instructional_core)
             response = self.llm.generate_text(prompt, max_tokens=1000)
             
             # JSON をパース

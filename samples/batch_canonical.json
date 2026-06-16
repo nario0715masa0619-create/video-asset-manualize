@@ -1,0 +1,16 @@
+{
+  "project_id": "batch-canonical-test",
+  "title": "Canonical Batch Test",
+  "items": [
+    {
+      "title": "Module 1",
+      "asset_id": "asset-054772ab",
+      "spec_path": "output/exports/asset-054772ab_spec.json"
+    },
+    {
+      "title": "Module 2",
+      "asset_id": "asset-054772ab",
+      "spec_path": "output/exports/asset-054772ab_spec.json"
+    }
+  ]
+}
